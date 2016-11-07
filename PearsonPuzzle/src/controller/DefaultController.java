@@ -3,11 +3,11 @@ package controller;
 import java.awt.event.ActionEvent;
 
 import model.Model;
-import view.StartView;
+import view.LoginView;
 import view.View;
 
 public class DefaultController extends Controller{
-	public DefaultController(Model model, StartView view) {
+	public DefaultController(Model model, LoginView view) {
 		super(model, view);
 		view.addController(this);
 		// TODO Auto-generated constructor stub

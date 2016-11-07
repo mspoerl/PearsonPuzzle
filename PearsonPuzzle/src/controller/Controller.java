@@ -1,6 +1,9 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+
+import com.sun.corba.se.spi.ior.MakeImmutable;
+
 import view.View;
 
 import model.Model;
@@ -22,7 +25,7 @@ public abstract class Controller implements java.awt.event.ActionListener {
 		model.setPassword(password);
 		model.setUsername(username);
 		// TODO: Passworttest und View Auswahl
-		this.view.setDesignPupil(Model.getCodeList(), model.getSaveList(),username);
+		this.view=view.makePupilView(Model.getCodeModel(), model.getSaveModel(),username);
 		view.draw();
 	}
 	@Override

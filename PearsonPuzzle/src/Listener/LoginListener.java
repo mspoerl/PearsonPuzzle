@@ -20,9 +20,7 @@ public class LoginListener implements ActionListener {
     }
 	public void actionPerformed(ActionEvent e) {
         //myTextField.append(e.getActionCommand());
-		controller.login( username, password.getPassword());
-		System.out.println(username);
-		System.out.println(password.getPassword());
+		controller.login(username, password.getPassword());
         //myTextField.setCaretPosition(myTextField.getDocument().getLength());
     }
 }

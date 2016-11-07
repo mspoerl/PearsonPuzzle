@@ -1,4 +1,4 @@
-package controller;
+/*package controller;
 
 import java.awt.event.ActionEvent;
 
@@ -36,3 +36,4 @@ public class LoginController extends Controller{
 	}
 
 }
+*/

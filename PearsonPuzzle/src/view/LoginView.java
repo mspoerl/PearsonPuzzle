@@ -13,12 +13,13 @@ import Listener.LoginListener;
 
 import controller.DefaultController;
 
-public class StartView extends View{
+public class LoginView extends View{
 	private JPanel loginPanel;
 	private JButton enter;
 	private JTextField username;
 	private JPasswordField password;
-	public StartView(){
+	public LoginView(){
+		buildFrame();
 		frame.setLocationRelativeTo(null);
 		loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.PAGE_AXIS));
