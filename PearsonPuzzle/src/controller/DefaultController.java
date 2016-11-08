@@ -5,17 +5,22 @@ import java.awt.event.ActionEvent;
 import model.Model;
 import view.LoginView;
 import view.View;
-
+/**
+ * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
+ * mit dem Controller zu verknüpfen.
+ * 
+ * 
+ * @author workspace
+ *
+ */
 public class DefaultController extends Controller{
 	public DefaultController(Model model, LoginView view) {
 		super(model, view);
 		view.addController(this);
-		// TODO Auto-generated constructor stub
 	}
 	public DefaultController(Model model, View view) {
 		super(model, view);
 		view.addController(this);
-		// TODO Auto-generated constructor stub
 	}
 	/*public void submitPassword(JPasswordField password){
 		if(password!=null)
@@ -37,8 +42,6 @@ public class DefaultController extends Controller{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		view.draw();
-		// TODO Auto-generated method stub	
-		
+		view.draw();	
 	}
 }

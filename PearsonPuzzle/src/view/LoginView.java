@@ -12,7 +12,12 @@ import javax.swing.JTextField;
 import Listener.LoginListener;
 
 import controller.DefaultController;
-
+/**
+ * Definiert die Login Ansicht, die zugleich als start Screen fungiert.
+ * 
+ * @author workspace
+ *
+ */
 public class LoginView extends View{
 	private JPanel loginPanel;
 	private JButton enter;

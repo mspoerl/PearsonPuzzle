@@ -3,8 +3,6 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.*;
-
-import Listener.ToTransferHandler;
 import controller.Controller;
 
 /**

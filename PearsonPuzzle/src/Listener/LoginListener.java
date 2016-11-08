@@ -9,7 +9,7 @@ import javax.swing.JTextField;
 import controller.Controller;
 /**
  * Klasse dient dazu, auf Betätigung des Login Buttons zu warten und dann 
- * eingegebenes Passwort und Nutzernamen an den Controller weiterzuleitens
+ * eingegebenes Passwort und Nutzernamen an den Controller weiterzuleiten.
  * 
  * @author workspace
  *
@@ -25,8 +25,6 @@ public class LoginListener implements ActionListener {
         this.controller = controller;
     }
 	public void actionPerformed(ActionEvent e) {
-        //myTextField.append(e.getActionCommand());
 		controller.login(username, password.getPassword());
-        //myTextField.setCaretPosition(myTextField.getDocument().getLength());
     }
 }

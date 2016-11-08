@@ -6,6 +6,12 @@ import model.Model;
 import view.LoginView;
 import view.View;
 
+/**
+ * Klasse dient dazu, die GUI zu erzeugen.
+ * 
+ * @author workspace
+ *
+ */
 public class user {
 	public static void main (String args[]){
 		Model model = new Model();

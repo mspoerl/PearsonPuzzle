@@ -9,7 +9,7 @@ import javax.swing.JList;
 import javax.swing.TransferHandler;
 
 /**
- * Klasse deint dazu zu definieren, was beim "droppen" mit dem Element passiert, auf das
+ * Klasse definiert, was beim "droppen" mit dem Element passiert, auf das
  * "gedropped" wurde.
  * 
  * @author workspace
@@ -55,14 +55,20 @@ public class ToTransferHandler extends TransferHandler {
         }
 
         JList list = (JList)support.getComponent();
-        DefaultListModel model = (DefaultListModel)list.getModel();
-        model.insertElementAt(data, index);
-        model.remove(index+1);
-        
-        Rectangle rect = list.getCellBounds(index, index);
-        list.scrollRectToVisible(rect);
-        list.setSelectedIndex(index);
-        list.requestFocusInWindow();
-        return true;
+        DefaultListModel listModel = (DefaultListModel)list.getModel();
+        if(listModel.contains(data)){
+        	// TODO: Allert ausgeben, dass Element bereits gedragt wurde oder alternativ Drag für dieses Element deaktivieren
+        	return false;
+        }
+        else{
+        	listModel.insertElementAt(data, index);
+            listModel.remove(index+1);
+            
+            Rectangle rect = list.getCellBounds(index, index);
+            list.scrollRectToVisible(rect);
+            list.setSelectedIndex(index);
+            list.requestFocusInWindow();
+            return true;
+        }     
     }  
 } 

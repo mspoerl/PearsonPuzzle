@@ -1,10 +1,6 @@
 package model;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JTextField;
-
-import view.View;
 
 /**
  * Klasse dient dazu, alle für die Benutzer notwendigen Daten zu halten
@@ -41,5 +37,5 @@ public class Model {
 	}
 	public static DefaultListModel getSaveModel(){
 		return saveModel;
-	}	
+	}
 }
