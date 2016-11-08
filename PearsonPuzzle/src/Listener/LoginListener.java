@@ -7,7 +7,13 @@ import javax.swing.JTextField;
 
 
 import controller.Controller;
-
+/**
+ * Klasse dient dazu, auf Betätigung des Login Buttons zu warten und dann 
+ * eingegebenes Passwort und Nutzernamen an den Controller weiterzuleitens
+ * 
+ * @author workspace
+ *
+ */
 public class LoginListener implements ActionListener {
 	String username; 
 	JPasswordField password;

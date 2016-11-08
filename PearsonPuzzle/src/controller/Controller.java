@@ -1,11 +1,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
-
 import view.View;
-
 import model.Model;
 
 public abstract class Controller implements java.awt.event.ActionListener {

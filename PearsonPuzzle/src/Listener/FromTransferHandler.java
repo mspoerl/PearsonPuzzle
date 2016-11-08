@@ -8,6 +8,12 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
 
+/**
+ * 
+ * 
+ * @author workspace
+ *
+ */
 public class FromTransferHandler extends TransferHandler {
 	JList dragFrom;
 	DefaultListModel dragList;

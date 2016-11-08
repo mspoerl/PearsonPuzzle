@@ -4,12 +4,15 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
-
-
+/**
+ * Klasse, um den Code aus der Datenbank zu holen, zu speicher 
+ * und für andere Klassen bereit zu stellen.
+ * 
+ * @author workspace
+ *
+ */
 public class Code {
 	private static String[] codeLines = {"Line1","Line2","Line3","Line4","Line5"};
-	private static JList<String> codeList;
-	private static JList<String> saveList;
 	private static DefaultListModel code=new DefaultListModel();
 	private static DefaultListModel saveModel=new DefaultListModel();
 	private JList<JTextField> codeTextFields;
@@ -17,20 +20,12 @@ public class Code {
 	 * soll noch erweitert werden, Daten aus datenbank, List, ...
 	 */
 	Code(){
-		codeList = new JList<String> (codeLines);
 		codeTextFields=new JList<JTextField>();
 		for(String line: codeLines){
 			codeTextFields.add(new JTextField(line));
 			code.add(0, line);
 			saveModel.add(0, new String());
 		}
-		saveList=new JList<String>(new String[codeLines.length]);
-	}
-	public static JList<String> getCodeList(){
-		return codeList;
-	}
-	public JList<JTextField> getCodeTextfields(){
-		return codeTextFields;	
 	}
 	public void setCodeTextFields(){
 		codeTextFields=new JList<JTextField>();
@@ -38,10 +33,6 @@ public class Code {
 			codeTextFields.add(new JButton(line));
 			System.out.println(JButton.getDefaultLocale());
 		}	
-	}
-	public JList<String> getSaveList() {
-		// TODO Auto-generated method stub
-		return saveList;
 	}
 	public DefaultListModel getCode(){
 		return code;

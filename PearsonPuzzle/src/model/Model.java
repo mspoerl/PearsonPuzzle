@@ -6,6 +6,12 @@ import javax.swing.JTextField;
 
 import view.View;
 
+/**
+ * Klasse dient dazu, alle für die Benutzer notwendigen Daten zu halten
+ * 
+ * @author workspace
+ *
+ */
 
 public class Model {
 	private String username; 
@@ -35,17 +41,5 @@ public class Model {
 	}
 	public static DefaultListModel getSaveModel(){
 		return saveModel;
-	}
-	public static JList<String> getCodeList(){
-		return Code.getCodeList();
-	}
-	public static JList<JTextField> getTextFields(){
-		return code.getCodeTextfields();
-	}
-	public void addObserver(View design){	
-	}
-	public JList<String> getSaveList() {
-		return code.getSaveList();
-	}
-	
+	}	
 }

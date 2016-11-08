@@ -8,6 +8,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
 
+/**
+ * Klasse deint dazu zu definieren, was beim "droppen" mit dem Element passiert, auf das
+ * "gedropped" wurde.
+ * 
+ * @author workspace
+ *
+ */
 public class ToTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
 	int action;

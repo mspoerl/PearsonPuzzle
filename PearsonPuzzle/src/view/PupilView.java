@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
@@ -9,12 +8,19 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
 import Listener.FromTransferHandler;
 import Listener.ToTransferHandler;
 
+/**
+ * Klasse dient dazu, bei Konstruktion den 
+ * 
+ * @author workspace
+ *
+ */
 public class PupilView extends View{
 	JList<String> dragDropList;
 	JList<String> saveDropList;
@@ -24,8 +30,11 @@ public class PupilView extends View{
 		this.saveDropList=new JList<String>(emptyList);
 		dragDropList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		dragDropList.setDragEnabled(true);
+		
+		// dises zwei Zeilen sollen noch ausgelagert werden
 		dragDropList.setTransferHandler(new FromTransferHandler(codeList, dragDropList));
 		saveDropList.setTransferHandler(new ToTransferHandler(TransferHandler.COPY));
+		
 		saveDropList.setDropMode(DropMode.ON);
 		saveDropList.setFixedCellHeight(20);
 		dragDropList.setFixedCellHeight(20);
@@ -42,10 +51,9 @@ public class PupilView extends View{
 		mainPanel.add(sp, BorderLayout.LINE_START);
 		sp = new JScrollPane(dragDropList);
 		mainPanel.add(sp, BorderLayout.LINE_END);
+		mainPanel.add(new JTextField("Hier erfolgt eine möglichst präzise Arbeitsanweisung für den Schüler"),BorderLayout.PAGE_END);
 		frame.pack();
 		frame.setSize(800,500);
 		this.draw();
-	}
-	
-	
+	}	
 }
