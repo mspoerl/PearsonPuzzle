@@ -3,15 +3,13 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.*;
-
-import Listener.ToTransferHandler;
 import controller.Controller;
 
 /**
  * Design Klasse, um Erscheinungsbild der grafischen Oberfläche zu definieren
  * und auf jeweiligen Nutzer einzustellen.
  * 
- * @author wildcut
+ * @author workspace
  *
  */
 

@@ -3,7 +3,15 @@ package controller;
 import java.awt.event.ActionEvent;
 import view.View;
 import model.Model;
-
+/**
+ * Oberklasse der verschiedenen Controller, die alle dafür zuständig sind,
+ * Daten vom Model an den jeweiligen darstellenden View weiterzureichen und 
+ * bei Interaktion des Benutzers die von den Listenern erfassten Veränderungen 
+ * an das Model weiterzureichen.
+ * 
+ * @author workspace
+ *
+ */
 public abstract class Controller implements java.awt.event.ActionListener {
 	protected static Model model;
 	View view;
@@ -12,7 +20,6 @@ public abstract class Controller implements java.awt.event.ActionListener {
 		this.view=view;
 	}
 	public void updateView(){
-		
 	}
 	public void editModel(){
 		
@@ -27,7 +34,6 @@ public abstract class Controller implements java.awt.event.ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 	/*
 	List<Model> models;

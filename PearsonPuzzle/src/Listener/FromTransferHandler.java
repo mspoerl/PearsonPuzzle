@@ -1,5 +1,6 @@
 package Listener;
 
+
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
@@ -26,21 +27,19 @@ public class FromTransferHandler extends TransferHandler {
     public int getSourceActions(JComponent comp) {
         return COPY_OR_MOVE;
     }
-
+    
     private int index = 0;
-
     public Transferable createTransferable(JComponent comp) {
-        index = dragFrom.getSelectedIndex();
+        index = dragFrom.getSelectedIndex();        
         if (index < 0 || index >= dragList.getSize()) {
             return null;
         }
-
         return new StringSelection((String)dragFrom.getSelectedValue());
     }
     
     public void exportDone(JComponent comp, Transferable trans, int action) {
         if (action != MOVE) {
-            return;
+        	return;
         }
         dragList.removeElementAt(index);
     }

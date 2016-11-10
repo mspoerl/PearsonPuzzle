@@ -1,20 +1,17 @@
 package model;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JTextField;
-
-import view.View;
 
 /**
- * Klasse dient dazu, alle für die Benutzer notwendigen Daten zu halten
+ * Klasse dient dazu, alle für die Benutzer notwendigen Daten einzulesen, zu halten
+ * und zu speichern.
  * 
  * @author workspace
  *
  */
 
 public class Model {
-	private String username; 
+	private String username;
 	private char[] password;
 	private static Code code;
 	private static DefaultListModel codeModel;
@@ -24,9 +21,6 @@ public class Model {
 		this.codeModel=code.getCode();
 		this.saveModel=code.getSaveModel();
 	}
-	public char[] getPassword() {
-		return password;
-	}
 	public void setPassword(char[] password) {
 		this.password = password;
 	}
@@ -34,6 +28,7 @@ public class Model {
 		return username;
 	}
 	public void setUsername(String username){
+		System.out.println(username);
 		this.username=username;
 	}
 	public static DefaultListModel getCodeModel(){
@@ -41,5 +36,5 @@ public class Model {
 	}
 	public static DefaultListModel getSaveModel(){
 		return saveModel;
-	}	
+	}
 }
