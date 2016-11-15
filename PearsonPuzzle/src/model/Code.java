@@ -12,9 +12,9 @@ import javax.swing.JTextField;
  *
  */
 public class Code {
-	private static String[] codeLines = {"Line1","Line2","Line3","Line4","Line5"};
-	private static DefaultListModel code=new DefaultListModel();
-	private static DefaultListModel saveModel=new DefaultListModel();
+	private String[] codeLines = {"Line1","Line2","Line3","Line4","Line5"};
+	private DefaultListModel code=new DefaultListModel();
+	private DefaultListModel saveModel=new DefaultListModel();
 	private JList<JTextField> codeTextFields;
 	/*
 	 * soll noch erweitert werden, Daten aus datenbank, List, ...

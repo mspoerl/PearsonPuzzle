@@ -1,6 +1,7 @@
 package Listener;
 
 
+import java.awt.Color;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
@@ -16,12 +17,12 @@ import javax.swing.TransferHandler;
  *
  */
 public class FromTransferHandler extends TransferHandler {
-	JList dragFrom;
-	DefaultListModel dragList;
+	JList dragJList;
+	DefaultListModel dragDList;
 	//DefaultListModel from;
-	public FromTransferHandler(DefaultListModel dragList, JList dragFrom){
-		this.dragList=dragList;
-		this.dragFrom=dragFrom;
+	public FromTransferHandler(DefaultListModel dragDList, JList dragJList){
+		this.dragDList=dragDList;
+		this.dragJList=dragJList;
 	}
 	
     public int getSourceActions(JComponent comp) {
@@ -30,17 +31,18 @@ public class FromTransferHandler extends TransferHandler {
     
     private int index = 0;
     public Transferable createTransferable(JComponent comp) {
-        index = dragFrom.getSelectedIndex();        
-        if (index < 0 || index >= dragList.getSize()) {
+        index = dragJList.getSelectedIndex();        
+        if (index < 0 || index >= dragDList.getSize()) {
             return null;
         }
-        return new StringSelection((String)dragFrom.getSelectedValue());
+        return new StringSelection((String)dragJList.getSelectedValue());
     }
     
     public void exportDone(JComponent comp, Transferable trans, int action) {
         if (action != MOVE) {
+        	
         	return;
         }
-        dragList.removeElementAt(index);
+        dragDList.removeElementAt(index);
     }
 }

@@ -2,9 +2,12 @@ package controller;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import model.Model;
 import view.LoginView;
-import view.View;
+import view.JView;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
@@ -13,15 +16,13 @@ import view.View;
  * @author workspace
  *
  */
-public class DefaultController extends Controller{
+public class DefaultController extends Controller {
 	public DefaultController(Model model, LoginView view) {
 		super(model, view);
-		view.addController(this);
-		//view.addActionListener()
+		view.addActionListener(this);
 	}
-	public DefaultController(Model model, View view) {
+	public DefaultController(Model model, JView view) {
 		super(model, view);
-		view.addController(this);
 	}
 	/*public void submitPassword(JPasswordField password){
 		if(password!=null)
@@ -43,6 +44,40 @@ public class DefaultController extends Controller{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		view.draw();	
+		if (e.getActionCommand().equals("submitPassword")){
+			view.submitChangeToController();
+		}
+		else if(e.getActionCommand().equals("openProject") ){
+			view.quitView();
+			view.openProject();
+		}
+		else if(e.getActionCommand().equals("openProjectList")){
+			view.quitView();
+			view.openProjectList();
+		}
+		else if(e.getActionCommand().equals("saveChanges")){
+			model.setSaveList(model.getCodeModel());
+			view.update();
+		}
+		else if(e.getActionCommand().equals("logout")){
+			view.quitView();
+			this.model=new Model();
+			this.view=new LoginView(model);
+			view.update();
+		}
+	}
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if(e.getValueIsAdjusting()){
+			System.out.println(e.getLastIndex() + " " + e.getFirstIndex() +" "+ model.getSelectedProject());
+			if(model.getSelectedProject()==e.getFirstIndex()){
+				model.setSelectedProject(e.getFirstIndex());
+			}
+			else{
+				model.setSelectedProject(e.getLastIndex());
+			}
+			System.out.println(e.getLastIndex() + " " + e.getFirstIndex() +" "+ model.getSelectedProject());
+			view.update();
+		}
 	}
 }
