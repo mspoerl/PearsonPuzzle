@@ -43,7 +43,7 @@ public class Model extends Observable {
 		String[] projects = {"Project1", "Project2", "Project3"};
 		List<String> projectList = new ArrayList<String> ();
 		for(String line:projects){
-			projectList.add(0,line);
+			projectList.add(projectList.size(),line);
 		}
 		return projectList;
 	}

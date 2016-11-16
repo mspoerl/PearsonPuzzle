@@ -32,7 +32,7 @@ public abstract class JView implements Observer {
 		protected DefaultListModel<String> makeDefaultListModel(List<String> stringList){
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
 			for(String listElement : stringList){
-				listModel.add(0,  listElement);
+				listModel.add(listModel.size(),  listElement);
 			}
 			return listModel;
 		}

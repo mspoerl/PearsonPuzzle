@@ -71,10 +71,10 @@ public class DefaultController extends Controller {
 		if(e.getValueIsAdjusting()){
 			System.out.println(e.getLastIndex() + " " + e.getFirstIndex() +" "+ model.getSelectedProject());
 			if(model.getSelectedProject()==e.getFirstIndex()){
-				model.setSelectedProject(e.getFirstIndex());
+				model.setSelectedProject(e.getLastIndex());
 			}
 			else{
-				model.setSelectedProject(e.getLastIndex());
+				model.setSelectedProject(e.getFirstIndex());
 			}
 			System.out.println(e.getLastIndex() + " " + e.getFirstIndex() +" "+ model.getSelectedProject());
 			view.update();

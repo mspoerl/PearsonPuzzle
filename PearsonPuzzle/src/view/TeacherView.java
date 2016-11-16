@@ -92,7 +92,7 @@ public class TeacherView extends JView{
 
 	@Override
 	public void update() {
-		projectDescription.setText(model.getProjectDescription());			
+		projectDescription.setText(model.getProjectDescription());		
 		// TODO Auto-generated method stub
 		
 	}
