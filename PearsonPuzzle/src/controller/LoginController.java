@@ -1,16 +1,39 @@
-/*package controller;
+package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.text.BadLocationException;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.MenuEvent;
 
 import model.Model;
-import view.PupilView;
-import view.View;
+import view.JView;
 
-public class LoginController extends Controller{
+public class LoginController extends Controller implements ActionListener{
+	public LoginController(Model model, JView view) {
+		super(model, view);
+	}
+	JTextField username;
+	JPasswordField password;
+	
+    public void LoginListener(JTextField username, JPasswordField password) {
+        this.username = username;
+        this.password = password;
+    }
+	public void actionPerformed(ActionEvent e) {
+		model.setPassword(password.getPassword());
+		model.setUsername(username.getText());
+		view.update();
+	}
+	@Override
+	public void valueChanged(ListSelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+}
+	/*
 	String username; 
 	char[] password;
 
