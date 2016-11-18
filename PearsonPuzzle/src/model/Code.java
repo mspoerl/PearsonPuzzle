@@ -1,5 +1,8 @@
 package model;
 
+import java.awt.List;
+import java.util.ArrayList;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -13,8 +16,8 @@ import javax.swing.JTextField;
  */
 public class Code {
 	private String[] codeLines = {"Line1","Line2","Line3","Line4","Line5"};
-	private DefaultListModel code=new DefaultListModel();
-	private DefaultListModel saveModel=new DefaultListModel();
+	private ArrayList<String> codeList = new ArrayList<String>();
+	private ArrayList<String>  saveList = new ArrayList<String> ();
 	private JList<JTextField> codeTextFields;
 	/*
 	 * soll noch erweitert werden, Daten aus datenbank, List, ...
@@ -23,8 +26,8 @@ public class Code {
 		codeTextFields=new JList<JTextField>();
 		for(String line: codeLines){
 			codeTextFields.add(new JTextField(line));
-			code.add(0, line);
-			saveModel.add(0, new String());
+			codeList.add(codeList.size(), line);
+			saveList.add(saveList.size(), new String());
 		}
 	}
 	public void setCodeTextFields(){
@@ -34,11 +37,11 @@ public class Code {
 			System.out.println(JButton.getDefaultLocale());
 		}	
 	}
-	public DefaultListModel getCode(){
-		return code;
+	public ArrayList<String> getCodeList(){
+		return codeList;
 	}
-	public DefaultListModel getSaveModel(){
-		return saveModel;
+	public ArrayList<String> getSaveList(){
+		return saveList;
 	}
 
 }

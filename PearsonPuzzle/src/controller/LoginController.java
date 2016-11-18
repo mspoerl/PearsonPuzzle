@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.MenuEvent;
 
 import model.Model;
 import view.JView;

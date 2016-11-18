@@ -1,7 +1,6 @@
 package Listener;
 
 
-import java.awt.Color;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 

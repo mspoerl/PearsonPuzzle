@@ -1,16 +1,13 @@
 package view;
 
 import java.util.Observable;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
 import controller.Controller;
-
 import model.Model;
 
 /**
@@ -43,25 +40,31 @@ public class LoginView extends JView{
 		loginPanel.add(password);
 		enter = new JButton("Los gehts");
 		enter.setActionCommand("submitPassword");
-		//enter.setActionCommand();
+		password.setActionCommand("submitPassword");
 		loginPanel.add(enter);
-	}	
-	// Controller ist dafür zuständig
-	//public void addActionListener(ActionListener listener){
-		//enter.addActionListener(listener);
-		//enter.addActionListener(controller);
-		//username.addActionListener(controller);
-		//password.addActionListener(controller);
-	//}
-	public void addActionListener(Controller controller) {
-		enter.addActionListener(controller);		
-		//enter.addActionListener(new LoginListener(username, password, controller));
-		//username.addActionListener(controller);
-		//password.addActionListener(controller);
+		draw();
 	}
+	
+	/**
+	 * Controller mit Action Listener Implementierung @param controller
+	 */
+	public void addActionListener(Controller controller) {
+		enter.addActionListener(controller);
+		username.addActionListener(controller);
+		password.addActionListener(controller);
+	}
+	
+	/**
+	 * Schließt das loginPanel
+	 */
 	public void quitView(){
 		loginPanel.removeAll();
 	}
+	
+	/**
+	 * TODO: Sollte auf eine Login Methode des Models zugreifen
+	 * Login Methode wird ausgeführt
+	 */
 	public void submitChangeToController(){
 		this.getController().login(username.getText(), password.getPassword());
 	}

@@ -28,32 +28,52 @@ import Listener.ToSaveTransferHandler;
  * Definiert die Schüler Perspektive der grafischen Oberfläche
  * 
  * @author workspace
- *
  */
 public class PupilView extends JView{
 	private JList<String> dragDropList;
 	private JList<String> saveDropList;
+	private DefaultListModel dragDropModel;
+	private DefaultListModel saveDropModel;
 	private JTextArea description;
 	private JList <String> projectList;
 	private JButton enter;
 	private JMenuItem enterProject;
 	private JMenuItem logout;
 	private JButton saveButton;
+	private DefaultListModel <String> projectListModel;
 	public PupilView(Model model){
+		// Instanzierung der Variablen
 		super(model);
-		this.dragDropList=new JList<String>(model.getCodeModel());
-		this.saveDropList=new JList<String>(model.getSaveModel());
+		dragDropModel=makeDefaultListModel(model.getCodeModel());
+		saveDropModel=makeDefaultListModel(model.getSaveModel());
+		dragDropList=new JList<String>(dragDropModel);
+		saveDropList=new JList<String>(saveDropModel);
 		description = new JTextArea("Wähle ein Projekt aus");
 		enter = new JButton("Projekt öffnen");
 		enterProject = new JMenuItem("Projekte anzeigen");
 		logout = new JMenuItem("Logout");
 		saveButton = new JButton("Übernehmen");
-		openProjectList();
+		projectListModel = makeDefaultListModel(model.getProjects());
+		projectList = new JList<String>(projectListModel);		
+		// Bei Konstruktion wird Ansicht "Projektliste" aufgerufen
+		selectView(0);
 	}
 	
-	public void openProjectList(){
-		DefaultListModel <String> projectListModel = makeDefaultListModel(model.getProjects());
-		projectList = new JList<String>(projectListModel);
+	/**
+	 * Die Möglichen Schüleranscihten <br>
+	 * TODO: eventuell mittels Enum auswählen, welcher View gewählt wird
+	 */
+	public void selectView(int i){
+	    if(i==0){
+		setupCodeLists();
+		setupMenu();
+		setupButtons();
+		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
+		mainPanel.add(new JTextField("Hier erfolgt eine möglichst präzise Arbeitsanweisung für den Schüler"),BorderLayout.PAGE_END);
+		draw();
+	    }
+	    if(i==1){
+		setupMenu();
 		projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		new JScrollPane(projectList);
 		ListSelectionModel listSelectionModel = projectList.getSelectionModel();
@@ -70,17 +90,10 @@ public class PupilView extends JView{
 		mainPanel.add(description, BorderLayout.EAST);
 		mainPanel.add(enter, BorderLayout.SOUTH);
 		draw();
-	}
-	public void openProject(){
-		setupCodeLists();
-		setupMenu();
-		setupButtons();
-		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
-		mainPanel.add(new JTextField("Hier erfolgt eine möglichst präzise Arbeitsanweisung für den Schüler"),BorderLayout.PAGE_END);
-		draw();
-		// TODO: projekt öffnen
+	    }    
 	}
 	
+	// private Methode, um die Drag and Drop Liste zu konstruiren
 	private void setupCodeLists(){
 		dragDropList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		dragDropList.setDragEnabled(true);
@@ -90,11 +103,16 @@ public class PupilView extends JView{
 		dragDropList.setFixedCellHeight(20);
 		saveDropList.setFixedCellWidth(300);
 		dragDropList.setFixedCellWidth(300);
+		// TODO: In den offiziellen Controller auslagern
+		dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList));
+		saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY));
 		JScrollPane sp = new JScrollPane(saveDropList);
 		mainPanel.add(sp, BorderLayout.LINE_START);
 		sp = new JScrollPane(dragDropList);
 		mainPanel.add(sp, BorderLayout.LINE_END);
 	}
+	
+	// private Methode, um das Menü zu definieren
 	private void setupMenu(){
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menu = new JMenu ("Datei");		
@@ -103,6 +121,8 @@ public class PupilView extends JView{
 		menu.add(logout);
 		frame.setJMenuBar(menuBar);
 	}
+	
+	// private Methode, um die Buttons zu definieren
 	private void setupButtons(){
 		JPanel topPanel=new JPanel(new BorderLayout());
 		JButton compileButton=new JButton("Compile");
@@ -110,11 +130,12 @@ public class PupilView extends JView{
 		topPanel.add(saveButton, BorderLayout.LINE_END);
 		mainPanel.add(topPanel,BorderLayout.PAGE_START);
 	}
-	public void addController(Controller controller){
-		dragDropList.setTransferHandler(new FromTransferHandler(model.getCodeModel(), dragDropList));
-		
-		saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY));
-		
+	
+	/**
+	 * Wird vom Controller asugeführt, um Listener, Handler und <br>
+	 * Controller hinzuzufügen
+	 */
+	public void addController(Controller controller){		
 		projectList.addListSelectionListener(controller);
 		
 		enter.addActionListener(controller);
@@ -133,22 +154,20 @@ public class PupilView extends JView{
 	public void quitView() {
 		mainPanel.removeAll();
 	}
+	
 	@Override
 	public void update() {
 		description.setText(model.getProjectDescription());
-		dragDropList=new JList<String>(model.getCodeModel());
-		saveDropList=new JList<String>(model.getSaveModel());
-		
-		// TODO Auto-generated method stub
-		
+		dragDropModel=makeDefaultListModel(model.getCodeModel());
+		saveDropModel=makeDefaultListModel(model.getSaveModel());
+		dragDropList=new JList<String>(dragDropModel);
+		saveDropList=new JList<String>(saveDropModel);
+		// TODO: in den offiziellen Controller auslagern
+		dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList));
+		saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY));
 	}
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void submitChangeToController() {
 		// TODO Auto-generated method stub
 		
 	}

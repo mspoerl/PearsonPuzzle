@@ -2,19 +2,17 @@ package controller;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import model.Model;
 import view.LoginView;
 import view.JView;
+import view.TextEditor;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
  * 
- * 
  * @author workspace
- *
  */
 public class DefaultController extends Controller {
 	public DefaultController(Model model, LoginView view) {
@@ -24,60 +22,68 @@ public class DefaultController extends Controller {
 	public DefaultController(Model model, JView view) {
 		super(model, view);
 	}
-	/*public void submitPassword(JPasswordField password){
-		if(password!=null)
-		{
-		model.setPassword(password.getPassword());
-		}
-	}
-	public void submitUsername(JTextField username){
-		try{
-			model.setUsername(username.getText(0, 20));
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-	}
-	private JTextField jTextField;
-	public void textFieldListener(JTextField jTextField){
-		this.jTextField=jTextField;
-	}*/
-
+	/**
+	 * Legt fest, was bei einem Action Event (z.B. Button drücken) passiert
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submitPassword")){
-			view.submitChangeToController();
+			((LoginView)view).submitChangeToController();
+		}
+		else if(e.getActionCommand().equals("editProject")){
+			view.quitView();
+			this.view=new TextEditor(model);
+			view.addController(this);
+			view.update();
 		}
 		else if(e.getActionCommand().equals("openProject") ){
 			view.quitView();
-			view.openProject();
+			view.selectView(0);
 		}
 		else if(e.getActionCommand().equals("openProjectList")){
 			view.quitView();
-			view.openProjectList();
+			view.selectView(1);
 		}
-		else if(e.getActionCommand().equals("saveChanges")){
+		else if(e.getActionCommand().equals("saveChanges")){	
 			model.setSaveList(model.getCodeModel());
 			view.update();
 		}
 		else if(e.getActionCommand().equals("logout")){
 			view.quitView();
 			this.model=new Model();
-			this.view=new LoginView(model);
+			LoginView startView= new LoginView(model);
+			startView.addActionListener(this);
+			startView.addController(this);
+			this.view=startView;
 			view.update();
+		}
+		else if(e.getActionCommand().equals("saveProject")){
+			model.setProjectHtml(((TextEditor)view).getCode());
+			view.allert("Projekt wurde gespeichert");
 		}
 	}
+	
+	/**
+	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert
+	 * @param <ListSelectionModel>
+	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if(e.getValueIsAdjusting()){
-			System.out.println(e.getLastIndex() + " " + e.getFirstIndex() +" "+ model.getSelectedProject());
-			if(model.getSelectedProject()==e.getFirstIndex()){
-				model.setSelectedProject(e.getLastIndex());
-			}
-			else{
-				model.setSelectedProject(e.getFirstIndex());
-			}
-			System.out.println(e.getLastIndex() + " " + e.getFirstIndex() +" "+ model.getSelectedProject());
-			view.update();
-		}
+		
+		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+        if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
+        } 
+        else {
+            // Find out which indexes are selected.
+            int minIndex = lsm.getMinSelectionIndex();
+            int maxIndex = lsm.getMaxSelectionIndex();
+            for (int i = minIndex; i <= maxIndex; i++) {
+                if (lsm.isSelectedIndex(i)) {
+                    model.setSelectedProject(i);
+                    System.out.println(i);
+                    view.update();
+                }
+             }
+        }
 	}
 }

@@ -1,5 +1,8 @@
 package model;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,20 +26,20 @@ public class Model extends Observable {
 	private String username;
 	private char[] password;
 	private Code code;
-	private DefaultListModel codeModel;
-	private DefaultListModel saveModel;
+	private ArrayList<String> codeList;
+	private ArrayList<String> saveList;
 	private List <String> projectList;
 	private int SelectedProject;
 	private String projectDescription;
 	public Model(){
 		code = new Code();
-		this.codeModel=code.getCode();
-		this.saveModel=code.getSaveModel();
+		this.codeList=code.getCodeList();
+		this.saveList=code.getSaveList();
 		this.projectList= fetchProjects();	
 	}
 	
-	public void setSaveList(DefaultListModel <String> listModelToSave){
-		saveModel=listModelToSave;
+	public void setSaveList(ArrayList<String> listModelToSave){
+		saveList=listModelToSave;
 	}
 	
 	private List <String> fetchProjects(){
@@ -78,7 +81,7 @@ public class Model extends Observable {
 		if(username.equals("Name")){
 			return accessGroup.PUPIL;
 		}
-		else if(username.equals("TUM")){
+		else if(username.equals("TUM") || username.equals("Lehrer")){
 			return accessGroup.TEACHER;
 		}
 		else
@@ -91,11 +94,11 @@ public class Model extends Observable {
 		System.out.println(username);
 		this.username=username;
 	}
-	public DefaultListModel getCodeModel(){
-		return codeModel;
+	public ArrayList<String> getCodeModel(){
+		return codeList;
 	}
-	public DefaultListModel getSaveModel(){
-		return saveModel;
+	public ArrayList<String> getSaveModel(){
+		return saveList;
 	}
 	public List<String> getProjects() {
 		return projectList;
@@ -109,5 +112,14 @@ public class Model extends Observable {
 	}
 	public String getProjectDescription() {
 		return projectList.get(getSelectedProject());
+	}
+	public String getProjectHtml() {
+		String projectHtml= new String("<html><head></head><body><p> Dies ist ein erstes Testprojekt<br>um zu sehen, wie Java dies <br>und die Zeilenumbrüche <br> darstellt</p></body></html>");
+		return projectHtml;
+	}
+
+	public void setProjectHtml(String htmlString) {
+		// TODO: In Datenbank speichern
+		System.out.println(htmlString);		
 	}
 }

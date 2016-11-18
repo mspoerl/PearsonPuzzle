@@ -1,6 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.List;
+import java.util.ArrayList;
 import java.util.Observable;
 
 import javax.swing.DefaultListModel;
@@ -23,32 +25,42 @@ import model.Model;
  *
  */
 public class TeacherView extends JView{
-	JMenu menu;
-	ListSelectionModel listSelectionModel;
-	JTextArea projectDescription;
+	private ListSelectionModel listSelectionModel;
+	private JTextArea projectDescription;
+	private ArrayList <JMenuItem> menuItems;	
 	public TeacherView(Model model) {
 		super(model);
-		menu = new JMenu("Datei");
 		projectDescription = new JTextArea("Wähle ein Projekt aus");
+		menuItems= new ArrayList<JMenuItem>();
 		setupMenu();
 		setupProjektList();
 		draw();
-		// TODO Auto-generated constructor stub
 	}
+	
+	/**
+	 * Menü wird definiert
+	 */
 	private void setupMenu(){
 		JMenuBar menuBar = new JMenuBar();
-		JMenuItem showProjects;
-		JMenuItem addProject;
-		JMenuItem classAdmin;
+		JMenu menu = new JMenu("Datei");
+		menuItems.add(new JMenuItem("Projekt anlegen"));
+		menuItems.get(menuItems.size()-1).setActionCommand("");
+		menuItems.add(new JMenuItem("Klassen verwalten"));
+		menuItems.get(menuItems.size()-1).setActionCommand("");
+		menuItems.add(new JMenuItem("Projekte verwalten"));
+		menuItems.get(menuItems.size()-1).setActionCommand("editProject");
+		menuItems.add(new JMenuItem("logout"));
+		menuItems.get(menuItems.size()-1).setActionCommand("");
 		menuBar.add(menu);
-		JMenuItem enterProject = new JMenuItem("Projekte anzeigen");
-		JMenuItem newProject = new JMenuItem("Projekt anlegen");
-		JMenuItem enterClass = new JMenuItem("Klassen verwalten");
-		menu.add(enterProject);
-		menu.add(newProject);
-		menu.add(enterClass);
+		for(JMenuItem menuItem: menuItems){
+			menu.add(menuItem);
+		}
 		frame.setJMenuBar(menuBar);
 	}
+	
+	/**
+	 * Die Projekt-Listenansicht wird definiert 
+	 */
 	private void setupProjektList(){
 		DefaultListModel <String> projectListModel = makeDefaultListModel(model.getProjects());
 		JList <String> projectList = new JList<String>(projectListModel);
@@ -68,32 +80,24 @@ public class TeacherView extends JView{
 		mainPanel.add(projectDescription, BorderLayout.EAST);
 	}
 	public void addController(Controller controller){
-		menu.addActionListener(controller);
-		listSelectionModel.addListSelectionListener(controller);
+	    listSelectionModel.addListSelectionListener(controller);
+	    for(JMenuItem menuItem : menuItems){
+	    	menuItem.addActionListener(controller);
+	    }
+	    
 	}
-	/* TODO: Lehreransicht definieren und interaktionen festlegen */
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void submitChangeToController() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void quitView() {
-		// TODO Auto-generated method stub
-		
+		mainPanel.removeAll();		
 	}
 
 	@Override
 	public void update() {
-		projectDescription.setText(model.getProjectDescription());		
-		// TODO Auto-generated method stub
-		
+		projectDescription.setText(model.getProjectDescription());			
 	}
 }
