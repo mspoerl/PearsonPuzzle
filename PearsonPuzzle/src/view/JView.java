@@ -22,7 +22,8 @@ import controller.Controller;
 public abstract class JView implements Observer {
 	protected static JFrame frame = new JFrame("PearsonPuzzle");
 	protected static JPanel mainPanel = new JPanel(new BorderLayout(5,1));
-	protected Model model; 
+	protected JMenuBar menuBar = new JMenuBar();
+	protected Model model;
 	private Controller controller;
 	public JView(Model model){
 			this.model=model;
@@ -42,14 +43,28 @@ public abstract class JView implements Observer {
 			}
 			return listModel;
 		}
+		protected DefaultListModel<String> makeDefaultListModel(String[] strings){
+			DefaultListModel<String> listModel = new DefaultListModel<String>();
+			for(String string : strings){
+				String tab="\t";
+				for(int i=0;i<model.getTabSize();i++){
+					tab=tab+"\t";
+				}
+				string.replace("\t", tab);
+				listModel.add(listModel.size(),  string);
+			}
+			return listModel;
+		}
 		
 		/**
 		 * Methode sol vom Controller ausgeführt werden, um sich selbst <br>
 		 * als konkreter Controller für einen konkreten View hinzuzufügen.
 		 * Action Controller @param controller
 		 */
-		public void addController(Controller controller){
+		public void setController(Controller controller){
 			this.controller=controller;
+		}
+		public void addController(Controller controller){
 		}
 		/**
 		 * Methode, um das Fenster aufzusetzen ung grundlegende Fenstereinstellungen festzulegen. <br>
@@ -60,7 +75,7 @@ public abstract class JView implements Observer {
 			//frame = new JFrame("PearsonPuzzle");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setLayout(new FlowLayout());
-			System.out.println("Neuer Frame erstelle");
+			System.out.println("Neuer Frame wurde erstell");
 			// BorderLayout mit 5 horizontalem und 1 vertikalem Versatz zwischen den Komponenten
 			//mainPanel = new JPanel(new BorderLayout(5,1));
 			frame.add(mainPanel);
@@ -92,7 +107,9 @@ public abstract class JView implements Observer {
 		/**
 		 * Der View soll geschlossen werden (in erster Linie das mainPanel
 		 */
-		abstract public void quitView();
+		public void quitView(){
+			mainPanel.removeAll();
+		}
 		
 		/**
 		 * Hier müssen alle Elemente notiert werden, die aktualisiert <br>

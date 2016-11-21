@@ -4,6 +4,7 @@ import java.util.Observable;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -42,23 +43,17 @@ public class LoginView extends JView{
 		enter.setActionCommand("submitPassword");
 		password.setActionCommand("submitPassword");
 		loginPanel.add(enter);
+		this.menuBar.setVisible(false);
 		draw();
 	}
 	
 	/**
 	 * Controller mit Action Listener Implementierung @param controller
 	 */
-	public void addActionListener(Controller controller) {
+	public void addController(Controller controller) {
 		enter.addActionListener(controller);
 		username.addActionListener(controller);
 		password.addActionListener(controller);
-	}
-	
-	/**
-	 * Schließt das loginPanel
-	 */
-	public void quitView(){
-		loginPanel.removeAll();
 	}
 	
 	/**

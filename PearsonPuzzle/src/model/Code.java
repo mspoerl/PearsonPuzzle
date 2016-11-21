@@ -1,9 +1,6 @@
 package model;
 
-import java.awt.List;
 import java.util.ArrayList;
-
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
@@ -34,7 +31,6 @@ public class Code {
 		codeTextFields=new JList<JTextField>();
 		for(String line: codeLines){
 			codeTextFields.add(new JButton(line));
-			System.out.println(JButton.getDefaultLocale());
 		}	
 	}
 	public ArrayList<String> getCodeList(){

@@ -1,13 +1,10 @@
 package model;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
-import javax.swing.DefaultListModel;
 
 
 /**
@@ -24,18 +21,50 @@ import javax.swing.DefaultListModel;
 
 public class Model extends Observable {
 	private String username;
-	private char[] password;
+	//private char[] password;
 	private Code code;
 	private ArrayList<String> codeList;
 	private ArrayList<String> saveList;
 	private List <String> projectList;
 	private int SelectedProject;
-	private String projectDescription;
+	//private String projectDescription;
+	private String projectCode;
+	private int tabSize;
+	private boolean randomMode;
+	private int grade;
 	public Model(){
 		code = new Code();
 		this.codeList=code.getCodeList();
 		this.saveList=code.getSaveList();
-		this.projectList= fetchProjects();	
+		this.projectList= fetchProjects();
+		// Default Werte werden gesetzt
+		this.tabSize=3;
+		this.randomMode=true;
+		this.grade=0;
+		projectCode= new String(" Zeile 1: Dies ist ein erstes Testprojekt \n Zeile 2: um zu sehen,\n \t Zeile 3: wie Java dies und die Zeilenumbrüche \n \t Zeile 4: darstellt");
+	}
+	public int getGrade() {
+		return grade;
+	}
+	public void setGrade(int grade) {
+		if(grade<14 && grade >5){
+			this.grade = grade;
+		}
+		else{
+			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
+		}
+	}
+	public void setTabSize(int tabWidth) {
+		this.tabSize=tabWidth;
+	}
+	public int getTabSize(){
+		return tabSize;
+	}
+	public void setRandomMode(boolean random){
+		this.randomMode=random;
+	}
+	public boolean getRandomMode(){
+		return randomMode;
 	}
 	
 	public void setSaveList(ArrayList<String> listModelToSave){
@@ -63,7 +92,7 @@ public class Model extends Observable {
 	    char[] correctPassword = { 'b', 'u', 'g', 'a', 'b', 'o', 'o' };
 
 	    if (input.length != correctPassword.length) {
-	        isCorrect = false;
+	        isCorrect = false;	
 	    } else {
 	        isCorrect = Arrays.equals (input, correctPassword);
 	    }
@@ -113,13 +142,26 @@ public class Model extends Observable {
 	public String getProjectDescription() {
 		return projectList.get(getSelectedProject());
 	}
-	public String getProjectHtml() {
-		String projectHtml= new String("<html><head></head><body><p> Dies ist ein erstes Testprojekt<br>um zu sehen, wie Java dies <br>und die Zeilenumbrüche <br> darstellt</p></body></html>");
-		return projectHtml;
+	public String getProjectCode() {
+		return new String(projectCode);
 	}
-
-	public void setProjectHtml(String htmlString) {
+	public String[] getProjectCodeArray(){
+		String[] parts = projectCode.split("\n");
+		if(randomMode){
+			String buffer;
+			for(int i=parts.length-1; i>0;i--){
+				int randomInt = new java.util.Random().nextInt(i);
+				buffer=parts[randomInt];
+				parts[randomInt]=parts[i];
+				parts[i]=buffer;
+			}
+		}
+		return parts;
+	}
+	public void setProjectCode(String codeString) {
 		// TODO: In Datenbank speichern
-		System.out.println(htmlString);		
+		projectCode=new String(codeString);	
 	}
 }
+
+	

@@ -1,12 +1,15 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-
+import java.util.ArrayList;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import model.Model;
+import view.CodeSortView;
 import view.LoginView;
 import view.JView;
+import view.PupilView;
 import view.TextEditor;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
@@ -17,7 +20,8 @@ import view.TextEditor;
 public class DefaultController extends Controller {
 	public DefaultController(Model model, LoginView view) {
 		super(model, view);
-		view.addActionListener(this);
+		view.setController(this);
+		view.addController(this);
 	}
 	public DefaultController(Model model, JView view) {
 		super(model, view);
@@ -28,21 +32,24 @@ public class DefaultController extends Controller {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submitPassword")){
-			((LoginView)view).submitChangeToController();
+			if(view.getClass().equals(LoginView.class)){
+				((LoginView)view).submitChangeToController();
+			}
 		}
 		else if(e.getActionCommand().equals("editProject")){
 			view.quitView();
 			this.view=new TextEditor(model);
 			view.addController(this);
-			view.update();
 		}
 		else if(e.getActionCommand().equals("openProject") ){
 			view.quitView();
-			view.selectView(0);
+			this.view=new CodeSortView(model);
+			view.addController(this);
 		}
 		else if(e.getActionCommand().equals("openProjectList")){
 			view.quitView();
-			view.selectView(1);
+			this.view=new PupilView(model);
+			view.addController(this);
 		}
 		else if(e.getActionCommand().equals("saveChanges")){	
 			model.setSaveList(model.getCodeModel());
@@ -50,16 +57,23 @@ public class DefaultController extends Controller {
 		}
 		else if(e.getActionCommand().equals("logout")){
 			view.quitView();
+			// TODO: Das Menü muss an dieser Stelle ncch ausgeblendet werden. Da das Menü aber sowieso in die Superclass portiert werden soll, steht das erst dann zur Debatte.
 			this.model=new Model();
 			LoginView startView= new LoginView(model);
-			startView.addActionListener(this);
+			startView.setController(this);
 			startView.addController(this);
 			this.view=startView;
 			view.update();
 		}
 		else if(e.getActionCommand().equals("saveProject")){
-			model.setProjectHtml(((TextEditor)view).getCode());
-			view.allert("Projekt wurde gespeichert");
+			if(view.getClass().equals(TextEditor.class)){
+				model.setProjectCode(((TextEditor)view).getCode());
+				ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
+				model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
+				model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+				view.allert("Projekt wurde gespeichert");
+				view.update();
+			}
 		}
 	}
 	
@@ -80,7 +94,6 @@ public class DefaultController extends Controller {
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
                     model.setSelectedProject(i);
-                    System.out.println(i);
                     view.update();
                 }
              }

@@ -1,12 +1,8 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseListener;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MenuListener;
-
 import view.JView;
 import view.PupilView;
 import view.TeacherView;

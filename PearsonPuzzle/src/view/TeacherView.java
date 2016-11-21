@@ -1,10 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Observable;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -41,7 +39,7 @@ public class TeacherView extends JView{
 	 * Menü wird definiert
 	 */
 	private void setupMenu(){
-		JMenuBar menuBar = new JMenuBar();
+		this.menuBar = new JMenuBar();
 		JMenu menu = new JMenu("Datei");
 		menuItems.add(new JMenuItem("Projekt anlegen"));
 		menuItems.get(menuItems.size()-1).setActionCommand("");
@@ -49,8 +47,8 @@ public class TeacherView extends JView{
 		menuItems.get(menuItems.size()-1).setActionCommand("");
 		menuItems.add(new JMenuItem("Projekte verwalten"));
 		menuItems.get(menuItems.size()-1).setActionCommand("editProject");
-		menuItems.add(new JMenuItem("logout"));
-		menuItems.get(menuItems.size()-1).setActionCommand("");
+		menuItems.add(new JMenuItem("Logout"));
+		menuItems.get(menuItems.size()-1).setActionCommand("logout");
 		menuBar.add(menu);
 		for(JMenuItem menuItem: menuItems){
 			menu.add(menuItem);
@@ -89,11 +87,6 @@ public class TeacherView extends JView{
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void quitView() {
-		mainPanel.removeAll();		
 	}
 
 	@Override
