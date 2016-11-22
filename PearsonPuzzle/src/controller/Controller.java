@@ -32,7 +32,7 @@ public abstract class Controller implements java.awt.event.ActionListener {
 		this.view=view.makePupilView(Model.getCodeModel(), model.getSaveModel(),username);
 		view.draw();
 	}
-	@Override
+	
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
