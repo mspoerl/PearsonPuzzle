@@ -21,7 +21,6 @@ public class LoginController extends Controller implements ActionListener{
         this.password = password;
     }
 	public void actionPerformed(ActionEvent e) {
-		model.setPassword(password.getPassword());
 		model.setUsername(username.getText());
 		view.update();
 	}

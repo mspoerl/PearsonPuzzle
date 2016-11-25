@@ -67,7 +67,7 @@ public class DefaultController extends Controller {
 		}
 		else if(e.getActionCommand().equals("saveProject")){
 			if(view.getClass().equals(TextEditor.class)){
-				model.setProjectCode(((TextEditor)view).getCode());
+				model.setProjectCode(((TextEditor)view).getCode(),"erstesProjekt",150);
 				ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
 				model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
 				model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
