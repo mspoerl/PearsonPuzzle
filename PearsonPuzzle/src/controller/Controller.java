@@ -36,12 +36,12 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 		if(username.isEmpty() || password.length==0){
 			view.allert("Bitte Nutzernamen und Passwort eingeben");
 		}
-		else if(model.getAccessGroup()==accessGroup.TEACHER){
+		else if(model.getAccessGroup(username, password)==accessGroup.TEACHER){
 			view.quitView();
 			this.view=new TeacherView(model);
 			view.addController(this);
 		}
-		else if(model.getAccessGroup()==accessGroup.PUPIL){
+		else if(model.getAccessGroup(username, password)==accessGroup.PUPIL){
 			view.quitView();
 			this.view=new PupilView(model);
 			view.addController(this);
@@ -50,11 +50,11 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 			view.allert("Zugang verweigert");
 		}
 	}
-	@Override
+	
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-	@Override
+	
 	public abstract void valueChanged(ListSelectionEvent arg0);
 	
 }

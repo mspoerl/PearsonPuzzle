@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.*;
@@ -117,6 +118,7 @@ public abstract class JView implements Observer {
 		 * (Methodenaufruf erfolgt durch den Controller) 
 		 */
 		abstract public void update();
+		abstract public void update(Observable o, Object arg);
 		public void selectView(int i){};
 		
 		/**
@@ -133,6 +135,5 @@ public abstract class JView implements Observer {
 		public void exit() {
 		    frame.removeAll();
 		    // TODO Auto-generated method stub
-		    
-		}
+		}		
 }

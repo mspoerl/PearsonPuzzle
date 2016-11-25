@@ -16,7 +16,7 @@ public class ModelTest {
 	public void test() {
 		//model.setProjectCode(pNames.get(1), pCodes.get(1), linelength.get(1));
 		String pCodes="";
-		model.setProjectCode(pCodes);
+		//model.setProjectCode(pCodes);
 		assertEquals(pCodes,model.getProjectCode());
 	}
 	

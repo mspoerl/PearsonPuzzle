@@ -1,10 +1,12 @@
 package model;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
+
 
 
 /**
@@ -21,7 +23,6 @@ import java.util.Observable;
 
 public class Model extends Observable {
 	private String username;
-	//private char[] password;
 	private Code code;
 	private ArrayList<String> codeList;
 	private ArrayList<String> saveList;
@@ -32,8 +33,18 @@ public class Model extends Observable {
 	private int tabSize;
 	private boolean randomMode;
 	private int grade;
+	private UserDBaccess userDBaccess;
+	
+	
+	
 	public Model(){
 		code = new Code();
+		try {
+			userDBaccess = new UserDBaccess();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.codeList=code.getCodeList();
 		this.saveList=code.getSaveList();
 		this.projectList= fetchProjects();
@@ -79,30 +90,23 @@ public class Model extends Observable {
 		}
 		return projectList;
 	}
-	public boolean isPasswordCorrect(char[] input) {
-	    boolean isCorrect = true;
-	    char[] correctPassword = { 'b', 'u', 'g', 'a', 'b', 'o', 'o' };
-
-	    if (input.length != correctPassword.length) {
-	        isCorrect = false;	
-	    } else {
-	        isCorrect = Arrays.equals (input, correctPassword);
-	    }
-
-	    //Zero out the password.
-	    Arrays.fill(correctPassword,'0');
-
-	    return isCorrect;
+	public void setPassword(char[] password) {
+//		if (isPasswordCorrect(password)) {
+//        } 
+//		else{}
+//        //Zero out the possible password, for security.
+//        Arrays.fill(password, '0');
 	}
 	
 	/*
 	 * TODO: in accessGroup auslagern
 	 */
-	public accessGroup getAccessGroup(){
-		if(username.equals("Name")){
+	public accessGroup getAccessGroup(String username, char[] password){
+		
+		if(userDBaccess.lookUpstudent(username,password)){
 			return accessGroup.PUPIL;
 		}
-		else if(username.equals("TUM") || username.equals("Lehrer")){
+		else if(userDBaccess.lookUpteacher(username,password)){
 			return accessGroup.TEACHER;
 		}
 		else
@@ -112,7 +116,6 @@ public class Model extends Observable {
 		return username;
 	}
 	public void setUsername(String username){
-		System.out.println(username);
 		this.username=username;
 	}
 	public ArrayList<String> getCodeModel(){
@@ -151,9 +154,20 @@ public class Model extends Observable {
 		return parts;
 	}
 	
-	public void setProjectCode(String codeString) {
-		// TODO: In Datenbank speichern
+	
+	// Speicherung eines Projekts
+	public void setProjectCode(String codeString, String projectname, int linelength) {
+		// TODO linelength maximum an puzzlestücke anpassen
+		projectCode=new String(codeString);	
+		String[] projectArray =  projectCode.split("\n");
+		try {
+			userDBaccess.saveProject(projectArray, projectname, linelength);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
+	
+
 }
 
 	
