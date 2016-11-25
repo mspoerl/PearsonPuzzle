@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Observable;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -24,10 +25,12 @@ import model.Model;
  */
 public class TeacherView extends JView{
 	private ListSelectionModel listSelectionModel;
+	private JButton enter;
 	private JTextArea projectDescription;
 	private ArrayList <JMenuItem> menuItems;	
 	public TeacherView(Model model) {
 		super(model);
+		enter = new JButton("Projekt öffnen");
 		projectDescription = new JTextArea("Wähle ein Projekt aus");
 		menuItems= new ArrayList<JMenuItem>();
 		setupMenu();
@@ -76,13 +79,15 @@ public class TeacherView extends JView{
 		projectDescription.setEditable(false);
 		projectDescription.setSize(200, 200);
 		mainPanel.add(projectDescription, BorderLayout.EAST);
+		enter.setActionCommand("editProject");
+		mainPanel.add(enter, BorderLayout.SOUTH);
 	}
 	public void addController(Controller controller){
+		enter.addActionListener(controller);
 	    listSelectionModel.addListSelectionListener(controller);
 	    for(JMenuItem menuItem : menuItems){
 	    	menuItem.addActionListener(controller);
-	    }
-	    
+	    }  
 	}
 	@Override
 	public void update(Observable arg0, Object arg1) {

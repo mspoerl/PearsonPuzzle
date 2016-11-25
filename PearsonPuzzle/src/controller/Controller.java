@@ -32,7 +32,6 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 	 * Passwort @param password
 	 */
 	public void login(String username, char[] password){
-		model.setPassword(password);
 		model.setUsername(username);
 		if(username.isEmpty() || password.length==0){
 			view.allert("Bitte Nutzernamen und Passwort eingeben");

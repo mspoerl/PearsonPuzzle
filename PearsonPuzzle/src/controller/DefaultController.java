@@ -26,25 +26,37 @@ public class DefaultController extends Controller {
 	public DefaultController(Model model, JView view) {
 		super(model, view);
 	}
+	
 	/**
 	 * Legt fest, was bei einem Action Event (z.B. Button drücken) passiert
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submitPassword")){
+			// FIXME: Ab und zu wird die Aktion 2x ausgeführt
 			if(view.getClass().equals(LoginView.class)){
 				((LoginView)view).submitChangeToController();
 			}
 		}
 		else if(e.getActionCommand().equals("editProject")){
-			view.quitView();
-			this.view=new TextEditor(model);
-			view.addController(this);
+			if(model.getSelectedProject()==null){
+				view.allert("Bitte Projekt auswählen!");
+			}
+			else{
+				view.quitView();
+				this.view=new TextEditor(model);
+				view.addController(this);
+			}
 		}
 		else if(e.getActionCommand().equals("openProject") ){
-			view.quitView();
-			this.view=new CodeSortView(model);
-			view.addController(this);
+			if(model.getSelectedProject()==null){
+				view.allert("Bitte Projekt auswählen!");
+			}
+			else{
+				view.quitView();
+				this.view=new CodeSortView(model);
+				view.addController(this);
+			}
 		}
 		else if(e.getActionCommand().equals("openProjectList")){
 			view.quitView();

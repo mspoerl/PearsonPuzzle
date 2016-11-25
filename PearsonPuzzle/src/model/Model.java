@@ -26,7 +26,7 @@ public class Model extends Observable {
 	private ArrayList<String> codeList;
 	private ArrayList<String> saveList;
 	private List <String> projectList;
-	private int SelectedProject;
+	private Integer SelectedProject;
 	//private String projectDescription;
 	private String projectCode;
 	private int tabSize;
@@ -39,7 +39,7 @@ public class Model extends Observable {
 		this.projectList= fetchProjects();
 		// Default Werte werden gesetzt
 		this.tabSize=3;
-		this.randomMode=true;
+		this.randomMode=false;
 		this.grade=0;
 		projectCode= new String(" Zeile 1: Dies ist ein erstes Testprojekt \n Zeile 2: um zu sehen,\n \t Zeile 3: wie Java dies und die Zeilenumbrüche \n \t Zeile 4: darstellt");
 	}
@@ -79,15 +79,7 @@ public class Model extends Observable {
 		}
 		return projectList;
 	}
-	public void setPassword(char[] password) {
-		if (isPasswordCorrect(password)) {
-            
-        } 
-		else{}
-        //Zero out the possible password, for security.
-        Arrays.fill(password, '0');
-	}
-	private static boolean isPasswordCorrect(char[] input) {
+	public boolean isPasswordCorrect(char[] input) {
 	    boolean isCorrect = true;
 	    char[] correctPassword = { 'b', 'u', 'g', 'a', 'b', 'o', 'o' };
 
@@ -133,10 +125,10 @@ public class Model extends Observable {
 		return projectList;
 	}
 
-	public int getSelectedProject() {
+	public Integer getSelectedProject() {
 		return SelectedProject;
 	}
-	public void setSelectedProject(int selectedProject) {
+	public void setSelectedProject(Integer selectedProject) {
 		SelectedProject = selectedProject;
 	}
 	public String getProjectDescription() {
@@ -158,9 +150,9 @@ public class Model extends Observable {
 		}
 		return parts;
 	}
+	
 	public void setProjectCode(String codeString) {
 		// TODO: In Datenbank speichern
-		projectCode=new String(codeString);	
 	}
 }
 

@@ -41,28 +41,8 @@ public class PupilView extends JView{
 	}
 	
 	/**
-	 * Die Möglichen Schüleranscihten <br>
-	 * TODO: eventuell mittels Enum auswählen, welcher View gewählt wird
+	 * Projekt Liste wird gezeichnet.
 	 */
-	/*public void selectView(){
-		setupMenu();
-		projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		new JScrollPane(projectList);
-		ListSelectionModel listSelectionModel = projectList.getSelectionModel();
-		projectList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		projectList.setFixedCellHeight(20);
-		projectList.setFixedCellWidth(200);
-		//projectList.setPreferredSize(new Dimension(250,250));		
-		mainPanel.add(projectList, BorderLayout.LINE_START);
-		// Zeilen werden umgebrichen und Wortgrenzen beachtet
-		description.setLineWrap(true);
-		description.setWrapStyleWord(true);
-		description.setEditable(false);
-		description.setSize(200, 200);
-		mainPanel.add(description, BorderLayout.EAST);
-		draw();    
-	}
-	*/
 	private void setupProjectList(){
 		DefaultListModel <String> projectListModel = makeDefaultListModel(model.getProjects());
 		JList <String> projectList = new JList<String>(projectListModel);

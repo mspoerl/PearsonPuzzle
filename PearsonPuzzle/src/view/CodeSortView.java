@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Observable;
 
 import javax.swing.DefaultListModel;
@@ -60,15 +61,23 @@ public class CodeSortView extends JView {
 			saveDropList.setDropMode(DropMode.ON);
 			saveDropList.setFixedCellHeight(20);
 			dragDropList.setFixedCellHeight(20);
-			saveDropList.setFixedCellWidth(300);
-			dragDropList.setFixedCellWidth(300);
+			saveDropList.setFixedCellWidth(350);
+			dragDropList.setFixedCellWidth(350);
 			// TODO: In den offiziellen Controller auslagern
 			dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList));
 			saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY));
-			JScrollPane sp = new JScrollPane(saveDropList);
-			mainPanel.add(sp, BorderLayout.LINE_START);
-			sp = new JScrollPane(dragDropList);
-			mainPanel.add(sp, BorderLayout.LINE_END);
+			JScrollPane scrollPanel_sDL = new JScrollPane(saveDropList);
+			JScrollPane scrollPanel_dDL = new JScrollPane(dragDropList);
+			scrollPanel_sDL.setVerticalScrollBarPolicy(
+			                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPanel_sDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scrollPanel_sDL.setPreferredSize(new Dimension(350,300));
+			mainPanel.add(scrollPanel_sDL, BorderLayout.LINE_START);
+			scrollPanel_dDL.setVerticalScrollBarPolicy(
+	                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPanel_dDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scrollPanel_dDL.setPreferredSize(new Dimension(350,300));
+			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);			
 		}
 		
 		// private Methode, um die Buttons zu definieren

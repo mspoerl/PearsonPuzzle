@@ -22,17 +22,17 @@ import controller.Controller;
 import model.Model;
 
 public class TextEditor extends JView{
-	private JMenu menu;
 	private JButton save;
 	//private JEditorPane editorPane;
 	private JTextArea textArea;
 	private ArrayList <JTextField> configFields;
+	private ArrayList <JMenuItem> menuItems;
 
 	public TextEditor(Model model) {
 		super(model);
-		menu = new JMenu("Datei");
 		save=new JButton("Projekt speichern");
 		configFields = new ArrayList <JTextField>();
+		menuItems = new ArrayList <JMenuItem>();
 		setupMenu();
 		setupTextEditor();
 		setupConfigPanel();
@@ -71,18 +71,22 @@ public class TextEditor extends JView{
 	 */
 	private void setupMenu(){
 		this.menuBar = new JMenuBar();
-		menuBar.add(menu);
-		JMenuItem enterProject = new JMenuItem("Projekte anzeigen");
-		JMenuItem newProject = new JMenuItem("Projekt anlegen");
-		JMenuItem enterClass = new JMenuItem("Klassen verwalten");
-		JMenuItem logout = new JMenuItem("logout");
-		menu.add(enterProject);
-		menu.add(newProject);
-		menu.add(enterClass);
-		menu.add(logout);
+		JMenu mainMenu = new JMenu("Datei");
+		JMenu projectMenu = new JMenu("ProjectMenu");
+		menuItems.add(new JMenuItem("Projekt anlegen"));
+		menuItems.get(menuItems.size()-1).setActionCommand("");
+		menuItems.add(new JMenuItem("Klassen verwalten"));
+		menuItems.get(menuItems.size()-1).setActionCommand("");
+		menuItems.add(new JMenuItem("Projekte verwalten"));
+		menuItems.get(menuItems.size()-1).setActionCommand("editProject");
+		menuItems.add(new JMenuItem("Logout"));
+		menuItems.get(menuItems.size()-1).setActionCommand("logout");
+		menuBar.add(mainMenu);
+		for(JMenuItem menuItem: menuItems){
+			mainMenu.add(menuItem);
+		}
 		frame.setJMenuBar(menuBar);
-	}
-	
+	}	
 	/**
 	 * Konfigurationsmenü (linke Seite) wird definiert 
 	 */
@@ -138,6 +142,9 @@ public class TextEditor extends JView{
 		for(JTextField comp: configFields){
 			comp.addActionListener(controller);
 		}
+		for(JMenuItem menuItem : menuItems){
+	    	menuItem.addActionListener(controller);
+	    }
 	}
 	
 	/**
