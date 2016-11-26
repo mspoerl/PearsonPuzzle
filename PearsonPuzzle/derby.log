@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Fri Nov 25 15:42:22 CET 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0158-9bef-ef28-0000071db7b0 
-on database directory C:\database.demo\db  with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
-Loaded from file:/C:/Users/Raphael%20Wewer/.m2/repository/org/apache/derby/derby/10.8.3.0/derby-10.8.3.0.jar
+Sat Nov 26 01:12:21 CET 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0158-9df9-c229-000002971be8 
+on database directory /home/workspace/git2/PearsonPuzzle/database  with class loader sun.misc.Launcher$AppClassLoader@4ee00c09 
+Loaded from file:/home/workspace/.m2/repository/org/apache/derby/derby/10.8.3.0/derby-10.8.3.0.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_112-b15
-user.dir=C:\Users\Raphael Wewer\git\PearsonPuzzle\PearsonPuzzle
-os.name=Windows 10
+java.runtime.version=1.7.0_111-b01
+user.dir=/home/workspace/git2/PearsonPuzzle
+os.name=Linux
 os.arch=amd64
-os.version=10.0
+os.version=3.16.0-4-amd64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

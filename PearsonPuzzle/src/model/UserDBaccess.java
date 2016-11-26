@@ -11,13 +11,6 @@ import java.util.List;
 public class UserDBaccess {
 
 	 Connection conn;
-	   public static void main(String[] args) throws SQLException {
-	     UserDBaccess app = new UserDBaccess();
-	     app.connectionToDerby();
-	     app.normalDbUsage();
-	     app.getProject("erstesProjekt");
-	     
-	   }
 
 	   public void connectionToDerby()  {
 	     // -------------------------------------------
@@ -28,8 +21,9 @@ public class UserDBaccess {
 	   }
 	   
 	   public UserDBaccess() throws SQLException{
-		   String dbUrl = "jdbc:derby:C:/database.demo/db;create=true";
-		     conn = DriverManager.getConnection(dbUrl);   	   
+		   String dbUrl = "jdbc:derby:database;create=true";
+		     conn = DriverManager.getConnection(dbUrl);
+		     this.normalDbUsage();
 	   }
 	   
 	   
@@ -93,7 +87,11 @@ public class UserDBaccess {
 	     /*Student*/
 	     
 	  // drop table
-	     stmt.executeUpdate("Drop Table students");
+	     try {
+			stmt.executeUpdate("Drop Table students");
+		} catch (SQLException e) {
+			// schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
+		}
 
 
 	     // create table 
@@ -117,7 +115,11 @@ public class UserDBaccess {
 	       
 	       
 	     // drop table
-		 stmt.executeUpdate("Drop Table teachers");
+		 try {
+			stmt.executeUpdate("Drop Table teachers");
+		} catch (SQLException e) {
+			// Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
+		}
 
 		 // create table
 		 stmt.executeUpdate("CREATE TABLE teachers (id int primary key, username varchar(30), password varchar(8)  NOT NULL default 'teacher')");

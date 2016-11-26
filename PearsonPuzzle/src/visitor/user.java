@@ -1,9 +1,5 @@
 package visitor;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import controller.DefaultController;
 import model.Model;
 import view.LoginView;
