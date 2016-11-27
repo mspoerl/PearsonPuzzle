@@ -4,6 +4,7 @@ import java.util.Observable;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -27,22 +28,23 @@ public class LoginView extends JView{
 		loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.PAGE_AXIS));
 		mainPanel.add(loginPanel);
-		username = new JTextField("Name");
-		username.setActionCommand("Username");
+		username = new JTextField("TUM");
+		username.setActionCommand("submitPassword");
 		JLabel label = new JLabel("Login");
 		label.setLabelFor(username);
 		loginPanel.add(label);
 		loginPanel.add(username);
 		loginPanel.add(new JLabel("Password"));
-		password = new JPasswordField(10);
+		password = new JPasswordField("TUM");
 		password.setName("pwd");
-		password.setActionCommand("pwd");
+		password.setActionCommand("submitPassword");
 		loginPanel.add(password);
 		enter = new JButton("Los gehts");
 		enter.setActionCommand("submitPassword");
 		password.setActionCommand("submitPassword");
 		loginPanel.add(enter);
-		this.menuBar.setVisible(false);
+		menuBar=new JMenuBar();
+		frame.setJMenuBar(menuBar);
 		draw();
 	}
 	

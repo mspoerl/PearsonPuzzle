@@ -1,5 +1,5 @@
 package model;
 
-public enum accessGroup {
+public enum AccessGroup {
 	TEACHER, PUPIL, UNKNOWN
 	}

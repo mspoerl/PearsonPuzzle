@@ -46,19 +46,21 @@ public abstract class JView implements Observer {
 		}
 		protected DefaultListModel<String> makeDefaultListModel(String[] strings){
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
+			
+			// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
 			for(String string : strings){
-				String tab="\t";
+				String tab=" ";
 				for(int i=0;i<model.getTabSize();i++){
-					tab=tab+"\t";
+					tab=tab+" ";
 				}
-				string.replace("\t", tab);
-				listModel.add(listModel.size(),  string);
+				String bString = string.replaceAll("\t", tab);
+				listModel.add(listModel.size(),  bString);
 			}
 			return listModel;
 		}
 		
 		/**
-		 * Methode sol vom Controller ausgeführt werden, um sich selbst <br>
+		 * Methode soll vom Controller ausgeführt werden, um sich selbst <br>
 		 * als konkreter Controller für einen konkreten View hinzuzufügen.
 		 * Action Controller @param controller
 		 */

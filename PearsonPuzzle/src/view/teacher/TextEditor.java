@@ -1,7 +1,8 @@
-package view;
+package view.teacher;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -18,6 +19,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import view.JView;
+
 import controller.Controller;
 import model.Model;
 
@@ -25,6 +28,7 @@ public class TextEditor extends JView{
 	private JButton save;
 	//private JEditorPane editorPane;
 	private JTextArea textArea;
+	private JTextField projectName;
 	private ArrayList <JTextField> configFields;
 	private ArrayList <JMenuItem> menuItems;
 
@@ -51,6 +55,11 @@ public class TextEditor extends JView{
 		//                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		//editorScrollPane.setPreferredSize(new Dimension(400,300));
 		//mainPanel.add(editorScrollPane, BorderLayout.CENTER);
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		topPanel.add(new JLabel("Projekt: "));
+		projectName = new JTextField(model.getProjectName(),15);
+		topPanel.add(projectName);
 		
 		textArea = new JTextArea(model.getProjectCode());
 		textArea.setEditable(true);
@@ -61,6 +70,7 @@ public class TextEditor extends JView{
 		                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textScrollPane.setPreferredSize(new Dimension(400,300));
+		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(textScrollPane, BorderLayout.WEST);		
 	}
 	
@@ -72,16 +82,17 @@ public class TextEditor extends JView{
 	private void setupMenu(){
 		this.menuBar = new JMenuBar();
 		JMenu mainMenu = new JMenu("Datei");
-		JMenu projectMenu = new JMenu("ProjectMenu");
-		menuItems.add(new JMenuItem("Projekt anlegen"));
-		menuItems.get(menuItems.size()-1).setActionCommand("");
+		JMenu projectMenu = new JMenu("Projekt");
+		menuItems.add(new JMenuItem("Neues Projekt"));
+		menuItems.get(menuItems.size()-1).setActionCommand("newProject");
+		menuItems.add(new JMenuItem("Projekte anzeigen"));
+		menuItems.get(menuItems.size()-1).setActionCommand("projectList");
 		menuItems.add(new JMenuItem("Klassen verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("");
-		menuItems.add(new JMenuItem("Projekte verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("editProject");
+		menuItems.get(menuItems.size()-1).setActionCommand("editClass");
 		menuItems.add(new JMenuItem("Logout"));
 		menuItems.get(menuItems.size()-1).setActionCommand("logout");
 		menuBar.add(mainMenu);
+		menuBar.add(projectMenu);
 		for(JMenuItem menuItem: menuItems){
 			mainMenu.add(menuItem);
 		}
@@ -135,7 +146,9 @@ public class TextEditor extends JView{
 	public ArrayList<JTextField> getInputComponents(){
 		return configFields;
 	}
-	
+	public String getProjectName(){
+		return projectName.getText();
+	}
 	public void addController(Controller controller){
 		save.addActionListener(controller);
 		save.setActionCommand("saveProject");

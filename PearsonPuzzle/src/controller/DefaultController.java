@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import model.AccessGroup;
 import model.Model;
-import view.CodeSortView;
 import view.LoginView;
 import view.JView;
-import view.PupilView;
-import view.TextEditor;
+import view.pupil.CodeSortView;
+import view.pupil.PupilView;
+import view.teacher.TeacherView;
+import view.teacher.TextEditor;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
@@ -39,7 +41,7 @@ public class DefaultController extends Controller {
 			}
 		}
 		else if(e.getActionCommand().equals("editProject")){
-			if(model.getSelectedProject()==null){
+			if(model.getProjectID()==null){
 				view.allert("Bitte Projekt auswählen!");
 			}
 			else{
@@ -48,8 +50,14 @@ public class DefaultController extends Controller {
 				view.addController(this);
 			}
 		}
+		else if(e.getActionCommand().equals("newProject")){
+			model.setProject(null);
+			view.quitView();
+			this.view=new TextEditor(model);
+			view.addController(this);
+		}
 		else if(e.getActionCommand().equals("openProject") ){
-			if(model.getSelectedProject()==null){
+			if(model.getProjectID()==null){
 				view.allert("Bitte Projekt auswählen!");
 			}
 			else{
@@ -58,18 +66,23 @@ public class DefaultController extends Controller {
 				view.addController(this);
 			}
 		}
-		else if(e.getActionCommand().equals("openProjectList")){
+		else if(e.getActionCommand().equals("projectList")){
 			view.quitView();
-			this.view=new PupilView(model);
+			if(model.getAccessGroup().equals(AccessGroup.PUPIL)){
+				this.view= new PupilView(model);
+			}
+			else{
+				this.view= new TeacherView(model);
+			}
 			view.addController(this);
+			
 		}
 		else if(e.getActionCommand().equals("saveChanges")){	
 			model.setSaveList(model.getCodeModel());
 			view.update();
-		}
+		} 
 		else if(e.getActionCommand().equals("logout")){
 			view.quitView();
-			// TODO: Das Menü muss an dieser Stelle ncch ausgeblendet werden. Da das Menü aber sowieso in die Superclass portiert werden soll, steht das erst dann zur Debatte.
 			this.model=new Model();
 			LoginView startView= new LoginView(model);
 			startView.setController(this);
@@ -79,16 +92,22 @@ public class DefaultController extends Controller {
 		}
 		else if(e.getActionCommand().equals("saveProject")){
 			if(view.getClass().equals(TextEditor.class)){
-				model.setProjectCode(((TextEditor)view).getCode(),"erstesProjekt",150);
-				ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
-				model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
-				model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
-				view.allert("Projekt wurde gespeichert");
-				view.update();
+				if((((TextEditor) view).getCode()).equals("")
+						|| (((TextEditor) view).getProjectName()).equals("")){
+					view.allert("Bitte Titel und Inhalt des Projekts angeben");
+				}
+				else{
+					// TODO: Fall behandeln, dass Projekt mit gleichem Namen existiert!
+					model.setProjectCode(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(),150);
+					ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
+					model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
+					model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+					view.allert("Projekt wurde gespeichert");
+					view.update();
+				}
 			}
 		}
-	}
-	
+	}	
 	/**
 	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert
 	 * @param <ListSelectionModel>
@@ -105,7 +124,7 @@ public class DefaultController extends Controller {
             int maxIndex = lsm.getMaxSelectionIndex();
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
-                    model.setSelectedProject(i);
+                    model.setProject(i);
                     view.update();
                 }
              }

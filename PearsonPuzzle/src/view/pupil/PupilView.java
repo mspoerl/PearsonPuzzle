@@ -1,4 +1,4 @@
-package view;
+package view.pupil;
 
 import java.awt.BorderLayout;
 import java.util.Observable;
@@ -12,6 +12,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+
+import view.JView;
 import model.Model;
 import controller.Controller;
 
@@ -85,7 +87,7 @@ public class PupilView extends JView{
 		saveButton.addActionListener(controller);
 		saveButton.setActionCommand("saveChanges");
 		
-		enterProject.setActionCommand("openProjectList");
+		enterProject.setActionCommand("projectList");
 		enterProject.addActionListener(controller);
 		
 		logout.setActionCommand("logout");

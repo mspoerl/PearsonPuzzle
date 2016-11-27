@@ -13,15 +13,14 @@ public class ModelTest {
 	}
 	
 	@Test
-	public void test() {
-		//model.setProjectCode(pNames.get(1), pCodes.get(1), linelength.get(1));
-		String pCodes="";
-		//model.setProjectCode(pCodes);
-		assertEquals(pCodes,model.getProjectCode());
+	public void testProjectCode() {
+		assertEquals("",model.getProjectCode());
 	}
 	
 	@Test
-	public void test2(){
-		assertEquals(model.getProjectCode(), model.getProjectCode());
+	public void testProjectName(){
+		assertEquals("", model.getProjectName());
 	}
+	
+	
 }

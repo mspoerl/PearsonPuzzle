@@ -4,10 +4,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import view.JView;
-import view.PupilView;
-import view.TeacherView;
+import view.pupil.PupilView;
+import view.teacher.TeacherView;
 import model.Model;
-import model.accessGroup;
+import model.AccessGroup;
 /**
  * Oberklasse der verschiedenen Controller, die alle dafür zuständig sind, <br>
  * Daten vom Model an den jeweiligen darstellenden View weiterzureichen und <br>
@@ -27,7 +27,7 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 	}
 	
 	/**
-	 * Soll eventuell ins Modell ausgelagert werden
+	 * XXX: Soll !eventuell! ins Modell ausgelagert werden
 	 * Nutzername @param username
 	 * Passwort @param password
 	 */
@@ -36,12 +36,14 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 		if(username.isEmpty() || password.length==0){
 			view.allert("Bitte Nutzernamen und Passwort eingeben");
 		}
-		else if(model.getAccessGroup(username, password)==accessGroup.TEACHER){
+		else if(model.getAccessGroup(username, password)==AccessGroup.TEACHER){
+			model.setAccessGroup(AccessGroup.TEACHER);
 			view.quitView();
 			this.view=new TeacherView(model);
 			view.addController(this);
 		}
-		else if(model.getAccessGroup(username, password)==accessGroup.PUPIL){
+		else if(model.getAccessGroup(username, password)==AccessGroup.PUPIL){
+			model.setAccessGroup(AccessGroup.PUPIL);
 			view.quitView();
 			this.view=new PupilView(model);
 			view.addController(this);

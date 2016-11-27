@@ -1,6 +1,7 @@
-package view;
+package view.teacher;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Observable;
 import javax.swing.DefaultListModel;
@@ -9,9 +10,12 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+
+import view.JView;
 
 import controller.Controller;
 
@@ -26,11 +30,13 @@ import model.Model;
 public class TeacherView extends JView{
 	private ListSelectionModel listSelectionModel;
 	private JButton enter;
+	private JButton newProject;
 	private JTextArea projectDescription;
 	private ArrayList <JMenuItem> menuItems;	
 	public TeacherView(Model model) {
 		super(model);
 		enter = new JButton("Projekt öffnen");
+		newProject = new JButton("Neues Projekt anlgen");
 		projectDescription = new JTextArea("Wähle ein Projekt aus");
 		menuItems= new ArrayList<JMenuItem>();
 		setupMenu();
@@ -44,12 +50,12 @@ public class TeacherView extends JView{
 	private void setupMenu(){
 		this.menuBar = new JMenuBar();
 		JMenu menu = new JMenu("Datei");
-		menuItems.add(new JMenuItem("Projekt anlegen"));
-		menuItems.get(menuItems.size()-1).setActionCommand("");
+		menuItems.add(new JMenuItem("Neues Projekt"));
+		menuItems.get(menuItems.size()-1).setActionCommand("newProject");
+		menuItems.add(new JMenuItem("Projekte anzeigen"));
+		menuItems.get(menuItems.size()-1).setActionCommand("projectList");
 		menuItems.add(new JMenuItem("Klassen verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("");
-		menuItems.add(new JMenuItem("Projekte verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("editProject");
+		menuItems.get(menuItems.size()-1).setActionCommand("editClass");
 		menuItems.add(new JMenuItem("Logout"));
 		menuItems.get(menuItems.size()-1).setActionCommand("logout");
 		menuBar.add(menu);
@@ -79,12 +85,20 @@ public class TeacherView extends JView{
 		projectDescription.setEditable(false);
 		projectDescription.setSize(200, 200);
 		mainPanel.add(projectDescription, BorderLayout.EAST);
+		
+		// Buttons hinufügen
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		enter.setActionCommand("editProject");
-		mainPanel.add(enter, BorderLayout.SOUTH);
+		newProject.setActionCommand("newProject");
+		buttonPanel.add(enter);
+		buttonPanel.add(newProject);
+		mainPanel.add(buttonPanel, BorderLayout.SOUTH);		
 	}
 	public void addController(Controller controller){
 		enter.addActionListener(controller);
-	    listSelectionModel.addListSelectionListener(controller);
+		newProject.addActionListener(controller);
+		listSelectionModel.addListSelectionListener(controller);
 	    for(JMenuItem menuItem : menuItems){
 	    	menuItem.addActionListener(controller);
 	    }  

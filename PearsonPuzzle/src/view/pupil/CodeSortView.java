@@ -1,4 +1,4 @@
-package view;
+package view.pupil;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -16,6 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
+
+import view.JView;
 
 import controller.Controller;
 
@@ -41,8 +43,6 @@ public class CodeSortView extends JView {
 				dragDropList=new JList<String>(dragDropModel);
 				saveDropList=new JList<String>(saveDropModel);
 				enter = new JButton("Projekt öffnen");
-				enterProject = new JMenuItem("Projekte anzeigen");
-				logout = new JMenuItem("Logout");
 				saveButton = new JButton("Übernehmen");
 				setupCodeLists();
 				setupMenu();
@@ -92,7 +92,11 @@ public class CodeSortView extends JView {
 		// private Methode, um das Menü zu definieren
 		private void setupMenu(){
 			menuBar = new JMenuBar();
-			JMenu menu = new JMenu ("Datei");
+			
+			JMenu menu = new JMenu ("Datei");			
+			enterProject = new JMenuItem("Projekte anzeigen");
+			logout = new JMenuItem("Logout");
+			
 			menuBar.add(menu);
 			menu.add(enterProject);
 			menu.add(logout);
@@ -111,7 +115,7 @@ public class CodeSortView extends JView {
 			saveButton.addActionListener(controller);
 			saveButton.setActionCommand("saveChanges");
 			
-			enterProject.setActionCommand("openProjectList");
+			enterProject.setActionCommand("projectList");
 			enterProject.addActionListener(controller);
 			
 			logout.setActionCommand("logout");
@@ -135,7 +139,6 @@ public class CodeSortView extends JView {
 		saveDropModel=makeDefaultListModel(model.getSaveModel());
 		dragDropList=new JList<String>(dragDropModel);
 		saveDropList=new JList<String>(saveDropModel);
-		// TODO: in den offiziellen Controller auslagern
 		dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList));
 		saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY));	
 	}
