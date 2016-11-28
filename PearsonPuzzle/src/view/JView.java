@@ -23,7 +23,7 @@ import controller.Controller;
 public abstract class JView implements Observer {
 	protected static JFrame frame = new JFrame("PearsonPuzzle");
 	protected static JPanel mainPanel = new JPanel(new BorderLayout(5,1));
-	protected JMenuBar menuBar = new JMenuBar();
+	protected Menu menu;
 	protected Model model;
 	private Controller controller;
 	public JView(Model model){
@@ -135,7 +135,7 @@ public abstract class JView implements Observer {
 		 * Frame soll geschlossen werden.
 		 */
 		public void exit() {
-		    frame.removeAll();
+		    frame.dispose();
 		    // TODO Auto-generated method stub
 		}		
 }

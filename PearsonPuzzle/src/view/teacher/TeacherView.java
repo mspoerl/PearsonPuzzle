@@ -2,14 +2,10 @@ package view.teacher;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.util.ArrayList;
 import java.util.Observable;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -31,38 +27,16 @@ public class TeacherView extends JView{
 	private ListSelectionModel listSelectionModel;
 	private JButton enter;
 	private JButton newProject;
-	private JTextArea projectDescription;
-	private ArrayList <JMenuItem> menuItems;	
+	private JTextArea projectDescription;	
 	public TeacherView(Model model) {
 		super(model);
-		enter = new JButton("Projekt öffnen");
+		enter = new JButton("Projekt editieren");
 		newProject = new JButton("Neues Projekt anlgen");
 		projectDescription = new JTextArea("Wähle ein Projekt aus");
-		menuItems= new ArrayList<JMenuItem>();
-		setupMenu();
+		menu = new MenuTeacher();
+		frame.setJMenuBar(menu);
 		setupProjektList();
 		draw();
-	}
-	
-	/**
-	 * Menü wird definiert
-	 */
-	private void setupMenu(){
-		this.menuBar = new JMenuBar();
-		JMenu menu = new JMenu("Datei");
-		menuItems.add(new JMenuItem("Neues Projekt"));
-		menuItems.get(menuItems.size()-1).setActionCommand("newProject");
-		menuItems.add(new JMenuItem("Projekte anzeigen"));
-		menuItems.get(menuItems.size()-1).setActionCommand("projectList");
-		menuItems.add(new JMenuItem("Klassen verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("editClass");
-		menuItems.add(new JMenuItem("Logout"));
-		menuItems.get(menuItems.size()-1).setActionCommand("logout");
-		menuBar.add(menu);
-		for(JMenuItem menuItem: menuItems){
-			menu.add(menuItem);
-		}
-		frame.setJMenuBar(menuBar);
 	}
 	
 	/**
@@ -99,9 +73,7 @@ public class TeacherView extends JView{
 		enter.addActionListener(controller);
 		newProject.addActionListener(controller);
 		listSelectionModel.addListSelectionListener(controller);
-	    for(JMenuItem menuItem : menuItems){
-	    	menuItem.addActionListener(controller);
-	    }  
+		menu.addActionListener(controller);
 	}
 	@Override
 	public void update(Observable arg0, Object arg1) {

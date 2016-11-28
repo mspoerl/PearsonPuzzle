@@ -32,8 +32,6 @@ public class CodeSortView extends JView {
 	private DefaultListModel dragDropModel;
 	private DefaultListModel saveDropModel;
 	private JButton enter;
-	private JMenuItem enterProject;
-	private JMenuItem logout;
 	private JButton saveButton;
 	public CodeSortView(Model model) {
 		super(model);
@@ -45,10 +43,10 @@ public class CodeSortView extends JView {
 				enter = new JButton("Projekt öffnen");
 				saveButton = new JButton("Übernehmen");
 				setupCodeLists();
-				setupMenu();
 				setupButtons();
 				// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
 				mainPanel.add(new JTextField("Hier erfolgt eine möglichst präzise Arbeitsanweisung für den Schüler"),BorderLayout.PAGE_END);
+				menu=new MenuPupil(frame);
 				draw();
 		// TODO Auto-generated constructor stub
 	}
@@ -87,22 +85,7 @@ public class CodeSortView extends JView {
 			topPanel.add(compileButton,BorderLayout.LINE_START);
 			topPanel.add(saveButton, BorderLayout.LINE_END);
 			mainPanel.add(topPanel,BorderLayout.PAGE_START);
-		}
-		
-		// private Methode, um das Menü zu definieren
-		private void setupMenu(){
-			menuBar = new JMenuBar();
-			
-			JMenu menu = new JMenu ("Datei");			
-			enterProject = new JMenuItem("Projekte anzeigen");
-			logout = new JMenuItem("Logout");
-			
-			menuBar.add(menu);
-			menu.add(enterProject);
-			menu.add(logout);
-			frame.setJMenuBar(menuBar);
-		}
-		
+		}		
 		
 		/**
 		 * Wird vom Controller asugeführt, um Listener, Handler und <br>
@@ -115,11 +98,7 @@ public class CodeSortView extends JView {
 			saveButton.addActionListener(controller);
 			saveButton.setActionCommand("saveChanges");
 			
-			enterProject.setActionCommand("projectList");
-			enterProject.addActionListener(controller);
-			
-			logout.setActionCommand("logout");
-			logout.addActionListener(controller);
+			menu.addActionListener(controller);
 		}
 
 	@Override

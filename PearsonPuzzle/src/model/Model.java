@@ -146,7 +146,12 @@ public class Model extends Observable {
 	}
 
 	public String getProjectDescription() {
-		return projectList.get(projectID);
+		// TODO: Projektbeschreibung ergänzen
+		if(projectID!=null)
+		{
+			return projectList.get(projectID);
+		}
+		return "Leider keine Projektbeschreibung voranden";
 	}
 
 	public String getProjectCode() {

@@ -6,9 +6,6 @@ import java.util.Observable;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
@@ -26,19 +23,15 @@ public class PupilView extends JView{
 	private ListSelectionModel listSelectionModel;
 	private JTextArea projectDescription;
 	private JButton enter;
-	private JMenuItem enterProject;
-	private JMenuItem logout;
 	private JButton saveButton;
 	public PupilView(Model model){
 		// Instanzierung der Variablen
 		super(model);
 		projectDescription = new JTextArea("Wähle ein Projekt aus");
 		enter = new JButton("Projekt öffnen");
-		enterProject = new JMenuItem("Projekte anzeigen");
-		logout = new JMenuItem("Logout");
 		saveButton = new JButton("Übernehmen");	
 		// Bei Konstruktion wird Ansicht "Projektliste" aufgerufen
-		setupMenu();
+		menu = new MenuPupil(frame);
 		setupProjectList();
 	}
 	
@@ -64,15 +57,6 @@ public class PupilView extends JView{
 		mainPanel.add(projectDescription, BorderLayout.EAST);
 		mainPanel.add(enter, BorderLayout.SOUTH);
 	}
-	// private Methode, um das Menü zu definieren
-	private void setupMenu(){
-		this.menuBar = new JMenuBar();
-		JMenu menu = new JMenu ("Datei");
-		menuBar.add(menu);
-		menu.add(enterProject);
-		menu.add(logout);
-		frame.setJMenuBar(menuBar);
-	}
 	
 	/**
 	 * Wird vom Controller asugeführt, um Listener, Handler und <br>
@@ -87,11 +71,7 @@ public class PupilView extends JView{
 		saveButton.addActionListener(controller);
 		saveButton.setActionCommand("saveChanges");
 		
-		enterProject.setActionCommand("projectList");
-		enterProject.addActionListener(controller);
-		
-		logout.setActionCommand("logout");
-		logout.addActionListener(controller);
+		menu.addActionListener(controller);
 	}
 	
 	@Override

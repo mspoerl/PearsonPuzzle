@@ -10,9 +10,6 @@ import java.util.Observable;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,14 +27,13 @@ public class TextEditor extends JView{
 	private JTextArea textArea;
 	private JTextField projectName;
 	private ArrayList <JTextField> configFields;
-	private ArrayList <JMenuItem> menuItems;
 
 	public TextEditor(Model model) {
 		super(model);
 		save=new JButton("Projekt speichern");
 		configFields = new ArrayList <JTextField>();
-		menuItems = new ArrayList <JMenuItem>();
-		setupMenu();
+		menu = new MenuTeacher();
+		frame.setJMenuBar(menu);
 		setupTextEditor();
 		setupConfigPanel();
 		draw();
@@ -74,30 +70,7 @@ public class TextEditor extends JView{
 		mainPanel.add(textScrollPane, BorderLayout.WEST);		
 	}
 	
-	/**
-	 * Menü wird definiert
-	 * TODO: sollte ausgelagert werrden
-	 * 
-	 */
-	private void setupMenu(){
-		this.menuBar = new JMenuBar();
-		JMenu mainMenu = new JMenu("Datei");
-		JMenu projectMenu = new JMenu("Projekt");
-		menuItems.add(new JMenuItem("Neues Projekt"));
-		menuItems.get(menuItems.size()-1).setActionCommand("newProject");
-		menuItems.add(new JMenuItem("Projekte anzeigen"));
-		menuItems.get(menuItems.size()-1).setActionCommand("projectList");
-		menuItems.add(new JMenuItem("Klassen verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("editClass");
-		menuItems.add(new JMenuItem("Logout"));
-		menuItems.get(menuItems.size()-1).setActionCommand("logout");
-		menuBar.add(mainMenu);
-		menuBar.add(projectMenu);
-		for(JMenuItem menuItem: menuItems){
-			mainMenu.add(menuItem);
-		}
-		frame.setJMenuBar(menuBar);
-	}	
+		
 	/**
 	 * Konfigurationsmenü (linke Seite) wird definiert 
 	 */
@@ -155,9 +128,7 @@ public class TextEditor extends JView{
 		for(JTextField comp: configFields){
 			comp.addActionListener(controller);
 		}
-		for(JMenuItem menuItem : menuItems){
-	    	menuItem.addActionListener(controller);
-	    }
+		menu.addActionListener(controller);
 	}
 	
 	/**

@@ -20,13 +20,10 @@ import view.teacher.TextEditor;
  * @author workspace
  */
 public class DefaultController extends Controller {
-	public DefaultController(Model model, LoginView view) {
-		super(model, view);
-		view.setController(this);
-		view.addController(this);
-	}
+	
 	public DefaultController(Model model, JView view) {
 		super(model, view);
+		view.setController(this);
 	}
 	
 	/**
@@ -34,13 +31,13 @@ public class DefaultController extends Controller {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("submitPassword")){
+		if (e.getActionCommand().equals(DCCommand.submitPassword.toString())){
 			// FIXME: Ab und zu wird die Aktion 2x ausgeführt
 			if(view.getClass().equals(LoginView.class)){
 				((LoginView)view).submitChangeToController();
 			}
 		}
-		else if(e.getActionCommand().equals("editProject")){
+		else if(e.getActionCommand().equals(DCCommand.editProject.toString())){
 			if(model.getProjectID()==null){
 				view.allert("Bitte Projekt auswählen!");
 			}
@@ -50,13 +47,13 @@ public class DefaultController extends Controller {
 				view.addController(this);
 			}
 		}
-		else if(e.getActionCommand().equals("newProject")){
+		else if(e.getActionCommand().equals(DCCommand.newProject.toString())){
 			model.setProject(null);
 			view.quitView();
 			this.view=new TextEditor(model);
 			view.addController(this);
 		}
-		else if(e.getActionCommand().equals("openProject") ){
+		else if(e.getActionCommand().equals(DCCommand.openProject.toString()) ){
 			if(model.getProjectID()==null){
 				view.allert("Bitte Projekt auswählen!");
 			}
@@ -66,7 +63,7 @@ public class DefaultController extends Controller {
 				view.addController(this);
 			}
 		}
-		else if(e.getActionCommand().equals("projectList")){
+		else if(e.getActionCommand().equals(DCCommand.projectList.toString())){
 			view.quitView();
 			if(model.getAccessGroup().equals(AccessGroup.PUPIL)){
 				this.view= new PupilView(model);
@@ -77,11 +74,11 @@ public class DefaultController extends Controller {
 			view.addController(this);
 			
 		}
-		else if(e.getActionCommand().equals("saveChanges")){	
+		else if(e.getActionCommand().equals(DCCommand.saveChanges.toString())){
 			model.setSaveList(model.getCodeModel());
 			view.update();
 		} 
-		else if(e.getActionCommand().equals("logout")){
+		else if(e.getActionCommand().equals(DCCommand.logout.toString())){
 			view.quitView();
 			this.model=new Model();
 			LoginView startView= new LoginView(model);
@@ -90,8 +87,8 @@ public class DefaultController extends Controller {
 			this.view=startView;
 			view.update();
 		}
-		else if(e.getActionCommand().equals("saveProject")){
-			if(view.getClass().equals(TextEditor.class)){
+		else if(e.getActionCommand().equals(DCCommand.saveProject.toString())){
+			if(view.getClass().equals(TextEditor.class) && model.getAccessGroup().equals(AccessGroup.TEACHER)){
 				if((((TextEditor) view).getCode()).equals("")
 						|| (((TextEditor) view).getProjectName()).equals("")){
 					view.allert("Bitte Titel und Inhalt des Projekts angeben");
@@ -107,7 +104,35 @@ public class DefaultController extends Controller {
 				}
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * XXX: Soll !eventuell! ins Modell ausgelagert werden
+	 * Nutzername @param username
+	 * Passwort @param password
+	 */
+	public void login(String username, char[] password){
+		model.setUsername(username);
+		if(username.isEmpty() || password.length==0){
+			view.allert("Bitte Nutzernamen und Passwort eingeben");
+		}
+		else if(model.getAccessGroup(username, password)==AccessGroup.TEACHER){
+			model.setAccessGroup(AccessGroup.TEACHER);
+			view.quitView();
+			this.view=new TeacherView(model);
+			view.addController(this);
+		}
+		else if(model.getAccessGroup(username, password)==AccessGroup.PUPIL){
+			model.setAccessGroup(AccessGroup.PUPIL);
+			view.quitView();
+			this.view=new PupilView(model);
+			view.addController(this);
+		}
+		else{
+			view.allert("Zugang verweigert");
+		}
+	}
+	
 	/**
 	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert
 	 * @param <ListSelectionModel>
