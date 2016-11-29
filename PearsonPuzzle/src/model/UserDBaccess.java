@@ -144,6 +144,7 @@ public class UserDBaccess {
 		   Statement stmt = conn.createStatement();
 		   
 		   //XXX doppelte Tabellennamen besser hendeln 
+		   //TODO beide Tabellen (Orginal und Mixed) bei namensänderung löschen 
 		   try{
 			   stmt.executeUpdate("Create table "+projectname+"mixed (linenumber int primary key, codeline varchar("+linelength+"))");
 		   }
@@ -208,9 +209,9 @@ public class UserDBaccess {
 		   String[] codeString;
 		   
 		   while (te.next()) { 
-			   codeliste.add(te.getString(projectname));
+			   codeliste.add(te.getString("codeline"));
 			     }
-		   codeString=(String[]) codeliste.toArray();
+		   codeString= codeliste.toArray(new String[0]);
 //		   String[] stringArray = new String[codeliste.size()];
 //		   stringArray=(String[]) codeliste.toArray();
 		   for(int j =0;j<codeString.length;j++){
