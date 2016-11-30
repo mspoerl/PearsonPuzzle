@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ import controller.Controller;
 public abstract class JView implements Observer {
 	protected static JFrame frame = new JFrame("PearsonPuzzle");
 	protected static JPanel mainPanel = new JPanel(new BorderLayout(5,1));
-	protected JMenuBar menuBar = new JMenuBar();
+	protected Menu menu;
 	protected Model model;
 	private Controller controller;
 	public JView(Model model){
@@ -45,19 +46,21 @@ public abstract class JView implements Observer {
 		}
 		protected DefaultListModel<String> makeDefaultListModel(String[] strings){
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
+			
+			// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
 			for(String string : strings){
-				String tab="\t";
+				String tab=" ";
 				for(int i=0;i<model.getTabSize();i++){
-					tab=tab+"\t";
+					tab=tab+" ";
 				}
-				string.replace("\t", tab);
-				listModel.add(listModel.size(),  string);
+				String bString = string.replaceAll("\t", tab);
+				listModel.add(listModel.size(),  bString);
 			}
 			return listModel;
 		}
 		
 		/**
-		 * Methode sol vom Controller ausgeführt werden, um sich selbst <br>
+		 * Methode soll vom Controller ausgeführt werden, um sich selbst <br>
 		 * als konkreter Controller für einen konkreten View hinzuzufügen.
 		 * Action Controller @param controller
 		 */
@@ -117,6 +120,7 @@ public abstract class JView implements Observer {
 		 * (Methodenaufruf erfolgt durch den Controller) 
 		 */
 		abstract public void update();
+		abstract public void update(Observable o, Object arg);
 		public void selectView(int i){};
 		
 		/**
@@ -131,8 +135,7 @@ public abstract class JView implements Observer {
 		 * Frame soll geschlossen werden.
 		 */
 		public void exit() {
-		    frame.removeAll();
+		    frame.dispose();
 		    // TODO Auto-generated method stub
-		    
-		}
+		}		
 }

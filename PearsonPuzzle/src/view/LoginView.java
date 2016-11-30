@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import controller.Controller;
+import controller.DCCommand;
+import controller.DefaultController;
 import model.Model;
 
 /**
@@ -25,26 +27,34 @@ public class LoginView extends JView{
 	public LoginView(Model model){
 		super(model);
 		setupFrame();
+		setupLoginPanel();
+		frame.setJMenuBar(new JMenuBar());
+		draw();
+	}
+	
+	private void setupLoginPanel(){
 		loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.PAGE_AXIS));
-		mainPanel.add(loginPanel);
-		username = new JTextField("Name");
-		username.setActionCommand("Username");
+		
+		username = new JTextField("TUM");
+		username.setActionCommand(DCCommand.submitPassword.toString());
 		JLabel label = new JLabel("Login");
 		label.setLabelFor(username);
 		loginPanel.add(label);
 		loginPanel.add(username);
+		
 		loginPanel.add(new JLabel("Password"));
-		password = new JPasswordField(10);
+		password = new JPasswordField("TUM");
 		password.setName("pwd");
-		password.setActionCommand("pwd");
+		password.setActionCommand(DCCommand.submitPassword.toString());
 		loginPanel.add(password);
+		
 		enter = new JButton("Los gehts");
-		enter.setActionCommand("submitPassword");
+		enter.setActionCommand(DCCommand.submitPassword.toString());
 		password.setActionCommand("submitPassword");
 		loginPanel.add(enter);
-		this.menuBar.setVisible(false);
-		draw();
+		
+		mainPanel.add(loginPanel);
 	}
 	
 	/**
@@ -61,7 +71,9 @@ public class LoginView extends JView{
 	 * Login Methode wird ausgeführt
 	 */
 	public void submitChangeToController(){
-		this.getController().login(username.getText(), password.getPassword());
+		if(this.getController().getClass().equals(DefaultController.class)){
+			((DefaultController)(this.getController())).login(username.getText(), password.getPassword());
+		}
 	}
 	@Override
 	public void update() {

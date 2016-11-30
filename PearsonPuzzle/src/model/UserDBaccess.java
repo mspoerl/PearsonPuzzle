@@ -6,31 +6,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserDBaccess {
 
 	 Connection conn;
-	   public static void main(String[] args) throws SQLException {
-	     UserDBaccess app = new UserDBaccess();
-	     app.connectionToDerby();
-	     app.normalDbUsage();
-	     app.getProject("erstesProjekt");
-	     
-	   }
-
-	   public void connectionToDerby()  {
+	 public UserDBaccess() throws SQLException {
+		 String dbUrl = "jdbc:derby:database;create=true";
+		 conn = DriverManager.getConnection(dbUrl);
+		 this.normalDbUsage();
+	 }
+	 
+	 public void connectionToDerby() {
 	     // -------------------------------------------
 	     // URL format is
 	     // jdbc:derby:<local directory to save data>
 	     // -------------------------------------------
 	     
-	   }
-	   
-	   public UserDBaccess() throws SQLException{
-		   String dbUrl = "jdbc:derby:C:/database.demo/db;create=true";
-		     conn = DriverManager.getConnection(dbUrl);   	   
-	   }
+	 }
+	 
 	   
 	   
 	   // ------------------------ Nutzername und Passwortvergleich -------------------------------
@@ -53,13 +46,11 @@ public class UserDBaccess {
 			     }
 			     else{
 			    	 return true;
-			     }
-			     
+			     }		     
 		   }
 		   catch(Exception e){
 			   return false;
 		   }
-		   
 	   }
 	   
 	   //Nutzername und Passwort Vergleich Lehrer
@@ -87,53 +78,61 @@ public class UserDBaccess {
 
 	// ------------------------ Tabellen in Datenbank anlegen (hardcoded) -------------------------------
 
-	   public void normalDbUsage() throws SQLException {
-	     Statement stmt = conn.createStatement();
+	   private void normalDbUsage() throws SQLException {
+		   Statement stmt = conn.createStatement();
 
-	     /*Student*/
-	     
-	  // drop table
-	     stmt.executeUpdate("Drop Table students");
-
-
-	     // create table 
-	     stmt.executeUpdate("Create table students (id int primary key, username varchar(30), password varchar(8) NOT NULL default 'student')");
-
-
-	     // insert 2 rows
-	     stmt.executeUpdate("insert into students values (1,'tom','tom')");
-	     stmt.executeUpdate("insert into students values (2,'peter','peter')");
-	     
-	     
-	     // query
-	     ResultSet rs = stmt.executeQuery("SELECT * FROM students");
-
-	     // print out query result
-	     while (rs.next()) { 
-	       System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));
-	     }
+		   /*Student*/
+		   ResultSet rsS;
+		   try{
+			   // query
+			   rsS = stmt.executeQuery("SELECT * FROM students");
+		   }
+		   catch(SQLException e){
+			   // Hier wird abgehandelt, wenn was schief läuft
+			   // bzw. wenn die Tabelle (noch) nicht existiert 
+			   try {
+				   stmt.executeUpdate("Drop Table students");
+			   } 
+			   catch (SQLException ex) { // schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
+			   }
+			   // create table 
+			   stmt.executeUpdate("Create table students (id int primary key, username varchar(30), password varchar(8) NOT NULL default 'student')");  
+			   // insert 2 rows
+			   stmt.executeUpdate("insert into students values (1,'tom','tom')");
+			   stmt.executeUpdate("insert into students values (2,'peter','peter')");
+			   rsS = stmt.executeQuery("SELECT * FROM students");
+		   }
+		   // print out query result
+		   while (rsS.next()) { 
+			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));
+		   }
 	       
-	       /*Teacher*/
-	       
-	       
-	     // drop table
-		 stmt.executeUpdate("Drop Table teachers");
-
-		 // create table
-		 stmt.executeUpdate("CREATE TABLE teachers (id int primary key, username varchar(30), password varchar(8)  NOT NULL default 'teacher')");
-
-		 // insert 2 rows
-		 stmt.executeUpdate("insert into teachers values (1,'Herr','Herr')");
-		 stmt.executeUpdate("insert into teachers values (2,'Frau','Frau')");
-		 stmt.executeUpdate("insert into teachers values (3,'TUM','TUM')");
-
-		 // query
-		 ResultSet te = stmt.executeQuery("SELECT * FROM teachers");
-
-		 // print out query result
-		 while (te.next()) { 
-		 System.out.printf("%d\t%s\t%s\n", te.getInt("id"), te.getString("username"), te.getString("password"));			   
-	     }
+		   /*Teacher*/
+		   ResultSet rsT;
+		   try{
+			   rsT = stmt.executeQuery("SELECT * FROM teachers");
+		   }
+		   catch(SQLException e){
+			   // Hier wird abgehandelt, wenn was schief läuft
+			   // bzw. wenn die Tabelle (noch) nicht existiert 
+			   try {
+				   stmt.executeUpdate("Drop Table teachers");
+			   } 
+			   catch (SQLException ex){ // Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
+			   }   
+			   // create table
+			   stmt.executeUpdate("CREATE TABLE teachers (id int primary key, username varchar(30), password varchar(8)  NOT NULL default 'teacher')");
+			   // insert 2 rows
+			   stmt.executeUpdate("insert into teachers values (1,'Herr','Herr')");
+			   stmt.executeUpdate("insert into teachers values (2,'Frau','Frau')");
+			   stmt.executeUpdate("insert into teachers values (3,'TUM','TUM')");
+			   // query
+			   rsT = stmt.executeQuery("SELECT * FROM teachers");
+		   }
+		   // print out query result
+		   while (rsT.next()) { 
+			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));			   
+		   }
 	   }
 	   
 	   
@@ -142,41 +141,74 @@ public class UserDBaccess {
 
 	   public void saveProject(String[] codeString, String projectname, int linelength) throws SQLException{
 		   Statement stmt = conn.createStatement();
+		   //XXX doppelte Tabellennamen besser handeln
 		   
-		   //XXX doppelte Tabellennamen besser hendeln 
-		   //TODO beide Tabellen (Orginal und Mixed) bei namensänderung löschen 
+		   // Speichert normalen Code
 		   try{
-			   stmt.executeUpdate("Create table "+projectname+"mixed (linenumber int primary key, codeline varchar("+linelength+"))");
-		   }
-		   catch(Exception e){ //falls Tabelle bereits existiert
 			   stmt.executeUpdate("DROP TABLE "+projectname);
-			   stmt.executeUpdate("CREATE TABLE "+projectname+" (linenumber int primary key, codeline varchar("+linelength+"))");
 		   }
+		   catch(Exception e){ //falls Tabelle noch nicht existiert
+		   }
+		   stmt.executeUpdate("CREATE TABLE "+projectname+" (linenumber int primary key, codeline varchar("+linelength+"))");
 		   for(int i=0 ; i<codeString.length ; i++){
 				 stmt.executeUpdate("insert into "+projectname+" values ("+i+",'"+codeString[i]+"')");
 		   }
 		   
-		   
+		   // Zeilen zufällig anordnen
 		   String buffer;
 			for(int i=codeString.length-1; i>0;i--){
 				int randomInt = new java.util.Random().nextInt(i);
 				buffer=codeString[randomInt];
 				codeString[randomInt]=codeString[i];
-				codeString[i]=buffer;}
-		   
+				codeString[i]=buffer;
+			}
+			// Speichert zufällig angeordnetetn Code
 			try{
-				   stmt.executeUpdate("Create table "+projectname+" (linenumber int primary key, codeline varchar("+linelength+"))");
-		   }
-		   catch(Exception e){
-			   stmt.executeUpdate("DROP TABLE "+projectname+"mixed");
-			   stmt.executeUpdate("CREATE TABLE "+projectname+"mixed (linenumber int primary key, codeline varchar("+linelength+"))");
-			   
-		   }
-			
+				stmt.executeUpdate("DROP TABLE "+projectname+"_mixed");
+			}
+			catch(Exception e){ // Falls Tabelle noch nicht existiert
+			}
+			stmt.executeUpdate("CREATE TABLE "+projectname+"_mixed (linenumber int primary key, codeline varchar("+linelength+"))");	
 			for(int i=0 ; i<codeString.length ; i++){
-				 stmt.executeUpdate("insert into "+projectname+"mixed values ("+i+",'"+codeString[i]+"')");
-		   }
-		   
+				 stmt.executeUpdate("insert into "+projectname+"_mixed values ("+i+",'"+codeString[i]+"')");
+			}
+/*
+			public void saveProject(String[] codeString, String projectname, int linelength) throws SQLException{
+				   Statement stmt = conn.createStatement();
+				   
+				   //XXX doppelte Tabellennamen besser hendeln 
+				   try{
+					   stmt.executeUpdate("Create table "+projectname+"mixed (linenumber int primary key, codeline varchar("+linelength+"))");
+				   }
+				   catch(Exception e){ //falls Tabelle bereits existiert
+					   stmt.executeUpdate("DROP TABLE "+projectname);
+					   stmt.executeUpdate("CREATE TABLE "+projectname+" (linenumber int primary key, codeline varchar("+linelength+"))");
+				   }
+				   for(int i=0 ; i<codeString.length ; i++){
+						 stmt.executeUpdate("insert into "+projectname+" values ("+i+",'"+codeString[i]+"')");
+				   }
+				   
+				   
+				   String buffer;
+					for(int i=codeString.length-1; i>0;i--){
+						int randomInt = new java.util.Random().nextInt(i);
+						buffer=codeString[randomInt];
+						codeString[randomInt]=codeString[i];
+						codeString[i]=buffer;}
+				   
+					try{
+						   stmt.executeUpdate("Create table "+projectname+" (linenumber int primary key, codeline varchar("+linelength+"))");
+				   }
+				   catch(Exception e){
+					   stmt.executeUpdate("DROP TABLE "+projectname+"mixed");
+					   stmt.executeUpdate("CREATE TABLE "+projectname+"mixed (linenumber int primary key, codeline varchar("+linelength+"))");
+					   
+				   }
+					
+					for(int i=0 ; i<codeString.length ; i++){
+						 stmt.executeUpdate("insert into "+projectname+"mixed values ("+i+",'"+codeString[i]+"')");
+				   }
+		   */
 			//-----------------------------testing------------------------------------
 		   
 		 
@@ -199,28 +231,21 @@ public class UserDBaccess {
 	   
 	   
 	   //-------------------------- Code aus Datenbank auslesen -------------------------------
-	   public String[] getProject(String projectname) throws SQLException{
-
+	   public ArrayList <String> getProject(String projectname) throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   
 		   ResultSet te = stmt.executeQuery("SELECT codeline FROM "+projectname);
 		   
-		   List<String> codeliste = new ArrayList<String>();
+		   ArrayList<String> codeliste = new ArrayList<String>();
 		   String[] codeString;
 		   
 		   while (te.next()) { 
 			   codeliste.add(te.getString("codeline"));
 			     }
 		   codeString= codeliste.toArray(new String[0]);
-//		   String[] stringArray = new String[codeliste.size()];
-//		   stringArray=(String[]) codeliste.toArray();
-		   for(int j =0;j<codeString.length;j++){
-			   System.out.println(codeString[j]);
-		   }
-		   return codeString;
+		   
+		   return codeliste;
 	   }
-	   
-	   
 	   
 	}
 

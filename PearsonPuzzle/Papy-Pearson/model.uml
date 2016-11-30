@@ -131,107 +131,79 @@
     <packagedElement xmi:type="uml:Class" xmi:id="_JFukELC6Eea2LZs0kU_nWQ" name="accessGroup"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_2o5YMKSLEeamRviXg3S1Fg" name="View">
-    <packagedElement xmi:type="uml:Class" xmi:id="__y8DEKTREeamRviXg3S1Fg" name="JView" isAbstract="true">
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_-A5hMKXjEeamRviXg3S1Fg" name="frame" visibility="protected"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_7LpV4KXkEeamRviXg3S1Fg" name="mainPanel" visibility="protected"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_9K7GAKXkEeamRviXg3S1Fg" name="controller" visibility="private" type="_K1bsAKXWEeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_ifgfEKxBEeaef6rkU0rGkw" name="model" type="_FRu0YKSNEeamRviXg3S1Fg"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_dxJxUKXlEeamRviXg3S1Fg" name="draw"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_nd2DoKXmEeamRviXg3S1Fg" name="addController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_uyNm0KxBEeaef6rkU0rGkw" name="JView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_8jXCgKxBEeaef6rkU0rGkw" name="makeDefaultListModel"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_CjFwUKxCEeaef6rkU0rGkw" name="setupFrame"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_JgUBIKxCEeaef6rkU0rGkw" name="getController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_Me2O0KxCEeaef6rkU0rGkw" name="submitChangeToController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_OjltwKxCEeaef6rkU0rGkw" name="quitView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_P9TSsKxCEeaef6rkU0rGkw" name="update" isAbstract="true"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_Rc2Z4KxCEeaef6rkU0rGkw" name="openProject"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_S5A14KxCEeaef6rkU0rGkw" name="openProjectList"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_Uc64oKxCEeaef6rkU0rGkw" name="allert"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_5ZF0kLGUEeal9KN5C32jpw" name="exit"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_FsT5sLGVEeal9KN5C32jpw" name="selectView">
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_OXmO0LGVEeal9KN5C32jpw" name="i">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EInt"/>
-        </ownedParameter>
-      </ownedOperation>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_VAWrgLGVEeal9KN5C32jpw" name="setController"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_dVN0gLcCEea1zZOPAxWWQw" name="JView" isAbstract="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_lFqSALcCEea1zZOPAxWWQw" name="frame" visibility="protected" isStatic="true"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_qxAEMLcCEea1zZOPAxWWQw" name="mainPanel" visibility="protected" isStatic="true"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_wiQRILcCEea1zZOPAxWWQw" name="menu" visibility="protected"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_zM7HoLcCEea1zZOPAxWWQw" name="model" visibility="protected"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_1i2dMLcCEea1zZOPAxWWQw" name="controller" visibility="private"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_6LPkoLcCEea1zZOPAxWWQw" name="JView"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_D-wGELcDEea1zZOPAxWWQw" name="makeDefaultListModel" visibility="protected"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_iXWcMLcDEea1zZOPAxWWQw" name="setController"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_jzRAkLcDEea1zZOPAxWWQw" name="addController"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_ovjUYLcDEea1zZOPAxWWQw" name="setupFrame"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_v3Y5wLcDEea1zZOPAxWWQw" name="draw"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_0Cr1gLcDEea1zZOPAxWWQw" name="getController"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_2yPzELcDEea1zZOPAxWWQw" name="quitView"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_5FdL0LcDEea1zZOPAxWWQw" name="update" isAbstract="true"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_DPmroLcEEea1zZOPAxWWQw" name="update" isAbstract="true"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_HsPPALcEEea1zZOPAxWWQw" name="selectView"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_KO6AELcEEea1zZOPAxWWQw" name="allert"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_L30eoLcEEea1zZOPAxWWQw" name="exit"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_EeIjAKXnEeamRviXg3S1Fg" name="PupilView">
-      <generalization xmi:type="uml:Generalization" xmi:id="_6PGRQKXoEeamRviXg3S1Fg" general="__y8DEKTREeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_7UXqYKxCEeaef6rkU0rGkw" name="listSelectionModel" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_95LJcKxCEeaef6rkU0rGkw" name="projectDescription" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_AR_a8KxDEeaef6rkU0rGkw" name="enter" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_ECGPgKxDEeaef6rkU0rGkw" name="enterProject" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_HD4lgKxDEeaef6rkU0rGkw" name="logout" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_J5CNsKxDEeaef6rkU0rGkw" name="saveButton" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_zOi1EKXnEeamRviXg3S1Fg" name="PupilView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_PcRMwKxDEeaef6rkU0rGkw" name="setupProjectList"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_hradwKxDEeaef6rkU0rGkw" name="setupMenu"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_lkH0sKxDEeaef6rkU0rGkw" name="addController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_pZHwUKxDEeaef6rkU0rGkw" name="update"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_RVY6kLcEEea1zZOPAxWWQw" name="LoginView">
+      <generalization xmi:type="uml:Generalization" xmi:id="_URNWALcFEea1zZOPAxWWQw" general="_dVN0gLcCEea1zZOPAxWWQw"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_Sv2tcLcEEea1zZOPAxWWQw" name="loginPanel" visibility="private"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_jxu6ELcEEea1zZOPAxWWQw" name="enter" visibility="private"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_myq7gLcEEea1zZOPAxWWQw" name="username" visibility="private"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_piFIELcEEea1zZOPAxWWQw" name="password" visibility="private"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_tvBCkLcEEea1zZOPAxWWQw" name="loginView"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_5xfV8LcEEea1zZOPAxWWQw" name="setupLoginPanel" visibility="private"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_GRUTsLcFEea1zZOPAxWWQw" name="addController"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_KvFfgLcFEea1zZOPAxWWQw" name="submitChangeToController"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_NweM4LcFEea1zZOPAxWWQw" name="update"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_OuRR4LcFEea1zZOPAxWWQw" name="update"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_6iotwKXnEeamRviXg3S1Fg" name="LoginView">
-      <generalization xmi:type="uml:Generalization" xmi:id="_my-PwKXoEeamRviXg3S1Fg" general="__y8DEKTREeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_-TqvYKXnEeamRviXg3S1Fg" name="loginPanel" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_HTaRkKXoEeamRviXg3S1Fg" name="enter" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_JDbdsKXoEeamRviXg3S1Fg" name="username" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_KGp1QKXoEeamRviXg3S1Fg" name="password" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_M8vRkKXoEeamRviXg3S1Fg" name="LoginView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_pqiF4KxCEeaef6rkU0rGkw" name="addController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_tZUr0KxCEeaef6rkU0rGkw" name="submitChangeToController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_vCykAKxCEeaef6rkU0rGkw" name="update"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_gbN0wLcFEea1zZOPAxWWQw" name="Menu" isAbstract="true">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_oK4PILcFEea1zZOPAxWWQw" name="serialVersionUID" visibility="private" isStatic="true"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_y0OzcLcFEea1zZOPAxWWQw" name="addActionListener" isAbstract="true"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_2NgcYLcFEea1zZOPAxWWQw" name="setupMenu" visibility="protected" isAbstract="true"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_5-NTQKxDEeaef6rkU0rGkw" name="TeacherView">
-      <generalization xmi:type="uml:Generalization" xmi:id="_SEYpEKxEEeaef6rkU0rGkw" general="__y8DEKTREeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_cQ5PALGXEeal9KN5C32jpw" name="listSelectionModel" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_gs114LGXEeal9KN5C32jpw" name="projectDescription" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_kuH6ALGXEeal9KN5C32jpw" name="menuItems" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_87QTMKxDEeaef6rkU0rGkw" name="TeacherView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_-vtTYKxDEeaef6rkU0rGkw" name="setupMenu"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_DmElYKxEEeaef6rkU0rGkw" name="setupProjektList"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_GXaroKxEEeaef6rkU0rGkw" name="addController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_NXmw4KxEEeaef6rkU0rGkw" name="update"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_9VkEMLcFEea1zZOPAxWWQw" name="pupil">
+      <packagedElement xmi:type="uml:Class" xmi:id="_aJydgLcGEea1zZOPAxWWQw" name="CodeSortView">
+        <generalization xmi:type="uml:Generalization" xmi:id="_xwH1oLcGEea1zZOPAxWWQw" general="_dVN0gLcCEea1zZOPAxWWQw"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_dhq_ULcGEea1zZOPAxWWQw" name="dragDropList" visibility="private"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_e_ck4LcGEea1zZOPAxWWQw" name="saveDropList" visibility="private"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_jlzsALcGEea1zZOPAxWWQw" name="dragDropModel" visibility="private"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_mGHFkLcGEea1zZOPAxWWQw" name="saveDropModel" visibility="private"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_qVkIkLcGEea1zZOPAxWWQw" name="enter" visibility="private"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_sLZo0LcGEea1zZOPAxWWQw" name="saveButton" visibility="private"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_8gBG0LcGEea1zZOPAxWWQw" name="setupCodeLists" visibility="private"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_KTLUsLcHEea1zZOPAxWWQw" name="setupButtons" visibility="private"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_QtaNMLcHEea1zZOPAxWWQw" name="addController"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_TSHloLcHEea1zZOPAxWWQw" name="update"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_U1tfULcHEea1zZOPAxWWQw" name="quitView"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_XsqeULcHEea1zZOPAxWWQw" name="update"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_jKOt0LcHEea1zZOPAxWWQw" name="MenuPupil">
+        <generalization xmi:type="uml:Generalization" xmi:id="_kUTUQLcHEea1zZOPAxWWQw" general="_gbN0wLcFEea1zZOPAxWWQw"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_oUsAgLcHEea1zZOPAxWWQw" name="enterProject"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_qeoIgLcHEea1zZOPAxWWQw" name="logout"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_7YSNQLcHEea1zZOPAxWWQw" name="MenuPupil"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_-V7DELcHEea1zZOPAxWWQw" name="setupMernu" visibility="protected"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_ECar0LcIEea1zZOPAxWWQw" name="addActionListener"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_NrYxMLcIEea1zZOPAxWWQw" name="PupilView">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_W7iG4LcIEea1zZOPAxWWQw" name="ListSelectionModel" visibility="private"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_aCnzoLcIEea1zZOPAxWWQw" name="projectDescription" visibility="private"/>
+      </packagedElement>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_u6fAULGXEeal9KN5C32jpw" name="TextEditor">
-      <generalization xmi:type="uml:Generalization" xmi:id="_S3NtYLGYEeal9KN5C32jpw" general="__y8DEKTREeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_xA0asLGXEeal9KN5C32jpw" name="menu" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_yzw_ALGXEeal9KN5C32jpw" name="save" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_0pnGULGXEeal9KN5C32jpw" name="textArea" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_2zRhgLGXEeal9KN5C32jpw" name="configFields" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_7sBZILGXEeal9KN5C32jpw" name="TextEditor"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_9dEgALGXEeal9KN5C32jpw" name="setupTextEditor" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_ApSkYLGYEeal9KN5C32jpw" name="setupMenu" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_EyvtELGYEeal9KN5C32jpw" name="setupConfigPanel" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_IcxHwLGYEeal9KN5C32jpw" name="getInputComponents"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_MGb9ILGYEeal9KN5C32jpw" name="addController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_N1JhsLGYEeal9KN5C32jpw" name="getCode"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_Pq9z0LGYEeal9KN5C32jpw" name="update"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_RRzOwLGYEeal9KN5C32jpw" name="update"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_i6bZsLGVEeal9KN5C32jpw" name="CodeSortView">
-      <generalization xmi:type="uml:Generalization" xmi:id="_kCqXoLGWEeal9KN5C32jpw" general="__y8DEKTREeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_oDOfgLGVEeal9KN5C32jpw" name="dragDropList" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_uc3iILGVEeal9KN5C32jpw" name="saveDropList" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_ybJ8oLGVEeal9KN5C32jpw" name="dragDropModel" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_1IoPgLGVEeal9KN5C32jpw" name="saveDropModel" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_4eKn8LGVEeal9KN5C32jpw" name="enter" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_6YF-ALGVEeal9KN5C32jpw" name="enterProject" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_8ahIwLGVEeal9KN5C32jpw" name="logout" visibility="private"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_-aTPMLGVEeal9KN5C32jpw" name="saveButton" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_DL5V8LGWEeal9KN5C32jpw" name="CodeSortView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_F43SgLGWEeal9KN5C32jpw" name="setupCodeLists" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_IJzaYLGWEeal9KN5C32jpw" name="setupButtons" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_J3V6QLGWEeal9KN5C32jpw" name="setupMenu" visibility="private"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_USUEULGWEeal9KN5C32jpw" name="addController"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_XOMmoLGWEeal9KN5C32jpw" name="update"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_ZLQJMLGWEeal9KN5C32jpw" name="quitView"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_ax_dgLGWEeal9KN5C32jpw" name="update"/>
-    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_IeOasLcGEea1zZOPAxWWQw" name="teacher"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_352pwKSLEeamRviXg3S1Fg" name="Controller">
     <packagedElement xmi:type="uml:Class" xmi:id="_K1bsAKXWEeamRviXg3S1Fg" name="Controller" isAbstract="true">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_mjImgKX0EeamRviXg3S1Fg" name="model" visibility="protected" isStatic="true" type="_FRu0YKSNEeamRviXg3S1Fg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_qsTbUKX0EeamRviXg3S1Fg" name="view" type="__y8DEKTREeamRviXg3S1Fg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_qsTbUKX0EeamRviXg3S1Fg" name="view"/>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_xoCaAKXWEeamRviXg3S1Fg" name="login">
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_KaV2AKXXEeamRviXg3S1Fg" name="username">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EString"/>
@@ -540,15 +512,36 @@
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_EZkrQKwKEeaef6rkU0rGkw" name="View">
     <packageImport xmi:type="uml:PackageImport" xmi:id="_z0KiwKwKEeaef6rkU0rGkw" importedPackage="_sgVsoKwGEeaef6rkU0rGkw"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_pKU2wLcBEea1zZOPAxWWQw" name="teacher"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_xLbmcLcBEea1zZOPAxWWQw" name="pupil"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_FTCC0KwKEeaef6rkU0rGkw" name="Listener">
     <elementImport xmi:type="uml:ElementImport" xmi:id="_3KSxEKwKEeaef6rkU0rGkw" importedElement="_sgVsoKwGEeaef6rkU0rGkw"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interaction" xmi:id="_xow4cLC7Eea2LZs0kU_nWQ" name="Interaction2"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_KmKUYLcCEea1zZOPAxWWQw" name="generated"/>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aQWtoKXxEeamRviXg3S1Fg">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_aQcNMKXxEeamRviXg3S1Fg" source="http://www.eclipse.org/uml2/2.0.0/UML">
       <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
     </eAnnotations>
     <appliedProfile xmi:type="uml:Profile" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#ActionLanguage"/>
+  </profileApplication>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_Kp92ULcCEea1zZOPAxWWQw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KqCu0LcCEea1zZOPAxWWQw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/PapyrusJava/1#/"/>
+    </eAnnotations>
+    <appliedProfile xmi:type="uml:Profile" href="pathmap://PapyrusJava_PROFILES/PapyrusJava.profile.uml#_j9REUByGEduN1bTiWJ0lyw"/>
+  </profileApplication>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_KsJnoLcCEea1zZOPAxWWQw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KsLc0LcCEea1zZOPAxWWQw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/Codegen/1#/"/>
+    </eAnnotations>
+    <appliedProfile xmi:type="uml:Profile" href="pathmap://Codegen_PROFILES/Codegen.profile.uml#_fPDsIBa-EearhdjjJ6cVzQ"/>
+  </profileApplication>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_KsN5ELcCEea1zZOPAxWWQw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KsQVULcCEea1zZOPAxWWQw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/uml2/5.0.0/UML/Profile/Standard#/"/>
+    </eAnnotations>
+    <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
   </profileApplication>
 </uml:Model>
