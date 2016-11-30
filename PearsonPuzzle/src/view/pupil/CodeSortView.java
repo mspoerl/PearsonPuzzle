@@ -8,9 +8,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -29,10 +26,9 @@ import model.Model;
 public class CodeSortView extends JView {
 	private JList<String> dragDropList;
 	private JList<String> saveDropList;
-	private DefaultListModel dragDropModel;
-	private DefaultListModel saveDropModel;
+	private DefaultListModel <String> dragDropModel;
+	private DefaultListModel <String> saveDropModel;
 	private JButton enter;
-	private JButton saveButton;
 	public CodeSortView(Model model) {
 		super(model);
 		// Instanzierung der Variablen
@@ -41,7 +37,6 @@ public class CodeSortView extends JView {
 				dragDropList=new JList<String>(dragDropModel);
 				saveDropList=new JList<String>(saveDropModel);
 				enter = new JButton("Projekt öffnen");
-				saveButton = new JButton("Übernehmen");
 				setupCodeLists();
 				setupButtons();
 				// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
@@ -83,7 +78,7 @@ public class CodeSortView extends JView {
 			JPanel topPanel=new JPanel(new BorderLayout());
 			JButton compileButton=new JButton("Compile");
 			topPanel.add(compileButton,BorderLayout.LINE_START);
-			topPanel.add(saveButton, BorderLayout.LINE_END);
+			//topPanel.add(saveButton, BorderLayout.LINE_END);
 			mainPanel.add(topPanel,BorderLayout.PAGE_START);
 		}		
 		
@@ -94,9 +89,6 @@ public class CodeSortView extends JView {
 		public void addController(Controller controller){				
 			enter.addActionListener(controller);
 			enter.setActionCommand("openProject");
-			
-			saveButton.addActionListener(controller);
-			saveButton.setActionCommand("saveChanges");
 			
 			menu.addActionListener(controller);
 		}

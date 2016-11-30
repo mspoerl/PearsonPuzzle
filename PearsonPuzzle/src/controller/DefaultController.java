@@ -38,7 +38,7 @@ public class DefaultController extends Controller {
 			}
 		}
 		else if(e.getActionCommand().equals(DCCommand.editProject.toString())){
-			if(model.getProjectID()==null){
+			if(model.getProjectListID()==null){
 				view.allert("Bitte Projekt auswählen!");
 			}
 			else{
@@ -54,7 +54,7 @@ public class DefaultController extends Controller {
 			view.addController(this);
 		}
 		else if(e.getActionCommand().equals(DCCommand.openProject.toString()) ){
-			if(model.getProjectID()==null){
+			if(model.getProjectListID()==null){
 				view.allert("Bitte Projekt auswählen!");
 			}
 			else{

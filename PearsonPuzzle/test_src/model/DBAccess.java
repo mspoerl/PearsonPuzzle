@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.*;
 
 public class DBAccess {
@@ -70,8 +68,13 @@ public class DBAccess {
 	
 	@Test//(expected=IllegalArgumentException.class)
 	public void test_Tab_Tab() {
-		assertTrue(isEqual(tabString, "\t", tabString, 150));
+		assertTrue(isEqual(tabString, "", tabString, 150));
 	}
+	@Test//(expected=IllegalArgumentException.class)
+	public void test_NewLine_NewLine() {
+		assertTrue(isEqual(newLines, "", newLines, 150));
+	}
+	
 	@Test
 	public void test_Fancy() {
 		assertTrue(isEqual(fancyString, "2", fancyString, 150));
@@ -95,10 +98,10 @@ public class DBAccess {
 	 */
 	private boolean isEqual(final String code, final String split_String, final String projectname, final int linelength){
 		try {
-			db.saveProject(code.split(split_String),projectname , linelength);
+			db.saveProject(code.split(split_String),projectname , linelength, 0);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			fail("Problem beim Speichern");
+			e.printStackTrace();
 			}
 		
 		try {
@@ -109,8 +112,9 @@ public class DBAccess {
 				assertEquals(split[i],dbResult.get(i));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+
 			fail("Problem beim Holen der Daten");
+			e.printStackTrace();
 			}
 		return true;
 	}

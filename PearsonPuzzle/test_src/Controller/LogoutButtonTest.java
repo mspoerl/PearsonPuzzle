@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 
+import model.AccessGroup;
 import model.Model;
 
 import org.junit.*;
@@ -49,6 +50,7 @@ public class LogoutButtonTest {
 
 	@Test 
 	public void logout_LogoutPupilView(){
+		//model.setAccessGroup(AccessGroup.PUPIL);
 		JView view = new PupilView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
@@ -59,6 +61,7 @@ public class LogoutButtonTest {
 	}
 	@Test 
 	public void logout_CodeSortView(){
+		//model.setAccessGroup(AccessGroup.PUPIL);
 		JView view = new CodeSortView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
@@ -69,6 +72,7 @@ public class LogoutButtonTest {
 	}
 	@Test 
 	public void logout_TeacherView(){
+		//model.setAccessGroup(AccessGroup.TEACHER);
 		JView view = new TeacherView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
@@ -78,6 +82,7 @@ public class LogoutButtonTest {
 	}
 	@Test 
 	public void logout_TextEditorView(){
+		//model.setAccessGroup(AccessGroup.TEACHER);
 		JView view = new TextEditor(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();

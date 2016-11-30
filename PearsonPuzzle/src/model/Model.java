@@ -26,13 +26,13 @@ public class Model extends Observable {
 	private int tabSize;
 	private boolean randomMode;
 	private int grade;
-	private UserDBaccess userDBaccess;
+	private UserDBaccess usrDBaccess;
 	private AccessGroup accessGroup;
 
 	public Model() {
 		code = new Code();
 		try {
-			userDBaccess = new UserDBaccess();
+			usrDBaccess = new UserDBaccess();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,9 +103,9 @@ public class Model extends Observable {
 	 */
 	public AccessGroup getAccessGroup(String username, char[] password) {
 
-		if (userDBaccess.lookUpstudent(username, password)) {
+		if (usrDBaccess.lookUpstudent(username, password)) {
 			return AccessGroup.PUPIL;
-		} else if (userDBaccess.lookUpteacher(username, password)) {
+		} else if (usrDBaccess.lookUpteacher(username, password)) {
 			return AccessGroup.TEACHER;
 		} else
 			return AccessGroup.UNKNOWN;
@@ -131,7 +131,7 @@ public class Model extends Observable {
 		return projectList;
 	}
 
-	public Integer getProjectID() {
+	public Integer getProjectListID() {
 		return projectID;
 	}
 	public String getProjectName(){
@@ -182,7 +182,7 @@ public class Model extends Observable {
 		projectCode = new String(codeString);
 		String[] projectArray = projectCode.split("\n");
 		try {
-			userDBaccess.saveProject(projectArray, projectname, linelength);
+			usrDBaccess.saveProject(projectArray, projectname, linelength, 0);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -196,3 +196,216 @@ public class Model extends Observable {
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+public class Model extends Observable {
+	private String username;
+	private ArrayList<String> codeList;
+	private ArrayList<String> saveList;
+	private List<String> projectList;
+	private Integer projectListID;
+	// private String projectDescription;
+	private String projectCode;
+	private int tabSize;
+	private boolean randomMode;
+	private int grade;
+	private UserDBaccess userDBaccess;
+	private AccessGroup accessGroup;
+
+	public Model() {
+		try {
+			userDBaccess = new UserDBaccess();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setup();		
+		// Default Werte werden gesetzt
+		this.tabSize = 3;
+		this.randomMode = false;
+		this.grade = 0;
+			}
+	private void setup(){
+		this.codeList= fetchProject();
+		this.saveList= new ArrayList<String>();
+		for (Iterator<String> iterator = codeList.iterator(); iterator.hasNext();) {
+			saveList.add(new String());
+		}
+		this.projectList = fetchProjects();
+		
+		this.projectCode = new String(
+				" Zeile 1: Dies ist ein erstes Testprojekt \n \t \t Zeile 2: um zu sehen,\n \t Zeile 3: wie Java dies und die Zeilenumbrüche \n \t Zeile 4: darstellt");
+
+	}
+
+	public int getGrade() {
+		return grade;
+	}
+
+	public void setGrade(int grade) {
+		if (grade < 14 && grade > 5) {
+			this.grade = grade;
+		} else {
+			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
+		}
+	}
+
+	public void setTabSize(int tabWidth) {
+		this.tabSize = tabWidth;
+	}
+
+	public int getTabSize() {
+		return tabSize;
+	}
+
+	public void setRandomMode(boolean random) {
+		this.randomMode = random;
+	}
+
+	public boolean getRandomMode() {
+		return randomMode;
+	}
+
+	public void setSaveList(ArrayList<String> listModelToSave) {
+		saveList = listModelToSave;
+	}
+
+	private ArrayList<String> fetchProjects() {
+		String[] projects = { "Project1", "Project2", "Project3" };
+		ArrayList<String> projectList = new ArrayList<String>();
+		for (String line : projects) {
+			projectList.add(projectList.size(), line);
+		}
+		return projectList;
+	}
+	
+	private ArrayList<String> fetchProject(){
+		//try {
+		//	return userDBaccess.getProject("DefaultProjekt");
+		//} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			ArrayList<String> failure= new ArrayList<String>();
+			failure.add("Probleme beim Laden des Projekts.");
+			failure.add("Bitte nehmen Sie kontakt zum Systemadministrator auf.");
+			return failure;
+		//}
+	}
+
+	public void setPassword(char[] password) {
+		// if (isPasswordCorrect(password)) {
+		// }
+		// else{}
+		// //Zero out the possible password, for security.
+		// Arrays.fill(password, '0');
+	}
+
+	// TODO: in accessGroup auslagern
+	public AccessGroup getAccessGroup(String username, char[] password) {
+
+		if (userDBaccess.lookUpstudent(username, password)) {
+			return AccessGroup.PUPIL;
+		} else if (userDBaccess.lookUpteacher(username, password)) {
+			return AccessGroup.TEACHER;
+		} else
+			return AccessGroup.UNKNOWN;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public ArrayList<String> getCodeModel() {
+		return codeList;
+	}
+
+	public ArrayList<String> getSaveModel() {
+		return saveList;
+	}
+
+	public List<String> getProjects() {
+		return projectList;
+	}
+
+	public Integer getProjectListID() {
+		return projectListID;
+	}
+	public String getProjectName(){
+		if(projectListID!=null){
+			return projectList.get(projectListID);
+		}
+		return "";
+	}
+
+	public void setProject(Integer projectID) {
+		this.projectListID = projectID;
+	}
+
+	public String getProjectDescription() {
+		// TODO: Projektbeschreibung ergänzen
+		if(projectListID!=null)
+		{
+			return projectList.get(projectListID);
+		}
+		return "Leider keine Projektbeschreibung voranden";
+	}
+
+	public String getProjectCode() {
+		if(projectListID!=null){
+			return new String(projectCode);
+		}
+		return "";
+	}
+
+	public String[] getProjectCodeArray() {
+		String[] parts = projectCode.split("\n");
+		if (randomMode) {
+			String buffer;
+			for (int i = parts.length - 1; i > 0; i--) {
+				int randomInt = new java.util.Random().nextInt(i);
+				buffer = parts[randomInt];
+				parts[randomInt] = parts[i];
+				parts[i] = buffer;
+			}
+		}
+		return parts;
+	}
+
+	// Speicherung eines Projekts
+	public void setProjectCode(String codeString, String projectname,
+			int linelength) {
+		// TODO linelength maximum an puzzlestücke anpassen
+		projectCode = new String(codeString);
+		String[] projectArray = projectCode.split("\n");
+		try {
+			userDBaccess.saveProject(projectArray, projectname, linelength, 0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public void setAccessGroup(AccessGroup accessGroup) {
+		this.accessGroup=accessGroup;		
+	}
+	public AccessGroup getAccessGroup(){
+		return accessGroup;
+	}
+
+}
+*/
