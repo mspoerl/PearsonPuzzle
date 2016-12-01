@@ -82,11 +82,19 @@ public class Model extends Observable {
 	}
 
 	private List<String> fetchProjects() {
-		String[] projects = { "Project1", "Project2", "Project3" };
-		List<String> projectList = new ArrayList<String>();
-		for (String line : projects) {
-			projectList.add(projectList.size(), line);
+		String[] projects;
+		try {
+			projects = userDBaccess.getNamesofProjects();
+			List<String> projectList = new ArrayList<String>();
+			for (String line : projects) {
+				projectList.add(projectList.size(), line);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 		return projectList;
 	}
 

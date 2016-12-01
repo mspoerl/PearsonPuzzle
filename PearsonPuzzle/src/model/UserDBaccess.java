@@ -31,7 +31,7 @@ public class UserDBaccess {
 	   
 	  
 	   
-	   // Nutzername und Passwort Vergleich Schüler
+	   // Nutzername und Passwort Vergleich SchÃ¼ler
 	   public boolean lookUpstudent(String name, char[] password){
 		   try{	  
 			   Statement stmt = conn.createStatement();
@@ -88,12 +88,12 @@ public class UserDBaccess {
 			   rsS = stmt.executeQuery("SELECT * FROM students");
 		   }
 		   catch(SQLException e){
-			   // Hier wird abgehandelt, wenn was schief läuft
+			   // Hier wird abgehandelt, wenn was schief lÃ¤uft
 			   // bzw. wenn die Tabelle (noch) nicht existiert 
 			   try {
 				   stmt.executeUpdate("Drop Table students");
 			   } 
-			   catch (SQLException ex) { // schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
+			   catch (SQLException ex) { // schmeiÃŸt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
 			   }
 			   // create table 
 			   stmt.executeUpdate("Create table students (id int primary key, username varchar(30), password varchar(8) NOT NULL default 'student')");  
@@ -113,12 +113,12 @@ public class UserDBaccess {
 			   rsT = stmt.executeQuery("SELECT * FROM teachers");
 		   }
 		   catch(SQLException e){
-			   // Hier wird abgehandelt, wenn was schief läuft
+			   // Hier wird abgehandelt, wenn was schief lÃ¤uft
 			   // bzw. wenn die Tabelle (noch) nicht existiert 
 			   try {
 				   stmt.executeUpdate("Drop Table teachers");
 			   } 
-			   catch (SQLException ex){ // Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
+			   catch (SQLException ex){ // SchmeiÃŸt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
 			   }   
 			   // create table
 			   stmt.executeUpdate("CREATE TABLE teachers (id int primary key, username varchar(30), password varchar(8)  NOT NULL default 'teacher')");
@@ -141,7 +141,27 @@ public class UserDBaccess {
 
 	   public void saveProject(String[] codeString, String projectname, int linelength) throws SQLException{
 		   Statement stmt = conn.createStatement();
+		   
+		   
+		   // Projektnamen Tabelle
+		   try{
+			   stmt.executeUpdate("CREATE TABLE Projects ( Projectname varchar(40) UNIQUE)");
+		   }
+		   catch(Exception e){ //falls Tabelle bereits existiert
+			   }
+		   
+		   try{stmt.execute("INSERT INTO Projects VALUES ('"+projectname+"')");
+		   }
+		   catch(Exception e){// TODO Projektname bereits vorhanden
+		   }
+		   
+		   
+		   
+		   
 		   //XXX doppelte Tabellennamen besser handeln
+		   
+		   
+		   
 		   
 		   // Speichert normalen Code
 		   try{
@@ -230,21 +250,53 @@ public class UserDBaccess {
 	   }
 	   
 	   
-	   //-------------------------- Code aus Datenbank auslesen -------------------------------
+	   //-------------------------- Projekte aus Datenbank auslesen -------------------------------
 	   public ArrayList <String> getProject(String projectname) throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   
 		   ResultSet te = stmt.executeQuery("SELECT codeline FROM "+projectname);
 		   
 		   ArrayList<String> codeliste = new ArrayList<String>();
-		   String[] codeString;
+
 		   
 		   while (te.next()) { 
 			   codeliste.add(te.getString("codeline"));
 			     }
-		   codeString= codeliste.toArray(new String[0]);
+		   
+		   
+//		   String[] codeString;
+//		   codeString= codeliste.toArray(new String[0]);
 		   
 		   return codeliste;
+	   }
+	   
+	   //-------------------------- Projektnamen aus Datenbank auslesen -------------------------------
+	   public String[] getNamesofProjects() throws SQLException{
+		   Statement stmt = conn.createStatement();
+		   
+		   //Für ersten aufruf
+		   try{
+			   stmt.executeUpdate("CREATE TABLE Projects ( Projectname varchar(40) UNIQUE)");
+			   stmt.executeUpdate("INSERT INTO Projects values ('FirstTry')");
+		   }
+		   catch(Exception e){ //falls Tabelle bereits existiert
+			   }
+		   
+		   
+		   ResultSet te = stmt.executeQuery("SELECT Projectname FROM Projects");
+		   
+		   ArrayList<String> codeliste = new ArrayList<String>();
+
+		   
+		   while (te.next()) { 
+			   codeliste.add(te.getString("codeline"));
+			     }
+		   
+		   
+		   String[] codeString;
+		   codeString= codeliste.toArray(new String[0]);
+		   
+		   return codeString;
 	   }
 	   
 	}
