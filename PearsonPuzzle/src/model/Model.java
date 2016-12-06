@@ -174,7 +174,6 @@ public class Model extends Observable {
 	 * Neuer Projektname @param projectName
 	 * @param linelength
 	 */
-	
 	public boolean saveProject(String codeString, String projectName,int linelength) {
 		projectCode = new String(codeString);
 		
@@ -194,13 +193,19 @@ public class Model extends Observable {
 		this.fetchProjectCode();
 		return true;
 	}
+	
 	public void setAccessGroup(AccessGroup accessGroup) {
 		this.accessGroup=accessGroup;		
 	}
+	
 	public AccessGroup getAccessGroup(){
 		return accessGroup;
 	}
 
+	/**
+	 * Löscht das mit <b>projectID</b> selektierte Projekt <br>und löscht es aus der Datenbank <br>
+	 * Löschen_erfolgreich@return
+	 */
 	public boolean removeProject() {
 		if(userDBaccess.delete(projectList.get(projectID))){
 			this.selectProject(null);
@@ -210,12 +215,12 @@ public class Model extends Observable {
 		return false;
 	}
 	
-	
-	
-	
+	/**
+	 * Holt Liste mit Projekten aus Datenbank
+	 */
 	private void fetchProjects() {
 		List <String> projects;
-		projects = userDBaccess.getProjects();
+		projects = userDBaccess.getProjects(grade);
 		List<String> projectList = new ArrayList<String>();
 		projectVector = new Vector<String>();
 		for (String line : projects) {
@@ -224,6 +229,10 @@ public class Model extends Observable {
 		}		
 		this.projectList=projectList;
 	}
+	
+	/**
+	 * Holt Projektbeschreibung <br><u>des aktuell in der Liste selektieren Projekts </u> <br> aus der Datenbank
+	 */
 	private void fetchProjectDescription(){
 		if(projectID!=null){
 			try{
@@ -237,6 +246,10 @@ public class Model extends Observable {
 			this.projectDescription = new String();
 		}
 	}
+	
+	/**
+	 * Holt Projekt-Code <br> <u>des aktuell in der Liste selektierten Projekts </u> <br> aus der Datenbank
+	 */
 	private void fetchProjectCode(){
 		if(projectID!=null){
 			if(projectID!=null){
@@ -257,16 +270,25 @@ public class Model extends Observable {
 			}
 		}
 	}
+	
+	/**
+	 * Model wird mit in Datenbank vorhandenen Werten gefüllt. <br>
+	 * Ist Abhängig vom unter <b>projectID</b> gespeicherten Listeneintag. 
+	 */
 	public void update(){
 		this.fetchProjects();
 		this.fetchProjectCode();
 		this.fetchProjectDescription();
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isResetDB() {
 		return resetDB;
 	}
-
+	
 	public void setResetDB(boolean resetDB) {
 		this.resetDB = resetDB;
 		setChanged();

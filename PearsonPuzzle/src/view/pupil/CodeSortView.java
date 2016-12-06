@@ -23,6 +23,12 @@ import Listener.ToSaveTransferHandler;
 
 import model.Model;
 
+/**
+ * Drag and Drop Liste für den Schüler. 
+ * Hier kann gepuzzlet werden!
+ * 
+ * @author workspace
+ */
 public class CodeSortView extends JView {
 	private JList<String> dragDropList;
 	private JList<String> saveDropList;

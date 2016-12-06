@@ -22,6 +22,10 @@ import view.JView;
 import controller.Controller;
 import model.Model;
 
+/**
+ * View, der dem Lehrer das grafische Bearbeiten von Proekten ermöglicht.
+ * @author workspace
+ */
 public class TextEditor extends JView{
 	
 	private JButton save;

@@ -2,6 +2,11 @@ package view;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Klasse dient dazu, mögliche Allerts zu definieren und dem Nutzer <br>
+ * Warnungen, Fehler auszugeben und eventuell um Bestätigung zu bitten.
+ * @author workspace
+ */
 public enum Allert {
 	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset;
 	

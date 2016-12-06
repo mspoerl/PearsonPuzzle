@@ -69,9 +69,7 @@ public class UserDBaccess {
 		   } catch(Exception e){
 			   		return false;}
 	   }
-	   
 
-	// ------------------------ Tabellen in Datenbank anlegen (hardcoded) -------------------------------
 
 	   private void normalDbUsage() throws SQLException {
 		   Statement stmt = conn.createStatement();
@@ -123,9 +121,16 @@ public class UserDBaccess {
 	   }
 	   
 	   
-	// ------------------------ Projekt in Datenbank einspeichern -------------------------------
+	 /**
+	 * Speichert das übergebene Projekt in der Datenbank.
+	 * @param projectname
+	 * @param codeString
+	 * @param linelength
+	 * @param tab
+	 */
 	   
 	   public void saveProject(String projectname, String codeString, int linelength, int tab) {
+		   // TODO: Linelength umdefinieren (wird nicht zwingend benötigt, übergebene Integer kann aber evtl. Verwendung finden
 		   if(linelength < 1){
 			   linelength = MIN_line_length_Code;
 		   }
@@ -177,6 +182,11 @@ public class UserDBaccess {
 		   }
 	   }
 	   
+	   /**
+	    * Projekt umbenennen (wenn der Projektname geändert werden soll)<br>
+	    * Alter Projektname@param oldName
+	    * Neuer Projektname@param newName
+	    */
 	   public void renameProject(String oldName, String newName){
 		   Statement stmt;
 		   try {
@@ -188,7 +198,16 @@ public class UserDBaccess {
 		   }		   
 	   }
 	
-
+	   /**
+	    * Speichert das übergebene Projekt 
+	    * #depricated
+	    * 
+	    * @param codeString
+	    * @param projectname
+	    * @param linelength
+	    * @param projectID
+	    * @throws SQLException
+	    */
 	   public void saveProject(String[] codeString, String projectname, int linelength, final int projectID) throws SQLException{
 		   if(linelength < 1){
 			   linelength =MIN_line_length_Code;
@@ -276,7 +295,14 @@ public class UserDBaccess {
 		   // return codeString;
 		   return codeliste;
 	   }
-	   public ArrayList <String> getProjects() {
+	   
+	   /**
+	    * Holt sich eine Projektliste aus der Datenbank.<br>
+	    * Es könnten Projekte einer bestimmten Klassenstufe <br>
+	    * abgefragt werden (müssen aber nicht).
+	    * ProjektListe@return
+	    */
+	   public ArrayList <String> getProjects(int grade) {
 		   Statement stmt;
 		   ResultSet te;
 		   try {
@@ -291,7 +317,7 @@ public class UserDBaccess {
 		   } catch (SQLException e1) {
 			   try{
 				   this.createTable_Projects();
-				   return this.getProjects();
+				   return this.getProjects(grade);
 			   } catch(SQLException e2){
 				   e2.printStackTrace();
 			   }
@@ -301,6 +327,13 @@ public class UserDBaccess {
 		   // return codeString;
 		   }
 	   	}
+	   
+	   /**
+	    * Liefert zum übergenenen Projektnamen die Projektbeschreibung.
+	    * Projektname@param projectname
+	    * Beschreibung@return
+	    * @throws SQLException
+	    */
 	   public String getProjectDescription(String projectname) throws SQLException{
 		   Statement stmt;
 		   ResultSet te;
@@ -325,6 +358,12 @@ public class UserDBaccess {
 				0,
 				0);
 	   }
+	   
+	   /**
+	    * Schülertabelle wird verworfen, falls vorhanden und neu kreiert.<br>
+	    * <b>!!!ACHTUNG!!!</b> Löscht eventuell vorhanenden Daten!
+	    * @throws SQLException
+	    */
 	   private void createTable_Students() throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   try{stmt.executeUpdate("DROP TABLE students");}
@@ -337,6 +376,12 @@ public class UserDBaccess {
 		   stmt.executeUpdate("insert into students values (1,'tom','tom')");
 		   stmt.executeUpdate("insert into students values (2,'peter','peter')");
 	   }
+	   
+	   /**
+	    * Lehrertabelle wird verworfen, falls vorhanden und neu kreiert.<br>
+	    * <b>!!!ACHTUNG!!!</b> Löscht eventuell vorhanenden Daten!
+	    * @throws SQLException
+	    */
 	   private void createTable_Teachers() throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   try{stmt.executeUpdate("DROP TABLE teachers");}
@@ -350,12 +395,21 @@ public class UserDBaccess {
 		   stmt.executeUpdate("insert into teachers values (3,'TUM','TUM')");
 	   }
 	   
+	   /**
+	    * <b>!!!ACHTUNG!!!</b> Löscht ALLE vorhanenden Daten!
+	    * @throws SQLException
+	    */
 	   public void resetAll() throws SQLException{
 		   createTable_Projects();
 		   createTable_Students();
 		   createTable_Teachers();
 	   }
 
+	   /**
+	    * Löscht das angegebene Projekt.
+	    * @param projectname
+	    * @return
+	    */
 	   public boolean delete(String projectname) {
 		   try{
 			   Statement stmt = conn.createStatement();
@@ -367,6 +421,11 @@ public class UserDBaccess {
 		   }
 	   }
 
+	   /**
+	    * Gibt Aufschluss, ob ein Projekt mit diesem Namen existiert. 
+	    * @param projectName
+	    * @return
+	    */
 	   public boolean projectExists(String projectName) {
 			try{
 				Statement stmt = conn.createStatement();

@@ -19,10 +19,9 @@ import controller.DCCommand;
 import model.Model;
 
 /**
- * Definiert die Lehrer-Sicht der grafischen Oberfläche
+ * Definiert die Projektübersicht aus Lehrerperspektive
  * 
  * @author workspace
- *
  */
 public class TeacherView extends JView{
 	private ListSelectionModel listSelectionModel;

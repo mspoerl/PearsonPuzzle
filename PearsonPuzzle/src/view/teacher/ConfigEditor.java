@@ -11,7 +11,10 @@ import controller.DCCommand;
 
 import model.Model;
 import view.JView;
-
+/**
+ * View, der den Lehrer grundsätzliche Einstellungen treffen lässt.
+ * @author workspace
+ */
 public class ConfigEditor extends JView{
 
 	JCheckBox dbReset;

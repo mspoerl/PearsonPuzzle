@@ -12,10 +12,12 @@ import view.Menu;
 import controller.Controller;
 import controller.DCCommand;
 
+/**
+ * Menü in der Lehrerperspektive
+ * 
+ * @author workspace
+ */
 public class MenuTeacher extends Menu{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private List <JMenuItem> menuItems;
 	

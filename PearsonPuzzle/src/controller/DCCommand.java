@@ -1,6 +1,11 @@
 package controller;
 
-
+/**
+ * Definiert globale Kommandos für ActionEvents u.Ä.<br>
+ * (über deren lokale Wohldefiniertheit der Controller entscheidet)
+ * @author workspace
+ *
+ */
 public enum DCCommand {
 	submitPassword, editProject, newProject, openProject, projectList, saveChanges, saveProject, logout, deleteProject, admin, resetDB, setConfig;
 	

@@ -22,7 +22,6 @@ import view.teacher.TextEditor;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
- * 
  * @author workspace
  */
 public class DefaultController extends Controller {
@@ -198,12 +197,13 @@ public class DefaultController extends Controller {
 	}
 	
 	/**
-	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert
+	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert.
 	 * @param <ListSelectionModel>
 	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		
+		// ----- Verhalten der Drag and Drop Liste (view.pupil.CodeSort
 		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
         if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
         } 
@@ -220,7 +220,11 @@ public class DefaultController extends Controller {
         }
 	}
 
+	/**
+	 * Handelt Checkboxen.
+	 */
 	public void itemStateChanged(ItemEvent e) {
+		// ----- Reset Knopf in: view.teacher.ConfigEditor
 		if(((AbstractButton) e.getItem()).getActionCommand()==DCCommand.resetDB.toString()){
 			if(e.getStateChange() == ItemEvent.SELECTED
 				&& !model.isResetDB()){

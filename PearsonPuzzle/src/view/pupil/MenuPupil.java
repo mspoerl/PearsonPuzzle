@@ -8,8 +8,9 @@ import controller.Controller;
 import view.Menu;
 
 public class MenuPupil extends Menu{
+	
 	/**
-	 * 
+	 * Definiert das Menü aus Schülerperspektive.
 	 */
 	private static final long serialVersionUID = 1L;
 	JMenuItem enterProject;
