@@ -21,34 +21,48 @@ public class randomKlickTest {
 	
 	
 	@Test
-	public void randomKlicktest() {
+	public void randomKlicktestPupil() {
+		randomSwingKlick(AccessGroup.PUPIL);
+		
+	}
+	@Test
+	public void randomKlicktestTeacher() {
+		randomSwingKlick(AccessGroup.TEACHER);
+	}
+	@Test
+	public void randomKlicktestUnknown(){
+		randomSwingKlick(AccessGroup.UNKNOWN);
+	}
+	
+	private void randomSwingKlick(final AccessGroup accessGroup){
+		final int numberOfKlicks = 20;
+		// ----- Array mit möglichen Kommandos wird erstellt
 		ArrayList <String> commandList = new ArrayList<String>();
 		for(DCCommand command : DCCommand.values()){
 			commandList.add(command.toString());
 		}
-		for(int i=0; i<20;i++){
+		for(int i=0; i<numberOfKlicks;i++){
 			int randomInt = new java.util.Random().nextInt(commandList.size());
 			Model model = new Model();
-			model.setAccessGroup(AccessGroup.PUPIL);
+			model.setAccessGroup(accessGroup);
 			JView view = new PupilView(model);
-			Controller controller = new DefaultController(model, view);
+			Controller controller = new DefaultController(model, view); 
 			JButton testButton = new JButton();
 			ActionEvent e = new ActionEvent(testButton, 1, commandList.get(randomInt));
+			// ----- Es wird versucht zu klicken.
 			try{
 				controller.actionPerformed(e);
 			}
 			catch(Exception ex){
 				ex.printStackTrace();
-				fail("Fehler beim Ausführen von: "+ commandList.get(randomInt));
+				fail("Fehler bei Befehl "+commandList.get(randomInt)+"in View "+view.getClass().getName());
 			}
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				fail("Konnte Thread nicht pausieren");
 			}
-			//view.exit();
+			// Wenn Allert erscheint, 
 		}
 	}
-
 }

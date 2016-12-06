@@ -31,7 +31,8 @@ public class PupilView extends JView{
 		enter = new JButton("Projekt öffnen");
 		saveButton = new JButton("Übernehmen");	
 		// Bei Konstruktion wird Ansicht "Projektliste" aufgerufen
-		menu = new MenuPupil(frame);
+		menu = new MenuPupil();
+		this.addMenuToFrame(menu);
 		setupProjectList();
 	}
 	

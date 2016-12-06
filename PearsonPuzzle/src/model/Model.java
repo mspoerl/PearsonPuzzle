@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Vector;
 
 /**
  * Klasse dient dazu, alle für die Benutzer notwendigen Daten einzulesen, zu
@@ -16,37 +17,40 @@ import java.util.Observable;
 
 public class Model extends Observable {
 	private String username;
+	
 	private Code code;
 	private ArrayList<String> codeList;
 	private ArrayList<String> saveList;
-	private List<String> projectList;
-	private Integer projectID;
-	// private String projectDescription;
+	private String projectDescription;
 	private String projectCode;
+	
+	private List<String> projectList;
+	private Vector<String> projectVector;
+	private Integer projectID;
 	private int tabSize;
 	private boolean randomMode;
+	private boolean resetDB;
 	private int grade;
-	private UserDBaccess usrDBaccess;
+	private UserDBaccess userDBaccess;
 	private AccessGroup accessGroup;
+	
 
 	public Model() {
 		code = new Code();
 		try {
-			usrDBaccess = new UserDBaccess();
+			userDBaccess = new UserDBaccess();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(e.getSQLState().equals("XJ040"))
+				// TODO Ausgabe, dass bereits eine Programminstanz gestartet wurde
+				System.out.println("Nichts wie raus hier!!!!\n");
+			else
+				e.printStackTrace();
 		}
-		this.codeList = code.getCodeList();
-		this.saveList = code.getSaveList();
-		this.projectList = fetchProjects();
-		
+		this.update();
 		// Default Werte werden gesetzt
 		this.tabSize = 3;
-		this.randomMode = false;
+		this.randomMode = true;
 		this.grade = 0;
-		projectCode = new String(
-				" Zeile 1: Dies ist ein erstes Testprojekt \n \t \t Zeile 2: um zu sehen,\n \t Zeile 3: wie Java dies und die Zeilenumbrüche \n \t Zeile 4: darstellt");
 	}
 
 	public int getGrade() {
@@ -81,31 +85,15 @@ public class Model extends Observable {
 		saveList = listModelToSave;
 	}
 
-	private List<String> fetchProjects() {
-		String[] projects = { "Project1", "Project2", "Project3" };
-		List<String> projectList = new ArrayList<String>();
-		for (String line : projects) {
-			projectList.add(projectList.size(), line);
-		}
-		return projectList;
-	}
-
-	public void setPassword(char[] password) {
-		// if (isPasswordCorrect(password)) {
-		// }
-		// else{}
-		// //Zero out the possible password, for security.
-		// Arrays.fill(password, '0');
-	}
-
+	
+	
 	/*
 	 * TODO: in accessGroup auslagern
 	 */
 	public AccessGroup getAccessGroup(String username, char[] password) {
-
-		if (usrDBaccess.lookUpstudent(username, password)) {
+		if (userDBaccess.lookUpstudent(username, password)) {
 			return AccessGroup.PUPIL;
-		} else if (usrDBaccess.lookUpteacher(username, password)) {
+		} else if (userDBaccess.lookUpteacher(username, password)) {
 			return AccessGroup.TEACHER;
 		} else
 			return AccessGroup.UNKNOWN;
@@ -130,38 +118,42 @@ public class Model extends Observable {
 	public List<String> getProjects() {
 		return projectList;
 	}
+	public Vector<String> getProjectVector(){
+		return projectVector;
+	}
 
 	public Integer getProjectListID() {
 		return projectID;
 	}
+	
 	public String getProjectName(){
 		if(projectID!=null){
 			return projectList.get(projectID);
 		}
-		return "";
+		return new String();
 	}
 
-	public void setProject(Integer projectID) {
+	public void selectProject(Integer projectID) {
 		this.projectID = projectID;
+		this.fetchProjectCode();
+		this.fetchProjectDescription();
 	}
 
 	public String getProjectDescription() {
-		// TODO: Projektbeschreibung ergänzen
-		if(projectID!=null)
-		{
-			return projectList.get(projectID);
+		if(projectID!=null){
+		return projectDescription;
 		}
-		return "Leider keine Projektbeschreibung voranden";
+		else return null;
 	}
 
 	public String getProjectCode() {
 		if(projectID!=null){
-			return new String(projectCode);
+			return projectCode;
 		}
-		return "";
+		else return new String();
 	}
 
-	public String[] getProjectCodeArray() {
+	private String[] getRandomCode() {
 		String[] parts = projectCode.split("\n");
 		if (randomMode) {
 			String buffer;
@@ -175,17 +167,32 @@ public class Model extends Observable {
 		return parts;
 	}
 
-	// Speicherung eines Projekts
-	public void setProjectCode(String codeString, String projectname,
-			int linelength) {
-		// TODO linelength maximum an puzzlestücke anpassen
+	/**
+	 * Speichert das Projekt. Für den Fall, dass das Projekt umbenannt wurde, <br>
+	 * wird projectName und der gewählte Eintrag ind projectList auf Ungleichheit geprüft.
+	 * Neuer Codeinhalt @param codeString
+	 * Neuer Projektname @param projectName
+	 * @param linelength
+	 */
+	
+	public boolean saveProject(String codeString, String projectName,int linelength) {
 		projectCode = new String(codeString);
-		String[] projectArray = projectCode.split("\n");
-		try {
-			usrDBaccess.saveProject(projectArray, projectname, linelength, 0);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		
+		// ---- Wenn neues Projekt, prüfen, ob bereits ein solches Existiert
+		if(projectID==null){
+			if( userDBaccess.projectExists(projectName)){
+				return false;
+			}
 		}
+		// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
+		else if(!projectName.equals(projectList.get(projectID))){
+			userDBaccess.renameProject(projectList.get(projectID), projectName);
+		}
+		// ----- Projekt speichern
+		userDBaccess.saveProject(projectName, codeString, 0, 0);
+		this.fetchProjects();
+		this.fetchProjectCode();
+		return true;
 	}
 	public void setAccessGroup(AccessGroup accessGroup) {
 		this.accessGroup=accessGroup;		
@@ -194,21 +201,89 @@ public class Model extends Observable {
 		return accessGroup;
 	}
 
+	public boolean removeProject() {
+		if(userDBaccess.delete(projectList.get(projectID))){
+			this.selectProject(null);
+			this.update();
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	
+	private void fetchProjects() {
+		List <String> projects;
+		projects = userDBaccess.getProjects();
+		List<String> projectList = new ArrayList<String>();
+		projectVector = new Vector<String>();
+		for (String line : projects) {
+			projectList.add(projectList.size(), line);
+			projectVector.add(line);
+		}		
+		this.projectList=projectList;
+	}
+	private void fetchProjectDescription(){
+		if(projectID!=null){
+			try{
+				this.projectDescription = userDBaccess.getProjectDescription(projectList.get(projectID));
+				}
+			catch(SQLException e){
+				this.projectDescription="Noch keine Beschreibung vorhanden";
+				}
+		}
+		else{
+			this.projectDescription = new String();
+		}
+	}
+	private void fetchProjectCode(){
+		if(projectID!=null){
+			if(projectID!=null){
+			try {
+				this.projectCode = userDBaccess.getCode(projectList.get(projectID));
+				String[] stringField = this.getRandomCode();
+				this.codeList = new ArrayList<String>();
+				this.saveList = new ArrayList<String>();
+				for(String line: stringField){
+					codeList.add(line);
+					saveList.add(new String());
+				}		
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			}
+			else{
+			}
+		}
+	}
+	public void update(){
+		this.fetchProjects();
+		this.fetchProjectCode();
+		this.fetchProjectDescription();
+	}
+
+	public boolean isResetDB() {
+		return resetDB;
+	}
+
+	public void setResetDB(boolean resetDB) {
+		this.resetDB = resetDB;
+		setChanged();
+		notifyObservers();
+	}
+
+	public void updateConfig() {
+		if(isResetDB()){
+			try {
+				userDBaccess.resetAll();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

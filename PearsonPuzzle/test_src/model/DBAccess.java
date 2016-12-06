@@ -9,21 +9,80 @@ import org.junit.*;
 public class DBAccess {
 
 	UserDBaccess db;
+	// TODO: null testen
 	private final static String normalString ="r2d2r2d2r2d2r2d";
 	private final static String emptyString="";
+	private final static String noString=null;
 	private final static String tabString= "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 	private final static String newLines = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 	private final static String fancyString =getFancyString();
+	private ArrayList <String> stringList;
 		
 	@Before
 	public void initModel(){
+		stringList = new ArrayList<String>();
+		stringList.add(normalString);
+		stringList.add(emptyString);
+		stringList.add(tabString);
+		stringList.add(newLines);
+		stringList.add(fancyString);
+		stringList.add(null);
 		try {
 			db = new UserDBaccess();
 		} catch (SQLException e) {
-			fail("Problem beim erstellen oder öffnen der Datenbank");
+			fail("Problem beim Erstellen oder Öffnen der Datenbank");
 		}
 	}
 	
+	@After
+	public void clear(){
+		for(String projectName : stringList){
+			db.delete(projectName);
+		}
+		db.delete(fancyString.substring(0, UserDBaccess.getLength_ProjectName()-1));
+	}
+	
+	private void saveProject(final String projectName, final String codeString, final int linelength){
+		// TODO: Testfehler sauber definieren
+		db.saveProject(projectName, codeString, linelength, 0);
+		try {
+			assertEquals(db.getCode(projectName),codeString);
+		} catch (SQLException e) {
+			fail("Problem nicht spezifiziert");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void saveProject_Test() {
+		for(String projectName : stringList){
+			for(String codeString : stringList){
+				db.saveProject(projectName, codeString, 0, 0);
+				System.out.println(projectName);
+				try{
+				if(projectName!= null && projectName.length()>UserDBaccess.getLength_ProjectName())
+					if(codeString==null)
+						assertNotEquals(null, db.getCode(fancyString.substring(0, UserDBaccess.getLength_ProjectName()-1)));
+					else
+						assertEquals(codeString, db.getCode(fancyString.substring(0, UserDBaccess.getLength_ProjectName()-1)));
+				else if(codeString==null)
+					assertNotEquals(null, db.getCode(projectName));
+				else
+					assertEquals(codeString, db.getCode(projectName));
+					}
+				catch(SQLException e){
+					if(projectName==null)
+						continue;
+					if(projectName.equals(""))
+						continue;
+					fail("Problem beim vergleichen von "+codeString+"... in "+projectName+"...");
+					e.printStackTrace();
+					}
+			}
+		}	
+	}
+	/*
 	@Test 
 	public void multiThread(){
 		try {
@@ -87,7 +146,7 @@ public class DBAccess {
 	public void test_Fancy_Normal() {
 		assertTrue(isEqual(fancyString, "", normalString, 150));
 	}
-	
+	*/
 	/**
 	 * Methode, um Eingabe und Ausgabe der Datenbank auf Gleichheit zu prüfen.
 	 * @param code
@@ -103,10 +162,10 @@ public class DBAccess {
 			fail("Problem beim Speichern");
 			e.printStackTrace();
 			}
-		
 		try {
 			String[] split=code.split(split_String);
-			ArrayList<String> dbResult = db.getProject(projectname);
+			// FIXME muss geändert werden (getCodeList is depricated)
+			ArrayList<String> dbResult = db.getCodeList(projectname);
 			assertEquals(split.length, dbResult.size());
 			for(int i=0; i<split.length; i++){
 				assertEquals(split[i],dbResult.get(i));
@@ -118,6 +177,8 @@ public class DBAccess {
 			}
 		return true;
 	}
+	
+	
 	
 	/**
 	 * String mit allen möglichen ASCI Zeichen @return

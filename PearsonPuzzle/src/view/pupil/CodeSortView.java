@@ -32,16 +32,17 @@ public class CodeSortView extends JView {
 	public CodeSortView(Model model) {
 		super(model);
 		// Instanzierung der Variablen
-				dragDropModel=makeDefaultListModel(model.getProjectCodeArray());
+				dragDropModel=makeDefaultListModel(model.getCodeModel());
 				saveDropModel=makeDefaultListModel(model.getSaveModel());
 				dragDropList=new JList<String>(dragDropModel);
 				saveDropList=new JList<String>(saveDropModel);
 				enter = new JButton("Projekt öffnen");
-				setupCodeLists();
-				setupButtons();
 				// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
 				mainPanel.add(new JTextField("Hier erfolgt eine möglichst präzise Arbeitsanweisung für den Schüler"),BorderLayout.PAGE_END);
-				menu=new MenuPupil(frame);
+				menu=new MenuPupil();
+				this.addMenuToFrame(menu);
+				setupCodeLists();
+				setupButtons();
 				draw();
 		// TODO Auto-generated constructor stub
 	}
@@ -54,22 +55,19 @@ public class CodeSortView extends JView {
 			saveDropList.setDropMode(DropMode.ON);
 			saveDropList.setFixedCellHeight(20);
 			dragDropList.setFixedCellHeight(20);
-			saveDropList.setFixedCellWidth(350);
-			dragDropList.setFixedCellWidth(350);
+			
 			// TODO: In den offiziellen Controller auslagern
 			dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList));
 			saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY));
 			JScrollPane scrollPanel_sDL = new JScrollPane(saveDropList);
 			JScrollPane scrollPanel_dDL = new JScrollPane(dragDropList);
-			scrollPanel_sDL.setVerticalScrollBarPolicy(
-			                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPanel_sDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPanel_sDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scrollPanel_sDL.setPreferredSize(new Dimension(350,300));
+			scrollPanel_sDL.setPreferredSize(new Dimension(360,300));
 			mainPanel.add(scrollPanel_sDL, BorderLayout.LINE_START);
-			scrollPanel_dDL.setVerticalScrollBarPolicy(
-	                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPanel_dDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPanel_dDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scrollPanel_dDL.setPreferredSize(new Dimension(350,300));
+			scrollPanel_dDL.setPreferredSize(new Dimension(360,300));
 			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);			
 		}
 		
@@ -100,13 +98,8 @@ public class CodeSortView extends JView {
 	}
 
 	@Override
-	public void quitView() {
-		mainPanel.removeAll();		
-	}
-
-	@Override
 	public void update() {
-		dragDropModel=makeDefaultListModel(model.getProjectCodeArray());
+		dragDropModel=makeDefaultListModel(model.getCodeModel());
 		saveDropModel=makeDefaultListModel(model.getSaveModel());
 		dragDropList=new JList<String>(dragDropModel);
 		saveDropList=new JList<String>(saveDropModel);
