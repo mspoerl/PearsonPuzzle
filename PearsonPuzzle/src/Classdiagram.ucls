@@ -56,8 +56,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <package id="8" language="java" name="model" project="PearsonPuzzle" file="/PearsonPuzzle/src/model" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <package id="8" language="java" name="Model_Test" project="PearsonPuzzle" file="/PearsonPuzzle/test_src/Model_Test" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="844" width="683" x="10" y="674"/>    
     <display autosize="false" stereotype="true" sort-features="false" accessors="true"/>  
   </package>  

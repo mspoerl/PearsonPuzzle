@@ -289,7 +289,7 @@ public class UserDBaccess {
 
 		   
 		   while (te.next()) { 
-			   codeliste.add(te.getString("codeline"));
+			   codeliste.add(te.getString("Projectname"));
 			     }
 		   
 		   

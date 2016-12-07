@@ -1,4 +1,4 @@
-package model;
+package Model_Test;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.*;
+
+import model.UserDBaccess;
 
 public class DBAccess {
 
