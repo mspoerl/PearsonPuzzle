@@ -16,12 +16,14 @@ import javax.swing.TransferHandler;
  *
  */
 public class FromTransferHandler extends TransferHandler {
-	JList dragJList;
-	DefaultListModel dragDList;
+	private JList dragJList;
+	private DefaultListModel dragDList;
+	private boolean removeElementAfterAction;
 	//DefaultListModel from;
-	public FromTransferHandler(DefaultListModel dragDList, JList dragJList){
+	public FromTransferHandler(DefaultListModel dragDList, JList dragJList, boolean removeElementAfter){
 		this.dragDList=dragDList;
 		this.dragJList=dragJList;
+		this.removeElementAfterAction=removeElementAfter;
 	}
 	
     public int getSourceActions(JComponent comp) {
@@ -39,9 +41,10 @@ public class FromTransferHandler extends TransferHandler {
     
     public void exportDone(JComponent comp, Transferable trans, int action) {
         if (action != MOVE) {
-        	
+        	if(removeElementAfterAction)
+        		dragDList.removeElementAt(index);
+        	dragJList.clearSelection();
         	return;
         }
-        dragDList.removeElementAt(index);
     }
 }

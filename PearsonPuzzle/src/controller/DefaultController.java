@@ -1,14 +1,15 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
+import javax.swing.event.ListSelectionEvent;
+
 import java.util.ArrayList;
 
-import javax.swing.AbstractButton;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.*;
+
 import model.AccessGroup;
 import model.Model;
 import view.Allert;
@@ -17,6 +18,7 @@ import view.JView;
 import view.pupil.CodeSortView;
 import view.pupil.PupilView;
 import view.teacher.ConfigEditor;
+import view.teacher.ProjectConfiguration;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 /**
@@ -31,25 +33,27 @@ public class DefaultController extends Controller {
 		view.setController(this);
 	}
 	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// !!!ACHTUNG!!! hier wird eine Exception geworfen, falls zu diesem Action Event kein Kommando existiert!
+		act(DCCommand.valueOf(e.getActionCommand()));
+	}
+
 	/**
 	 * Legt fest, was bei einem Action Event (z.B. Button drücken) passiert
 	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		act(DCCommand.valueOf(e.getActionCommand()));
-	}
 	private void act(DCCommand cmd){
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
 		if(view.getClass().equals(TextEditor.class)  
-				&& cmd!=DCCommand.saveProject){
-			// FIXME: Nur, wenn Nutzer Projekt geändert hat, soll Allert ausgegeben werden
+				&& cmd!=DCCommand.saveProject
+				&& model.hasChanged()){
 			Integer allert=view.showMessage(Allert.notSaved);
-			if(allert==JOptionPane.YES_OPTION){
+			if(allert==JOptionPane.YES_OPTION)
 				this.act(DCCommand.saveProject);
-			}
-			else if(allert==JOptionPane.CANCEL_OPTION){
+			else if(allert==JOptionPane.NO_OPTION)
+				model.fetchAll();				
+			else if(allert==JOptionPane.CANCEL_OPTION)
 				return;
-			}
 		}
 		switch(cmd){
 			case submitPassword:
@@ -101,7 +105,7 @@ public class DefaultController extends Controller {
 				}
 				break;
 			case saveChanges:
-				model.setSaveList(model.getCodeModel());
+				model.setSaveList(model.getCodeList());
 				view.update();
 				break;
 			case logout:
@@ -129,12 +133,11 @@ public class DefaultController extends Controller {
 					else{
 						
 						// ---- Es wird versucht das Projekt zu speichern, schlägt dies fehl, so existiert bereits ein Projekt mit gleichem Namen
-						if(model.saveProject(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(),150))
+						if(model.saveProject(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(), ((TextEditor)view).getProjectDescription(),150))
 						{
 							ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
 							model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
 							model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
-							// TODO: Test, ob erfolgreich gespeichert wurde
 							view.showMessage(Allert.projectSaved);
 						}
 						else{
@@ -164,6 +167,14 @@ public class DefaultController extends Controller {
 				if(model.getAccessGroup()==AccessGroup.TEACHER){
 					model.updateConfig();
 				}
+				break;
+			case configureProject:
+				if(model.getAccessGroup()==AccessGroup.TEACHER){
+					view.quitView();
+					this.view = new ProjectConfiguration(model);
+					view.addController(this);
+				}
+				break;
 			default:
 				break;				
 		}
@@ -202,22 +213,38 @@ public class DefaultController extends Controller {
 	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		
-		// ----- Verhalten der Drag and Drop Liste (view.pupil.CodeSort
-		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-        if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
-        } 
-        else {
-            // Find out which indexes are selected.
-            int minIndex = lsm.getMinSelectionIndex();
-            int maxIndex = lsm.getMaxSelectionIndex();
-            for (int i = minIndex; i <= maxIndex; i++) {
-                if (lsm.isSelectedIndex(i)) {
-                    model.selectProject(i);
-                    view.update();
-                }
-             }
-        }
+		if(view.getClass().equals(ProjectConfiguration.class)){
+			ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+	        if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
+	        } 
+	        else {
+	            // Findet heraus, welcher Index selektiert ist
+	            int minIndex = lsm.getMinSelectionIndex();
+	            int maxIndex = lsm.getMaxSelectionIndex();
+	            for (int i = minIndex; i <= maxIndex; i++) {
+	                if (lsm.isSelectedIndex(i)) {
+	                    view.update();
+	                }
+	             }
+	        }
+		}
+		else
+		{
+			ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+	        if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
+	        } 
+	        else {
+	            // Findet heraus, welcher Index selektiert ist
+	            int minIndex = lsm.getMinSelectionIndex();
+	            int maxIndex = lsm.getMaxSelectionIndex();
+	            for (int i = minIndex; i <= maxIndex; i++) {
+	                if (lsm.isSelectedIndex(i)) {
+	                    model.selectProject(i);
+	                    view.update();
+	                }
+	             }
+	        }
+		}	
 	}
 
 	/**
@@ -234,7 +261,59 @@ public class DefaultController extends Controller {
 					model.setResetDB(false);
 			}
 			else
-			model.setResetDB(e.getStateChange()==ItemEvent.SELECTED);			
+			model.setResetDB(e.getStateChange()==ItemEvent.SELECTED);
 		}
+	}
+
+	
+	public void focusGained(FocusEvent e) {
+		// Sorgt dafür, dass der Defaut Text im Text Editor verschwindet
+		if(e.getComponent().getClass().equals(JTextArea.class)
+				&& ((JTextArea)(e.getComponent())).getText().contains(((TextEditor)view).getDefaultText())){
+			((JTextArea)(e.getComponent())).setText("");
+		}
+	}
+
+	public void focusLost(FocusEvent e) {
+		if(e.getComponent().getName().equals("ProjectCode")){
+			model.setProjectCode(((JTextArea)(e.getComponent())).getText());
+		}
+		else if(e.getComponent().getName().equals("ProjectDescription")){
+			model.setProjectDescription(((JTextArea)(e.getComponent())).getText());
+		}
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		System.out.println(e);
+		if(e.getButton()==MouseEvent.BUTTON3){
+			if(e.getComponent().getName().equals("dropList")){
+				ListSelectionModel lsm= ((JList) (e.getComponent())).getSelectionModel();
+				//System.out.println(e.getComponent().getComponentAt(e.getLocationOnScreen()).getName());
+				System.out.println(e.getComponent().getComponentAt(e.getPoint()));
+			}
+		}
+			
+	}
+		// TODO Auto-generated method stub
+
+
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

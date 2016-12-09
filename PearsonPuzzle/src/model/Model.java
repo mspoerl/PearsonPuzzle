@@ -18,9 +18,10 @@ import java.util.Vector;
 public class Model extends Observable {
 	private String username;
 	
-	private Code code;
 	private ArrayList<String> codeList;
 	private ArrayList<String> saveList;
+	private Vector<String> codeVector;
+	private Vector<Integer> sequenceVector;
 	private String projectDescription;
 	private String projectCode;
 	
@@ -36,7 +37,7 @@ public class Model extends Observable {
 	
 
 	public Model() {
-		code = new Code();
+		// Datenbankverbindung wird aufgebaut
 		try {
 			userDBaccess = new UserDBaccess();
 		} catch (SQLException e) {
@@ -45,18 +46,19 @@ public class Model extends Observable {
 				System.out.println("Nichts wie raus hier!!!!\n");
 			else
 				e.printStackTrace();
-		}
-		this.update();
+			}
+		
+		// Holt Daten aus der Datenbank
+		this.fetchAll();
+		
 		// Default Werte werden gesetzt
 		this.tabSize = 3;
 		this.randomMode = true;
 		this.grade = 0;
 	}
 
-	public int getGrade() {
-		return grade;
-	}
-
+	// ------------------------------------ Getter und Setter ------------------------------
+	// --- Klassenstufe
 	public void setGrade(int grade) {
 		if (grade < 14 && grade > 5) {
 			this.grade = grade;
@@ -64,32 +66,32 @@ public class Model extends Observable {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
 	}
+	public int getGrade() {
+		return grade;
+	}
 
+	
+	// --- Tabbreite
 	public void setTabSize(int tabWidth) {
 		this.tabSize = tabWidth;
 	}
-
 	public int getTabSize() {
 		return tabSize;
 	}
 
+	// --- Zufallsmodus
 	public void setRandomMode(boolean random) {
 		this.randomMode = random;
 	}
-
 	public boolean getRandomMode() {
 		return randomMode;
 	}
 
-	public void setSaveList(ArrayList<String> listModelToSave) {
-		saveList = listModelToSave;
+	// --- Zugriffsgruppe
+	// TODO: in accessGroup auslagern
+	public void setAccessGroup(AccessGroup accessGroup) {
+		this.accessGroup=accessGroup;		
 	}
-
-	
-	
-	/*
-	 * TODO: in accessGroup auslagern
-	 */
 	public AccessGroup getAccessGroup(String username, char[] password) {
 		if (userDBaccess.lookUpstudent(username, password)) {
 			return AccessGroup.PUPIL;
@@ -98,61 +100,81 @@ public class Model extends Observable {
 		} else
 			return AccessGroup.UNKNOWN;
 	}
-
-	public String getUsername() {
-		return username;
+	public AccessGroup getAccessGroup(){
+		return accessGroup;
 	}
-
+	
+	// --- Nutzername
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
-	public ArrayList<String> getCodeModel() {
+	public String getUsername() {
+		return username;
+	}
+	
+	// --- Code
+	public ArrayList<String> getCodeList() {
 		return codeList;
 	}
 
-	public ArrayList<String> getSaveModel() {
-		return saveList;
-	}
-
-	public List<String> getProjects() {
-		return projectList;
-	}
+	// --- Projekte
 	public Vector<String> getProjectVector(){
 		return projectVector;
 	}
-
+		// -- Gewähltes Projekt
+	public void selectProject(Integer projectID) {
+		this.projectID = projectID;
+		this.fetchProjectCode();
+		this.fetchProjectDescription();
+	}
 	public Integer getProjectListID() {
 		return projectID;
 	}
-	
+			// - Projektname
 	public String getProjectName(){
 		if(projectID!=null){
 			return projectList.get(projectID);
 		}
 		return new String();
 	}
-
-	public void selectProject(Integer projectID) {
-		this.projectID = projectID;
-		this.fetchProjectCode();
-		this.fetchProjectDescription();
+			// - Projektbeschreibung
+	public void setProjectDescription(String descriptionString) {
+		this.projectDescription=descriptionString;
+		setChanged();
 	}
-
 	public String getProjectDescription() {
 		if(projectID!=null){
 		return projectDescription;
 		}
 		else return null;
 	}
-
+			// - Projektcode
 	public String getProjectCode() {
 		if(projectID!=null){
 			return projectCode;
 		}
 		else return new String();
 	}
+	public void setProjectCode(String codeString){
+		projectCode=codeString;
+		setChanged();
+	}
+				// Projektvektor
+	public Vector<String> getCodeVector() {
+		return codeVector;
+	}
+	public void setCodeVector(Vector<String> codeVector) {
+		this.codeVector = codeVector;
+	}
+				// Projekt Sequenz Vektor
+	public Vector<Integer> getSequenceVector() {
+		return sequenceVector;
+	}
+	public void setSequenceVector(Vector<Integer> sequenceVector) {
+		this.sequenceVector = sequenceVector;
+	}
 
+	// Code zum puzzeln
 	private String[] getRandomCode() {
 		String[] parts = projectCode.split("\n");
 		if (randomMode) {
@@ -166,7 +188,38 @@ public class Model extends Observable {
 		}
 		return parts;
 	}
+	
+	// --- Vom Schüler zusammengepuzzelter Code
+	public ArrayList<String> getSaveList() {
+		return saveList;
+	}
+	public void setSaveList(ArrayList<String> listModelToSave) {
+		saveList = listModelToSave;
+	}
+	
+	// --- Datenbank zurücksetzen
+	public boolean isResetDB() {
+		return resetDB;
+	}
+	public void setResetDB(boolean resetDB) {
+		this.resetDB = resetDB;
+		setChanged();
+		notifyObservers();
+	}
 
+	// ------------------------------------ Datenbankinteraktionen----------------------------------------
+	/**
+	 * Model wird mit in Datenbank vorhandenen Werten gefüllt. <br>
+	 * Ist Abhängig vom unter <b>projectID</b> gespeicherten Listeneintag. 
+	 */
+	public void fetchAll(){
+		this.fetchProjects();
+		this.fetchProjectCode();
+		this.fetchProjectDescription();
+		notifyObservers();
+		clearChanged();
+	}	
+	
 	/**
 	 * Speichert das Projekt. Für den Fall, dass das Projekt umbenannt wurde, <br>
 	 * wird projectName und der gewählte Eintrag ind projectList auf Ungleichheit geprüft.
@@ -174,32 +227,35 @@ public class Model extends Observable {
 	 * Neuer Projektname @param projectName
 	 * @param linelength
 	 */
-	public boolean saveProject(String codeString, String projectName,int linelength) {
+	public boolean saveProject(String codeString, String projectName, String projectDescription,int linelength) {
 		projectCode = new String(codeString);
 		
-		// ---- Wenn neues Projekt, prüfen, ob bereits ein solches Existiert
-		if(projectID==null){
+		// ---- Prüfen, ob bereits ein gleichnamiges Projekt existiert 
+		if(projectID==null 
+				|| !projectName.equals(projectList.get(projectID))){
 			if( userDBaccess.projectExists(projectName)){
 				return false;
 			}
 		}
+		
 		// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
-		else if(!projectName.equals(projectList.get(projectID))){
+		if(!projectName.equals(projectList.get(projectID))){
 			userDBaccess.renameProject(projectList.get(projectID), projectName);
 		}
+		
 		// ----- Projekt speichern
 		userDBaccess.saveProject(projectName, codeString, 0, 0);
+		userDBaccess.updateDescription(projectName, projectDescription);
+		
+		// TODO: Test, ob erfolgreich gespeichert wurde
+		
 		this.fetchProjects();
 		this.fetchProjectCode();
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
+		
 		return true;
-	}
-	
-	public void setAccessGroup(AccessGroup accessGroup) {
-		this.accessGroup=accessGroup;		
-	}
-	
-	public AccessGroup getAccessGroup(){
-		return accessGroup;
 	}
 
 	/**
@@ -209,12 +265,27 @@ public class Model extends Observable {
 	public boolean removeProject() {
 		if(userDBaccess.delete(projectList.get(projectID))){
 			this.selectProject(null);
-			this.update();
+			this.fetchAll();
 			return true;
 		}
 		return false;
 	}
 	
+	/**
+	 * Speichert die neue Konfiguration
+	 */
+	public void updateConfig() {
+		if(isResetDB()){
+			try {
+				userDBaccess.resetAll();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	// ----- private Methoden zur Datenbankinteraktion
 	/**
 	 * Holt Liste mit Projekten aus Datenbank
 	 */
@@ -258,50 +329,19 @@ public class Model extends Observable {
 				String[] stringField = this.getRandomCode();
 				this.codeList = new ArrayList<String>();
 				this.saveList = new ArrayList<String>();
+				this.codeVector = new Vector<String>();
+				this.sequenceVector = new Vector<Integer>();
 				for(String line: stringField){
 					codeList.add(line);
 					saveList.add(new String());
+					codeVector.add(line);
+					sequenceVector.add(0);
 				}		
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			}
 			else{
-			}
-		}
-	}
-	
-	/**
-	 * Model wird mit in Datenbank vorhandenen Werten gefüllt. <br>
-	 * Ist Abhängig vom unter <b>projectID</b> gespeicherten Listeneintag. 
-	 */
-	public void update(){
-		this.fetchProjects();
-		this.fetchProjectCode();
-		this.fetchProjectDescription();
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isResetDB() {
-		return resetDB;
-	}
-	
-	public void setResetDB(boolean resetDB) {
-		this.resetDB = resetDB;
-		setChanged();
-		notifyObservers();
-	}
-
-	public void updateConfig() {
-		if(isResetDB()){
-			try {
-				userDBaccess.resetAll();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}

@@ -16,10 +16,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 
 import view.JView;
 
 import controller.Controller;
+import controller.DCCommand;
 import model.Model;
 
 /**
@@ -29,17 +31,19 @@ import model.Model;
 public class TextEditor extends JView{
 	
 	private JButton save;
+	private JButton configure;
 	//private JEditorPane editorPane;
 	private JTextArea textArea;
 	private final static String defaultCode = "Hier müssen Sie den darzustellenden Inhalt einfügen";
 	private JTextArea description;
-	private final static String defaultDescription = "Hier können Sie eine kurze Beschreibung angeben";
 	private JTextField projectName;
 	private ArrayList <JTextField> configFields;
 
 	public TextEditor(Model model) {
 		super(model);
-		save=new JButton("Projekt speichern");
+		
+		save=new JButton("Speichern");
+		configure = new JButton("Projekt konfigurieren");
 		configFields = new ArrayList <JTextField>();
 		menu = new MenuTeacher();
 		this.addMenuToFrame(menu);
@@ -49,7 +53,7 @@ public class TextEditor extends JView{
 			textArea.setText(defaultCode);
 		}
 		
-		description = new JTextArea(defaultDescription);
+		description = new JTextArea(model.getProjectDescription());
 		
 		setupTextEditor();
 		setupConfigPanel();
@@ -61,14 +65,6 @@ public class TextEditor extends JView{
 	 */
 	// TODO: Es muss noch eine Prüfung erfolgen, ob vom Nutzer Html Tags eingegeben wurden!!!!
 	private void setupTextEditor() {
-		//editorPane = new JEditorPane("text/html", model.getProjectHtml());
-		//editorPane.setEditable(true);
-		//editorPane.setPreferredSize(new Dimension(400,300));
-		//JScrollPane editorScrollPane = new JScrollPane(editorPane);
-		//editorScrollPane.setVerticalScrollBarPolicy(
-		//                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		//editorScrollPane.setPreferredSize(new Dimension(400,300));
-		//mainPanel.add(editorScrollPane, BorderLayout.CENTER);
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		topPanel.add(new JLabel("Projekt: "));
@@ -79,6 +75,8 @@ public class TextEditor extends JView{
 		textArea.setEditable(true);
 		textArea.setLineWrap(false);
 		textArea.setTabSize(model.getTabSize());
+		textArea.setName("ProjectCode");
+		
 		JScrollPane textScrollPane = new JScrollPane(textArea);
 		textScrollPane.setVerticalScrollBarPolicy(
 		                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -115,15 +113,15 @@ public class TextEditor extends JView{
 			configPanel.add(labels.get(i));
 			configPanel.add(configFields.get(i));
 		}
-		JLabel randomLabel = new JLabel("Zufallsmodus");
-		JToggleButton randomButton= new JToggleButton();
+		//JLabel randomLabel = new JLabel("Zufallsmodus");
+		//JToggleButton randomButton= new JToggleButton();
 		//randomButton.setSize(5, 5);
-		randomButton.setSelected(model.getRandomMode());
-		String toolTip = new String("<html>Wird dieser Haken gesetzt, <br> wird aus dem eingegebenen Text <br> per Zufallsmodus ein Puzzletext erstellt</html>");
-		randomLabel.setToolTipText(toolTip);
-		randomButton.setToolTipText(toolTip);
-		configPanel.add(randomLabel);
-		configPanel.add(randomButton);
+		//randomButton.setSelected(model.getRandomMode());
+		//String toolTip = new String("<html>Wird dieser Haken gesetzt, <br> wird aus dem eingegebenen Text <br> per Zufallsmodus ein Puzzletext erstellt</html>");
+		//randomLabel.setToolTipText(toolTip);
+		//randomButton.setToolTipText(toolTip);
+		//configPanel.add(randomLabel);
+		//configPanel.add(randomButton);
 		// TODO: Layoutanpassung: der folgende Abschnitt sollte noch durch einen angemessenen Platzhalter ersetzt werden
 		
 		configPanel.add(Box.createHorizontalStrut(10));
@@ -134,11 +132,20 @@ public class TextEditor extends JView{
 		
 		JPanel descriptionPanel=new JPanel(new BorderLayout());
 		
-		
-		description.setPreferredSize(new Dimension(300,50));
+		description.setName("ProjectDescription");
+		JScrollPane textScrollPane = new JScrollPane(description);
+		textScrollPane.setVerticalScrollBarPolicy(
+		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		textScrollPane.setPreferredSize(new Dimension(300,51));
+		textScrollPane.setMinimumSize(new Dimension(300,51));		
 		descriptionPanel.add(new JLabel("Projektbeschreibung"), BorderLayout.BEFORE_FIRST_LINE);
-		descriptionPanel.add(description, BorderLayout.CENTER);
-		descriptionPanel.add(save, BorderLayout.AFTER_LAST_LINE);
+		descriptionPanel.add(textScrollPane, BorderLayout.CENTER);
+		JPanel buttonPanel = new JPanel(new FlowLayout());
+		buttonPanel.add(save);
+		buttonPanel.add(configure);
+		
+		descriptionPanel.add(buttonPanel, BorderLayout.AFTER_LAST_LINE);
 		leftPanel.add(descriptionPanel);
 		//leftPanel.add(configPanel);
 		mainPanel.add(leftPanel, BorderLayout.EAST);		
@@ -156,7 +163,14 @@ public class TextEditor extends JView{
 	}
 	public void addController(Controller controller){
 		save.addActionListener(controller);
-		save.setActionCommand("saveProject");
+		save.setActionCommand(DCCommand.saveProject.toString());
+
+		configure.addActionListener(controller);
+		configure.setActionCommand(DCCommand.configureProject.toString());
+		
+		textArea.addFocusListener(controller);
+		description.addFocusListener(controller);
+		
 		for(JTextField comp: configFields){
 			comp.addActionListener(controller);
 		}
@@ -173,16 +187,17 @@ public class TextEditor extends JView{
 		}
 		return textArea.getText();
 	}
-	public String getDescription(){
-		if(description.getText().equals(defaultDescription)){
-			return "";
-		}
+	
+	public String getDefaultText(){
+		return defaultCode;
+	}
+	public String getProjectDescription(){
 		return description.getText();
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub		
+		update();
 	}
 
 	@Override
@@ -190,6 +205,8 @@ public class TextEditor extends JView{
 		configFields.get(0).setText(""+model.getTabSize());
 		configFields.get(1).setText(""+model.getGrade());
 		textArea.setTabSize(model.getTabSize());
+		textArea.setText(model.getProjectCode());
+		description.setText(model.getProjectDescription());
 		this.draw();
 		// TODO Auto-generated method stub	
 	}

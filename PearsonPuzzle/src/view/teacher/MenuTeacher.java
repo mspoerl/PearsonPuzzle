@@ -25,11 +25,7 @@ public class MenuTeacher extends Menu{
 		menuItems=new ArrayList <JMenuItem>();
 		setupMenu();
 		}
-	/**
-	 * Menü wird definiert
-	 * TODO: sollte ausgelagert werrden
-	 * 
-	 */
+	
 	@Override
 	protected void setupMenu(){
 		JMenu mainMenu = new JMenu("Projekte");
@@ -37,12 +33,17 @@ public class MenuTeacher extends Menu{
 		JMenu configMenu = new JMenu("Account");
 		
 		menuItems.add(new JMenuItem("Neues Projekt"));
+		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.newProject.toString());
 		menuItems.get(menuItems.size()-1).setAccelerator(KeyStroke.getKeyStroke(
 		        java.awt.event.KeyEvent.VK_N, 
-		        java.awt.Event.CTRL_MASK));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.newProject.toString());
+		        java.awt.Event.CTRL_MASK));		
+		
 		menuItems.add(new JMenuItem("Projekte anzeigen"));
 		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.projectList.toString());
+		menuItems.get(menuItems.size()-1).setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_A, 
+		        java.awt.Event.CTRL_MASK));
+		
 		menuItems.add(new JMenuItem("Klassen verwalten"));
 		menuItems.get(menuItems.size()-1).setActionCommand("editClass");
 		

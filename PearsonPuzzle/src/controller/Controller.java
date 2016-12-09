@@ -1,7 +1,9 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -16,7 +18,7 @@ import model.Model;
  * @author workspace
  *
  */
-public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener, ItemListener{
+public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener, ItemListener, FocusListener, MouseListener{
 	protected Model model;
 	protected JView view;
 	public Controller(Model model, JView view){

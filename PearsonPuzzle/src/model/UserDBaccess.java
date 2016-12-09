@@ -17,6 +17,7 @@ public class UserDBaccess {
 	 public UserDBaccess() throws SQLException {
 		String dbUrl = "jdbc:derby:database;create=true";
 		conn = DriverManager.getConnection(dbUrl);
+		//derby.ui.codeset
 		this.normalDbUsage();
 		}
 	 
@@ -122,7 +123,9 @@ public class UserDBaccess {
 	   
 	   
 	 /**
-	 * Speichert das übergebene Projekt in der Datenbank.
+	 * Speichert das übergebene Projekt in der Datenbank.<br>
+	 * <b>Leere Zeilen werden beim Apspeichern gelöscht.</b>
+	 * 
 	 * @param projectname
 	 * @param codeString
 	 * @param linelength
@@ -149,28 +152,44 @@ public class UserDBaccess {
 		   
 		   String buffer;
 		   String[] codeStrings=codeString.split("\n");
-			for(int i=codeStrings.length-1; i>0;i--){
+		   
+		   // Leere Zeilen werden gelöscht
+		   StringBuffer stringBuffer = new StringBuffer();
+		   for(String line: codeStrings){
+			   // FIXME: Zeilen, die nur aus Tabs bestehen, sollen entfernt werden
+			   String line_buffer = line;
+			   if(!line.trim().equals(""))
+				   stringBuffer.append(line+"\n");
+		   }
+		   codeString = new String(stringBuffer);
+		   
+		   for(int i=codeStrings.length-1; i>0;i--){
+				// FIXME: Random Anker setzen
 				int randomInt = new java.util.Random().nextInt(i);
 				buffer=codeStrings[randomInt];
 				codeStrings[randomInt]=codeStrings[i];
 				codeStrings[i]=buffer;
 			}
-			StringBuffer stringBuffer= new StringBuffer();
+		   
+		    // Leere Zeichen in zufälligem Code werden entfernt
+			StringBuffer randomCode= new StringBuffer();
 			for(String line : codeStrings){
-				stringBuffer.append(line);
+				// FIXME: Zeilen, die nur aus Tabs bestehen, sollen entfernt werden
+				String line_buffer = line;
+				if(line_buffer.trim()!="")
+					randomCode.append(line+"\n");
 			}
-			System.out.println(stringBuffer.toString());
-			
+						
 		   try{
 			   Statement stmt = conn.createStatement();
-			   stmt.execute("INSERT INTO Projects VALUES ('"+projectname+"', '"+codeString+"','"+stringBuffer.toString()+"','')");
+			   stmt.execute("INSERT INTO Projects VALUES ('"+projectname+"', '"+codeString+"','"+randomCode.toString()+"','')");
 		   }
 		   catch(SQLException e){
 			   // Falls der Eintrag schon existiert.
 			   if(e.getSQLState().equals("23505")){
 				   try{
 					   Statement stmt = conn.createStatement();
-					   stmt.execute("UPDATE Projects SET Code='"+codeString+"', randomCode='"+stringBuffer.toString()+"' WHERE pName='"+projectname+"'");
+					   stmt.execute("UPDATE Projects SET Code='"+codeString+"', randomCode='"+randomCode.toString()+"' WHERE pName='"+projectname+"'");
 				   }
 				   catch(SQLException e1){
 					   e1.printStackTrace(); 
@@ -180,6 +199,17 @@ public class UserDBaccess {
 				   }
 			   e.printStackTrace();
 		   }
+	   }
+	   
+	   public void updateDescription(String projectname, String description){
+		   try{
+			   Statement stmt = conn.createStatement();
+			   stmt.execute("UPDATE Projects SET Description='"+description+"' WHERE pName='"+projectname+"'");
+		   }
+		   catch(SQLException e1){
+			   e1.printStackTrace();
+			   //TODO: Auto generated Method stub 
+			   }
 	   }
 	   
 	   /**
@@ -209,6 +239,7 @@ public class UserDBaccess {
 	    * @throws SQLException
 	    */
 	   public void saveProject(String[] codeString, String projectname, int linelength, final int projectID) throws SQLException{
+		   projectname=new String(projectname.trim());
 		   if(linelength < 1){
 			   linelength =MIN_line_length_Code;
 		   }
@@ -277,7 +308,7 @@ public class UserDBaccess {
 		   Statement stmt = conn.createStatement();
 		   ResultSet te = stmt.executeQuery("SELECT Code FROM Projects WHERE pName='"+projectname+"'");
 		   te.next();
-		   System.out.println(te.getString("Code"));
+		   //System.out.println(te.getString("Code"));
 		   return te.getString("Code");  
 	   }
 	   public ArrayList <String> getCodeList(String projectname) throws SQLException{
@@ -349,7 +380,8 @@ public class UserDBaccess {
 		   catch(SQLException e){}
 		   stmt.executeUpdate("CREATE TABLE Projects ( " +
 		   		"pName varchar("+length_projectName+") UNIQUE, " +
-		   		"Code LONG VARCHAR, randomCode LONG VARCHAR, " +
+		   		"Code LONG VARCHAR, " +
+		   		"randomCode LONG VARCHAR, " +
 		   		"Description varchar("+length_projectDescription+"), " +
 		   		"INT tabSize)");
 		   saveProject(

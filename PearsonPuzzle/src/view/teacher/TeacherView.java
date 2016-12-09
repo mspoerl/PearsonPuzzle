@@ -57,12 +57,13 @@ public class TeacherView extends JView{
 		projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		new JScrollPane(projectList);
 		listSelectionModel = projectList.getSelectionModel();
-		projectList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		projectList.setPreferredSize(new Dimension(250,250));
+		// Liste wird nicht umgebrochen, sondern vertikal weitergeführt
+		projectList.setLayoutOrientation(JList.VERTICAL);
 		projectList.setFixedCellHeight(25);
 		JScrollPane scrollPanel_pL = new JScrollPane(projectList);
 		scrollPanel_pL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_pL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPanel_pL.setPreferredSize(new Dimension(250,250));
 		mainPanel.add(scrollPanel_pL, BorderLayout.LINE_START);
 		
 		// Zeilen werden umgebrochen und Wortgrenzen beachtet

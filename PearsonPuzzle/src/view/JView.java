@@ -36,27 +36,6 @@ public abstract class JView implements Observer {
 			this.model=model;
 			model.addObserver(this);
 		}
-	
-		/**
-		 * Soll noch in einen Presenter ausgelagert werden <br>
-		 * ermöglicht, dass die Swing Komponenten ein Listen Model erhalten
-		 * Liste aus dem Model @param stringList
-		 * Liste für (swing) View @return
-		 */
-		protected DefaultListModel<String> makeDefaultListModel(List<String> stringList){
-			DefaultListModel<String> listModel = new DefaultListModel<String>();
-			
-			// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
-			for(String string : stringList){
-				String tab=" ";
-				for(int i=0;i<model.getTabSize();i++){
-					tab=tab+" ";
-				}
-				String bString = string.replaceAll("\t", tab);
-				listModel.add(listModel.size(),  bString);
-			}
-			return listModel;
-		}
 		
 		
 		/**
@@ -94,8 +73,6 @@ public abstract class JView implements Observer {
 			if(frame.isVisible()==false){
 				frame.setVisible(true);
 			}
-			
-			// TODO: wenn frame bereits sichtbar ist, updaten
 		}
 		
 		/**
@@ -111,6 +88,7 @@ public abstract class JView implements Observer {
 		 */
 		public void quitView(){
 			mainPanel.removeAll();
+			model.deleteObserver(this);
 		}
 		
 		/**
@@ -144,7 +122,7 @@ public abstract class JView implements Observer {
 		 */
 		public Integer showMessage(Allert allert){
 			if(allert==Allert.projectSaved){
-				menu.add(new JLabel("Projekt wurde gespeichert"));
+				//menu.add(new JLabel("Projekt wurde gespeichert"));
 				return null;
 			}
 			else

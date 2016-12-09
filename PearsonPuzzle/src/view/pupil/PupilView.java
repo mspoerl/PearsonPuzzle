@@ -3,7 +3,6 @@ package view.pupil;
 import java.awt.BorderLayout;
 import java.util.Observable;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -40,12 +39,13 @@ public class PupilView extends JView{
 	 * Projekt Liste wird gezeichnet.
 	 */
 	private void setupProjectList(){
-		DefaultListModel <String> projectListModel = makeDefaultListModel(model.getProjects());
-		JList <String> projectList = new JList<String>(projectListModel);
+		//DefaultListModel <String> projectListModel = makeDefaultListModel(model.getProjects());
+		JList <String> projectList = new JList<String>(model.getProjectVector());
 		projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		new JScrollPane(projectList);
 		listSelectionModel = projectList.getSelectionModel();
-		projectList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		// Liste wird nicht umgebrochen, sondern vertikal weitergeführt
+		projectList.setLayoutOrientation(JList.VERTICAL);
 		projectList.setFixedCellHeight(20);
 		projectList.setFixedCellWidth(200);
 		//projectList.setPreferredSize(new Dimension(250,250));		

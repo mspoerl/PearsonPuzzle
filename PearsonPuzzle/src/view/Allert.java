@@ -31,7 +31,6 @@ public enum Allert {
 				JOptionPane.showMessageDialog(null, "Es existert ein Projekt mit gleichem Namen.\nBitte wählen Sie einen anderen Namen.");
 				return null;
 			case notSaved:
-				// FIXME: erscheint auch, wenn Projekt gerade erst gespeichert wurde
 				n = JOptionPane.showOptionDialog( null,
 				          "Projekt wurde noch nicht gespeichert.\nWollen Sie speichern bevor Sie fortfahren?",	// Nachricht/Frage
 				          "Projekt noch nicht gespeichert.",	// Titel
