@@ -135,9 +135,8 @@ public class DefaultController extends Controller {
 						// ---- Es wird versucht das Projekt zu speichern, schlägt dies fehl, so existiert bereits ein Projekt mit gleichem Namen
 						if(model.saveProject(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(), ((TextEditor)view).getProjectDescription(),150))
 						{
-							ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
-							model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
-							model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+							act(DCCommand.setTextConfig);
+							model.saveProjectSettings();
 							view.showMessage(Allert.projectSaved);
 						}
 						else{
@@ -174,6 +173,10 @@ public class DefaultController extends Controller {
 					this.view = new ProjectConfiguration(model);
 					view.addController(this);
 				}
+			case setTextConfig:
+				ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
+				model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
+				model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
 				break;
 			default:
 				break;				

@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
@@ -31,16 +32,17 @@ import model.Model;
  * @author workspace
  */
 public class CodeSortView extends JView {
-	private JList<String> dragDropList;
+	private JList<String> dragList;
 	private JList<String> saveDropList;
-	private DefaultListModel <String> dragDropModel;
+	private DefaultListModel <String> dragModel;
 	private DefaultListModel <String> saveDropModel;
+	private String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
 	private JButton enter;
 	// Puzzlemodus 0: Reines Drag and Drop
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
-	// Puzzlemodus 3: Elemente bleiben rechts vorhanden
-	private int Puzzlemodus;
+	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
+	private int Puzzlemodus=ToSaveTransferHandler.DnD_Bugger_OneWay;
 	public CodeSortView(Model model) {
 		super(model);
 		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
@@ -54,24 +56,56 @@ public class CodeSortView extends JView {
 	
 		// private Methode, um die Drag and Drop Liste zu konstruieren
 		private void setupCodeLists(){
-			
-			dragDropModel=makeDefaultListModel(model.getCodeList());
 			saveDropModel=new DefaultListModel<String>();
-			dragDropList=new JList<String>(dragDropModel);
 			saveDropList=new JList<String>(saveDropModel);
-			dragDropList.setName("dragList");
+			dragModel=makeDefaultListModel(model.getCodeList());
+			dragList=new JList<String>(dragModel);
+			TransferHandler dragTransferH = new FromTransferHandler(dragModel, dragList);
+			ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus);
+			
+			switch(Puzzlemodus){
+				case 0:
+					// reine Drag List (dragDropList wird entfernt
+					saveDropModel=makeDefaultListModel(model.getCodeList());
+					saveDropList=new JList<String>(saveDropModel);
+					dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus);
+					dragModel= new DefaultListModel();
+					dragList = new JList<String>();
+					saveDropList.setDropMode(DropMode.INSERT);					
+					saveDropList.setTransferHandler(dragDropTransferH);
+					break;
+				case 1:
+					// TODO: umsetzten
+					break;
+				case 2:
+					// Elemte werden rechts entfernt, können links nicht entfernt werden
+					saveDropList.setDropMode(DropMode.INSERT);
+					saveDropList.setTransferHandler(dragDropTransferH);
+					dragList.setTransferHandler(dragTransferH);
+					break;
+				case 3:
+					saveDropList.setDropMode(DropMode.ON_OR_INSERT);					
+					saveDropList.setTransferHandler(dragDropTransferH);
+					dragList.setTransferHandler(dragTransferH);
+					break;
+				default:
+					Puzzlemodus=3;
+					break;
+					
+			}
+			
+			dragList.setName("dragList");
 			saveDropList.setName("dropList");
 			//dragDropList.setDropMode(DropMode.ON);
-			saveDropList.setDropMode(DropMode.ON_OR_INSERT);
 			saveDropList.setFixedCellHeight(20);
-			dragDropList.setFixedCellHeight(20);
+			dragList.setFixedCellHeight(20);
 			
-			dragDropList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			dragDropList.setDragEnabled(true);
+			dragList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			dragList.setDragEnabled(true);
 			saveDropList.setDragEnabled(true);
 			
 			JScrollPane scrollPanel_sDL = new JScrollPane(saveDropList);
-			JScrollPane scrollPanel_dDL = new JScrollPane(dragDropList);
+			JScrollPane scrollPanel_dDL = new JScrollPane(dragList);
 			scrollPanel_sDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPanel_sDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scrollPanel_sDL.setPreferredSize(new Dimension(360,300));
@@ -79,8 +113,19 @@ public class CodeSortView extends JView {
 			scrollPanel_dDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPanel_dDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scrollPanel_dDL.setPreferredSize(new Dimension(360,300));
-			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
-			mainPanel.add(new JTextField("Hier erfolgt eine möglichst präzise Arbeitsanweisung für den Schüler"),BorderLayout.PAGE_END);
+			if(Puzzlemodus!=0)
+				mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
+			JTextArea description=new JTextArea(defaultDescription);
+			if(!model.getProjectDescription().trim().equals("")){
+				description.setText(model.getProjectDescription());
+			}
+			description.setLineWrap(true);
+			description.setWrapStyleWord(true);
+			JScrollPane scrollPane_description = new JScrollPane(description);
+			scrollPane_description.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPane_description.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scrollPane_description.setPreferredSize(new Dimension(360,100));
+			mainPanel.add(scrollPane_description,BorderLayout.PAGE_END);
 		}
 		
 		// private Methode, um die Buttons zu definieren
@@ -99,8 +144,6 @@ public class CodeSortView extends JView {
 		 */
 		public void addController(Controller controller){
 			// TODO: In den offiziellen Controller auslagern
-			dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList, false));
-			saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY, saveDropModel, saveDropList));
 			saveDropList.addMouseListener(controller);
 			enter.addActionListener(controller);
 			enter.setActionCommand("openProject");
@@ -118,8 +161,13 @@ public class CodeSortView extends JView {
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
 		
 		// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
+		// Steht hier, weil es ein Problem von Swing ist, kein allgemeines Problem
 		for(String string : stringList){
-			String tab=" ";
+			String tab;
+			if(model.getTabSize()==0)
+				tab="";
+			else
+				tab=" ";
 			for(int i=0;i<model.getTabSize();i++){
 				tab=tab+" ";
 			}
@@ -137,12 +185,12 @@ public class CodeSortView extends JView {
 
 	@Override
 	public void update() {
-		dragDropModel=makeDefaultListModel(model.getCodeList());
+		dragModel=makeDefaultListModel(model.getCodeList());
 		saveDropModel=new DefaultListModel <String>();
-		dragDropList=new JList<String>(dragDropModel);
+		dragList=new JList<String>(dragModel);
 		saveDropList=new JList<String>(saveDropModel);
-		dragDropList.setTransferHandler(new FromTransferHandler(dragDropModel, dragDropList, false));
-		saveDropList.setTransferHandler(new ToSaveTransferHandler(TransferHandler.COPY, saveDropModel, saveDropList));	
+		dragList.setTransferHandler(new FromTransferHandler(dragModel, dragList));
+		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus));	
 	}
 
 }

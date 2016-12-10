@@ -15,8 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
 
 import view.JView;
 
@@ -97,7 +95,6 @@ public class TextEditor extends JView{
 		leftPanel.setPreferredSize(new Dimension(300,350));
 		JPanel configDiv = new JPanel();
 		JPanel configPanel = new JPanel();
-		//configPanel.setSize(100,100);
 		configPanel.setMaximumSize(new Dimension(50,100));		
 		configPanel.setLayout(new GridLayout(/*6*/ 0,2, 6,3));
 
@@ -139,7 +136,7 @@ public class TextEditor extends JView{
 		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textScrollPane.setPreferredSize(new Dimension(300,51));
 		textScrollPane.setMinimumSize(new Dimension(300,51));		
-		descriptionPanel.add(new JLabel("Projektbeschreibung"), BorderLayout.BEFORE_FIRST_LINE);
+		descriptionPanel.add(new JLabel("Arbeitsanweisung:"), BorderLayout.BEFORE_FIRST_LINE);
 		descriptionPanel.add(textScrollPane, BorderLayout.CENTER);
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		buttonPanel.add(save);
@@ -173,6 +170,7 @@ public class TextEditor extends JView{
 		
 		for(JTextField comp: configFields){
 			comp.addActionListener(controller);
+			comp.setActionCommand(DCCommand.setTextConfig.toString());
 		}
 		menu.addActionListener(controller);
 	}

@@ -150,39 +150,14 @@ public class UserDBaccess {
 			   return;
 		   }
 		   
-		   String buffer;
+		   // -- Code Array wird erzeugt und wieder zu einem String zusammengefasst
 		   String[] codeStrings=codeString.split("\n");
+		   codeString = unite(codeStrings, false, tab);
+		   String randomCode=unite(codeStrings, true, tab);
 		   
-		   // Leere Zeilen werden gelöscht
-		   StringBuffer stringBuffer = new StringBuffer();
-		   for(String line: codeStrings){
-			   // FIXME: Zeilen, die nur aus Tabs bestehen, sollen entfernt werden
-			   String line_buffer = line;
-			   if(!line.trim().equals(""))
-				   stringBuffer.append(line+"\n");
-		   }
-		   codeString = new String(stringBuffer);
-		   
-		   for(int i=codeStrings.length-1; i>0;i--){
-				// FIXME: Random Anker setzen
-				int randomInt = new java.util.Random().nextInt(i);
-				buffer=codeStrings[randomInt];
-				codeStrings[randomInt]=codeStrings[i];
-				codeStrings[i]=buffer;
-			}
-		   
-		    // Leere Zeichen in zufälligem Code werden entfernt
-			StringBuffer randomCode= new StringBuffer();
-			for(String line : codeStrings){
-				// FIXME: Zeilen, die nur aus Tabs bestehen, sollen entfernt werden
-				String line_buffer = line;
-				if(line_buffer.trim()!="")
-					randomCode.append(line+"\n");
-			}
-						
 		   try{
 			   Statement stmt = conn.createStatement();
-			   stmt.execute("INSERT INTO Projects VALUES ('"+projectname+"', '"+codeString+"','"+randomCode.toString()+"','')");
+			   stmt.execute("INSERT INTO Projects VALUES ('"+projectname+"', '"+codeString+"','"+randomCode.toString()+"','',0)");
 		   }
 		   catch(SQLException e){
 			   // Falls der Eintrag schon existiert.
@@ -199,6 +174,30 @@ public class UserDBaccess {
 				   }
 			   e.printStackTrace();
 		   }
+	   }
+	   private String unite(String[] codeStrings, boolean random, int tab){
+		   if(random){
+			   String buffer;
+			   for(int i=codeStrings.length-1; i>0;i--){
+					int randomInt = new java.util.Random().nextInt(i);
+					buffer=codeStrings[randomInt];
+					codeStrings[randomInt]=codeStrings[i];
+					codeStrings[i]=buffer;
+				}
+		   }
+		   StringBuffer stringBuffer = new StringBuffer();
+		   for(String line: codeStrings){
+			   // FIXME: Zeilen, die nur aus Tabs bestehen, sollen entfernt werden
+			   if(!line.trim().equals("")){
+				   // trim entfernt auch tabs, deshalb while schleife
+				   line=line.replaceAll("\t ", "\t");
+				   while(line.startsWith(" ")){
+					   line=line.replaceFirst(" ", "");
+				   }
+				   stringBuffer.append(line+"\n");
+			   }
+		   }
+		   return new String(stringBuffer);
 	   }
 	   
 	   public void updateDescription(String projectname, String description){
@@ -299,6 +298,18 @@ public class UserDBaccess {
 			//-----------------------------testing------------------------------------
 		   
 	   }
+	   public void saveProjectSettings(String projectname, int tabSize, int grade) {
+		   if(projectname.equals("")){
+			   return;
+		   }
+		   try {
+			   Statement stmt = conn.createStatement();
+			   stmt.executeUpdate("UPDATE Projects SET tabSize="+tabSize+" WHERE pName='"+projectname+"'");
+		   		} catch (SQLException e) {
+		   			// XXX: Auto-generated catch block
+		   			e.printStackTrace();
+		   		}
+		}
 	   
 	   
 	   //-------------------------- Code aus Datenbank auslesen -------------------------------	   
@@ -372,7 +383,22 @@ public class UserDBaccess {
 		   te = stmt.executeQuery("SELECT Description FROM Projects WHERE pName='"+projectname+"'");
 		   te.next();
 		   return te.getString("Description");
-	   	}
+	   }
+	   public int getTabSize(String projectname) {
+		   Statement stmt;
+		   ResultSet te;
+		   try {
+			stmt = conn.createStatement();
+			te = stmt.executeQuery("SELECT tabsize FROM Projects WHERE pName='"+projectname+"'");
+			   te.next();
+			   return te.getInt("tabsize");
+		   } catch (SQLException e) {
+			   // TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   return 0;
+		   
+		}
 	   private void createTable_Projects() throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   // TODO: Allert soll erfolgen, der abfrägt, ob dies das erst Projekt ist, das man erstellt. Erst bei ja soll DROP TABLE erfolgen (sonst werden eventuell vorhandenen DAten verworfen)
@@ -383,13 +409,14 @@ public class UserDBaccess {
 		   		"Code LONG VARCHAR, " +
 		   		"randomCode LONG VARCHAR, " +
 		   		"Description varchar("+length_projectDescription+"), " +
-		   		"INT tabSize)");
+		   		"tabSize INT)");
 		   saveProject(
 				"TestProjekt", 
 				"Beispielcode 1 \nBeispielcode2\n\tBeispielcode3\n \t \t \t \t \t\t\t\t\t\t\t\t \tLanger" , 
 				0,
 				0);
 	   }
+	   
 	   
 	   /**
 	    * Schülertabelle wird verworfen, falls vorhanden und neu kreiert.<br>

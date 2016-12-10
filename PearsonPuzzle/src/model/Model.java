@@ -40,6 +40,7 @@ public class Model extends Observable {
 		// Datenbankverbindung wird aufgebaut
 		try {
 			userDBaccess = new UserDBaccess();
+			//userDBaccess.resetAll();
 		} catch (SQLException e) {
 			if(e.getSQLState().equals("XJ040"))
 				// TODO Ausgabe, dass bereits eine Programminstanz gestartet wurde
@@ -52,7 +53,7 @@ public class Model extends Observable {
 		this.fetchAll();
 		
 		// Default Werte werden gesetzt
-		this.tabSize = 3;
+		this.tabSize = 0;
 		this.randomMode = true;
 		this.grade = 0;
 	}
@@ -65,6 +66,7 @@ public class Model extends Observable {
 		} else {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
+		clearChanged();
 	}
 	public int getGrade() {
 		return grade;
@@ -74,9 +76,14 @@ public class Model extends Observable {
 	// --- Tabbreite
 	public void setTabSize(int tabWidth) {
 		this.tabSize = tabWidth;
+		setChanged();
+		notifyObservers();
+		clearChanged();
 	}
 	public int getTabSize() {
-		return tabSize;
+		if(projectID!=null)
+			return tabSize;
+		return 0;
 	}
 
 	// --- Zufallsmodus
@@ -125,8 +132,9 @@ public class Model extends Observable {
 	public void selectProject(Integer projectID) {
 		this.projectID = projectID;
 		this.fetchProjectCode();
-		this.fetchProjectDescription();
+		this.fetchProjectSettings();
 	}
+		
 	public Integer getProjectListID() {
 		return projectID;
 	}
@@ -215,7 +223,7 @@ public class Model extends Observable {
 	public void fetchAll(){
 		this.fetchProjects();
 		this.fetchProjectCode();
-		this.fetchProjectDescription();
+		this.fetchProjectSettings();
 		notifyObservers();
 		clearChanged();
 	}	
@@ -239,7 +247,7 @@ public class Model extends Observable {
 		}
 		
 		// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
-		if(!projectName.equals(projectList.get(projectID))){
+		else if(!projectName.equals(projectList.get(projectID))){
 			userDBaccess.renameProject(projectList.get(projectID), projectName);
 		}
 		
@@ -248,14 +256,18 @@ public class Model extends Observable {
 		userDBaccess.updateDescription(projectName, projectDescription);
 		
 		// TODO: Test, ob erfolgreich gespeichert wurde
-		
 		this.fetchProjects();
-		this.fetchProjectCode();
+		this.selectProject(projectList.indexOf(projectName));
 		this.setChanged();
 		this.notifyObservers();
 		this.clearChanged();
 		
 		return true;
+	}
+	
+	public void saveProjectSettings(){
+		if(projectID!=null)
+			userDBaccess.saveProjectSettings(projectList.get(projectID), tabSize, grade);
 	}
 
 	/**
@@ -304,10 +316,11 @@ public class Model extends Observable {
 	/**
 	 * Holt Projektbeschreibung <br><u>des aktuell in der Liste selektieren Projekts </u> <br> aus der Datenbank
 	 */
-	private void fetchProjectDescription(){
+	private void fetchProjectSettings(){
 		if(projectID!=null){
 			try{
 				this.projectDescription = userDBaccess.getProjectDescription(projectList.get(projectID));
+				this.tabSize = userDBaccess.getTabSize(projectList.get(projectID));
 				}
 			catch(SQLException e){
 				this.projectDescription="Noch keine Beschreibung vorhanden";
