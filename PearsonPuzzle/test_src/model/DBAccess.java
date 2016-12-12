@@ -48,6 +48,9 @@ public class DBAccess {
 		}
 	}
 	
+	@Test void saveProject_Test2(){
+		db.saveProject(normalString, normalString, 0,0);
+	}
 	
 	@Test
 	public void saveProject_Test() {

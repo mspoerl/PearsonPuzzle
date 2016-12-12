@@ -206,14 +206,21 @@ public class DefaultController extends Controller {
 				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
 				break;
 			case Compile:
-				TestCompiler.compileCode(model.getProjectCode());
+				TestCompiler.compileCode(model.getSolutionStrings());
 				break;
 			case TestCode:
 				System.out.println(model.getSollution());
+				if(model.isExactOrder())
+					System.out.println("Herzlichen Glückwunsch, richtige Reihenfolge!");
+				else
+					System.out.println("Reihenfolge nicht 1:1, Test auf Korrektheit folgt");
 				Result result = JUnitCore.runClasses(LineOrderTest.class);
+				System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 			    for (Failure failure : result.getFailures()) {
-			    	if(failure!=null)
-			    	model.addjUnitFailure(failure);
+			    	if(failure!=null){
+			    		model.addjUnitFailure(failure);
+			    		System.out.println(failure);
+			    	}
 			    }
 			    view.showMessage(Allert.Failure);
 				break;
@@ -327,7 +334,6 @@ public class DefaultController extends Controller {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(e);
 		if(e.getButton()==MouseEvent.BUTTON3){
 			if(e.getComponent().getName().equals("dropList")){
 				//ListSelectionModel lsm= ((JList<String>) (e.getComponent())).getSelectionModel();
@@ -366,7 +372,6 @@ public class DefaultController extends Controller {
 			int column = e.getColumn();
 	        TableModel tableModel = (TableModel)e.getSource();
 	        String columnName = tableModel.getColumnName(column);
-	        System.out.println(row+" "+column);
 	        // damit beim Aktualisieren der Tabelle nichts getan wird
 	        if(row>=0 && column>=0){
 	        	Object data = tableModel.getValueAt(row, column);

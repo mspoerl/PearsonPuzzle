@@ -49,6 +49,7 @@ public class Model extends Observable {
 	private LinkedList<Failure> jUnitFailures;
 
 	public Model() {
+		jUnitFailures=new LinkedList<Failure>();
 		// Datenbankverbindung wird aufgebaut
 		try {
 			userDBaccess = new UserDBaccess();
@@ -168,6 +169,7 @@ public class Model extends Observable {
 	}
 			// - Projektcode
 	public String getProjectCode() {
+		// TODO: Abfrage, ob Benutzergrupe Lehrer
 		if(projectID!=null){
 			return projectCode;
 		}
@@ -244,6 +246,14 @@ public class Model extends Observable {
 	public LinkedList<Integer> getSollution(){
 		return sortedCode;
 	}
+	public Vector<String> getSolutionStrings(){
+		Vector<String> solution = new Vector<String>(codeMap.size());
+		int i=0;
+		for(Integer index: sortedCode){
+			solution.add(codeVector.get(index));
+		}
+		return solution;
+	}
 	// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
 	public void insertInSollution(int index, String value){
 		sortedCode.add(index, codeMap.get(value.trim()));
@@ -254,6 +264,15 @@ public class Model extends Observable {
 	}
 	public void removeInSollution(int index){
 		sortedCode.remove(index);
+	}
+	public boolean isExactOrder(){
+		String sollutionString = new String();
+		for (String string : getSolutionStrings()){
+			sollutionString=sollutionString+string+"\n";
+		}
+		if(sollutionString.equals(projectCode))
+		 	return true;
+		return false;
 	}
 	
 

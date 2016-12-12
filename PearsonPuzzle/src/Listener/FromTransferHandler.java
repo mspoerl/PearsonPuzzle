@@ -39,7 +39,6 @@ public class FromTransferHandler extends TransferHandler {
     }
     
     public void exportDone(JComponent comp, Transferable trans, int action) {
-        System.out.println(action+this.toString());
     	if (action != MOVE) {
         	dragJList.clearSelection();
     		return;
