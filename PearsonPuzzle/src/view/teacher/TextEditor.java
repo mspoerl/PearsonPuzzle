@@ -160,17 +160,17 @@ public class TextEditor extends JView{
 	}
 	public void addController(Controller controller){
 		save.addActionListener(controller);
-		save.setActionCommand(DCCommand.saveProject.toString());
+		save.setActionCommand(DCCommand.SaveProject.toString());
 
 		configure.addActionListener(controller);
-		configure.setActionCommand(DCCommand.configureProject.toString());
+		configure.setActionCommand(DCCommand.ConfigureProject.toString());
 		
 		textArea.addFocusListener(controller);
 		description.addFocusListener(controller);
 		
 		for(JTextField comp: configFields){
 			comp.addActionListener(controller);
-			comp.setActionCommand(DCCommand.setTextConfig.toString());
+			comp.setActionCommand(DCCommand.SetTextConfig.toString());
 		}
 		menu.addActionListener(controller);
 	}

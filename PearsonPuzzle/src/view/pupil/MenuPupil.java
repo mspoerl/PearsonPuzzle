@@ -5,6 +5,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import controller.Controller;
+import controller.DCCommand;
 import view.Menu;
 
 public class MenuPupil extends Menu{
@@ -27,9 +28,9 @@ public class MenuPupil extends Menu{
 	protected void setupMenu() {		
 		JMenu menu = new JMenu ("Datei");			
 		enterProject = new JMenuItem("Projekte anzeigen");
-		enterProject.setActionCommand("projectList");
+		enterProject.setActionCommand(DCCommand.ProjectList.toString());
 		logout = new JMenuItem("Logout");
-		logout.setActionCommand("logout");
+		logout.setActionCommand(DCCommand.Logout.toString());
 
 		this.add(menu);
 		menu.add(enterProject);

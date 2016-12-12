@@ -2,8 +2,9 @@ package view.pupil;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.List;
+import java.awt.FlowLayout;
 import java.util.Observable;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
@@ -12,13 +13,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
 import view.JView;
 
 import controller.Controller;
+import controller.DCCommand;
 
 import Listener.FromTransferHandler;
 import Listener.ToSaveTransferHandler;
@@ -37,7 +38,8 @@ public class CodeSortView extends JView {
 	private DefaultListModel <String> dragModel;
 	private DefaultListModel <String> saveDropModel;
 	private String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
-	private JButton enter;
+	private JButton compileButton;
+	private JButton testButton;
 	// Puzzlemodus 0: Reines Drag and Drop
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
@@ -58,18 +60,18 @@ public class CodeSortView extends JView {
 		private void setupCodeLists(){
 			saveDropModel=new DefaultListModel<String>();
 			saveDropList=new JList<String>(saveDropModel);
-			dragModel=makeDefaultListModel(model.getCodeList());
+			dragModel=makeDefaultListModel();
 			dragList=new JList<String>(dragModel);
 			TransferHandler dragTransferH = new FromTransferHandler(dragModel, dragList);
-			ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus);
+			ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
 			
 			switch(Puzzlemodus){
 				case 0:
 					// reine Drag List (dragDropList wird entfernt
-					saveDropModel=makeDefaultListModel(model.getCodeList());
+					saveDropModel=makeDefaultListModel();
 					saveDropList=new JList<String>(saveDropModel);
-					dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus);
-					dragModel= new DefaultListModel();
+					dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
+					dragModel= new DefaultListModel<String>();
 					dragList = new JList<String>();
 					saveDropList.setDropMode(DropMode.INSERT);					
 					saveDropList.setTransferHandler(dragDropTransferH);
@@ -130,11 +132,11 @@ public class CodeSortView extends JView {
 		
 		// private Methode, um die Buttons zu definieren
 		private void setupButtons(){
-			enter = new JButton("Projekt öffnen");
-			JPanel topPanel=new JPanel(new BorderLayout());
-			JButton compileButton=new JButton("Compile");
-			topPanel.add(compileButton,BorderLayout.LINE_START);
-			//topPanel.add(saveButton, BorderLayout.LINE_END);
+			compileButton=new JButton("Compilieren");
+			testButton = new JButton("Test starten");
+			JPanel topPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+			topPanel.add(compileButton);
+			topPanel.add(testButton);
 			mainPanel.add(topPanel,BorderLayout.PAGE_START);
 		}
 		
@@ -145,24 +147,26 @@ public class CodeSortView extends JView {
 		public void addController(Controller controller){
 			// TODO: In den offiziellen Controller auslagern
 			saveDropList.addMouseListener(controller);
-			enter.addActionListener(controller);
-			enter.setActionCommand("openProject");
-			
+			compileButton.addActionListener(controller);
+			compileButton.setActionCommand(DCCommand.Compile.toString());
+			testButton.setActionCommand(DCCommand.TestCode.toString());
+			testButton.addActionListener(controller);
 			menu.addActionListener(controller);
 		}
 		
 	/**
 	 * Soll noch in einen Presenter ausgelagert werden <br>
 	 * ermöglicht, dass die Swing Komponenten ein Listen Model erhalten
-	 * Liste aus dem Model @param stringList
-	 * Liste für (swing) View @return
+	 * @param stringList Liste aus dem Model 
+	 * @return DefaultListModel
 	 */
-	private DefaultListModel<String> makeDefaultListModel(List<String> stringList){
+	private DefaultListModel<String> makeDefaultListModel(){
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
 		
 		// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
 		// Steht hier, weil es ein Problem von Swing ist, kein allgemeines Problem
-		for(String string : stringList){
+		Vector<String> codeVector = model.getCodeVector();
+		for(String string : codeVector){
 			String tab;
 			if(model.getTabSize()==0)
 				tab="";
@@ -185,12 +189,12 @@ public class CodeSortView extends JView {
 
 	@Override
 	public void update() {
-		dragModel=makeDefaultListModel(model.getCodeList());
+		dragModel=makeDefaultListModel();
 		saveDropModel=new DefaultListModel <String>();
 		dragList=new JList<String>(dragModel);
 		saveDropList=new JList<String>(saveDropModel);
 		dragList.setTransferHandler(new FromTransferHandler(dragModel, dragList));
-		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus));	
+		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model));	
 	}
 
 }

@@ -12,6 +12,7 @@ import javax.swing.ListSelectionModel;
 import view.JView;
 import model.Model;
 import controller.Controller;
+import controller.DCCommand;
 
 /**
  * Definiert die Schüler Perspektive der grafischen Oberfläche
@@ -22,17 +23,16 @@ public class PupilView extends JView{
 	private ListSelectionModel listSelectionModel;
 	private JTextArea projectDescription;
 	private JButton enter;
-	private JButton saveButton;
 	public PupilView(Model model){
 		// Instanzierung der Variablen
 		super(model);
 		projectDescription = new JTextArea("Wähle ein Projekt aus");
 		enter = new JButton("Projekt öffnen");
-		saveButton = new JButton("Übernehmen");	
 		// Bei Konstruktion wird Ansicht "Projektliste" aufgerufen
 		menu = new MenuPupil();
 		this.addMenuToFrame(menu);
 		setupProjectList();
+		draw();
 	}
 	
 	/**
@@ -67,11 +67,8 @@ public class PupilView extends JView{
 		listSelectionModel.addListSelectionListener(controller);
 		
 		enter.addActionListener(controller);
-		enter.setActionCommand("openProject");
-		
-		saveButton.addActionListener(controller);
-		saveButton.setActionCommand("saveChanges");
-		
+		enter.setActionCommand(DCCommand.OpenProject.toString());
+			
 		menu.addActionListener(controller);
 	}
 	

@@ -168,13 +168,24 @@ public class UserDBaccess {
 				   }
 				   catch(SQLException e1){
 					   e1.printStackTrace(); 
-					   //TODO: Auto generated Method stub 
+					   //XXX: Auto generated Method stub 
 					   }
 				   return;
 				   }
 			   e.printStackTrace();
 		   }
 	   }
+	   
+	   /**
+	    * Aus dem String[] wird wieder ein String. Dieser wird entweder zufällig zusammengesetzt <br>
+	    * oder aber so wie er im String[] abgespeichert ist. Leerzeichen am Anfang, Leerzeichen <br>
+	    * nach Tabs sowie leere Zeilen werden vor dem Zusammensetzten entfernt-
+	    * <br><br>
+	    * Array mit Strings @param codeStrings<br>
+	    * Zufällige Zusammensetung @param random<br>
+	    * Tabbreite @param tab<br>
+	    * Zusammengesetzter String @return<br>
+	    */
 	   private String unite(String[] codeStrings, boolean random, int tab){
 		   if(random){
 			   String buffer;
@@ -187,7 +198,6 @@ public class UserDBaccess {
 		   }
 		   StringBuffer stringBuffer = new StringBuffer();
 		   for(String line: codeStrings){
-			   // FIXME: Zeilen, die nur aus Tabs bestehen, sollen entfernt werden
 			   if(!line.trim().equals("")){
 				   // trim entfernt auch tabs, deshalb while schleife
 				   line=line.replaceAll("\t ", "\t");
@@ -257,12 +267,12 @@ public class UserDBaccess {
 		   try{
 			   stmt.executeUpdate("CREATE TABLE Projects ( Projectname varchar("+length_projectName+") UNIQUE)");
 		   }
-		   catch(Exception e){ //falls Tabelle bereits existiert
+		   catch(Exception e){ //Tabelle existiert bereits
 			   }
 		   
 		   try{stmt.execute("INSERT INTO Projects VALUES ('"+projectname+"')");
 		   }
-		   catch(Exception e){// TODO Projektname bereits vorhanden
+		   catch(Exception e){	//Projektname bereits vorhanden
 		   }
 		   
 		   // ----- Speichert normalen Code

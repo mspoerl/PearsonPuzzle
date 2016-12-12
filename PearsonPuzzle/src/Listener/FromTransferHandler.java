@@ -5,7 +5,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
 import javax.swing.DefaultListModel;
-import javax.swing.DropMode;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
@@ -17,11 +16,12 @@ import javax.swing.TransferHandler;
  *
  */
 public class FromTransferHandler extends TransferHandler {
-	private JList dragJList;
-	private DefaultListModel dragDList;
+	private static final long serialVersionUID = 1L;
+	private JList<String> dragJList;
+	private DefaultListModel<String> dragDList;
 	
 	//DefaultListModel from;
-	public FromTransferHandler(DefaultListModel dragDList, JList dragJList){
+	public FromTransferHandler(DefaultListModel<String> dragDList, JList<String> dragJList){
 		this.dragDList=dragDList;
 		this.dragJList=dragJList;
 	}

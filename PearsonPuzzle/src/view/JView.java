@@ -2,7 +2,6 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,9 +31,9 @@ public abstract class JView implements Observer {
 			// main Panel wird bereinigt
 			// da mainPanel static ist, ist dies notwendig (nur eine einzige Instanz existeiert) 
 			// XXX: Herangehensweise ändern (protected static ist nicht optimal
-			mainPanel.removeAll();
 			this.model=model;
 			model.addObserver(this);
+			quitView();
 		}
 		
 		
@@ -62,6 +61,11 @@ public abstract class JView implements Observer {
 		}
 		public void addMenuToFrame(JMenuBar menuBar){
 			frame.setJMenuBar(menuBar);
+		}
+		protected void setMainPanel(JPanel mainPanel){
+			this.mainPanel=mainPanel;
+			frame.add(mainPanel);
+			draw();
 		}
 		
 		/**
@@ -126,7 +130,7 @@ public abstract class JView implements Observer {
 				return null;
 			}
 			else
-				return allert.allert();
+				return allert.allert(model);
 		}
 		public void closeAllert(){
 			

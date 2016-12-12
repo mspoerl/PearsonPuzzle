@@ -8,6 +8,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+
 import model.Model;
 import view.JView;
 
@@ -60,6 +62,10 @@ public class LoginController extends Controller{
 		
 	}
 	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void tableChanged(TableModelEvent e) {
 		// TODO Auto-generated method stub
 		
 	}

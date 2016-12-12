@@ -2,9 +2,14 @@ package model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Vector;
+
+import org.junit.runner.notification.Failure;
 
 /**
  * Klasse dient dazu, alle für die Benutzer notwendigen Daten einzulesen, zu
@@ -18,10 +23,16 @@ import java.util.Vector;
 public class Model extends Observable {
 	private String username;
 	
-	private ArrayList<String> codeList;
-	private ArrayList<String> saveList;
 	private Vector<String> codeVector;
-	private Vector<Integer> sequenceVector;
+	
+	// Bei einer LinkedHaspMap ist auch die Reihenfolge der eingefügten Elemente einsehbar.
+	// Die linked Hash Map soll NICHT frei verfügbar sein 
+	// (sonst kann man eventuell die richtige Reihenfolge auslesen)
+	private LinkedHashMap<String, Integer> codeMap;
+	private LinkedList<Integer> sortedCode;
+	
+	private Vector<String> testExpressionsVector;
+	private Vector<Vector<Integer>> codeLine_GroupMatrix;
 	private String projectDescription;
 	private String projectCode;
 	
@@ -35,6 +46,7 @@ public class Model extends Observable {
 	private UserDBaccess userDBaccess;
 	private AccessGroup accessGroup;
 	
+	private LinkedList<Failure> jUnitFailures;
 
 	public Model() {
 		// Datenbankverbindung wird aufgebaut
@@ -119,10 +131,8 @@ public class Model extends Observable {
 		return username;
 	}
 	
-	// --- Code
-	public ArrayList<String> getCodeList() {
-		return codeList;
-	}
+	// -------- Code
+	
 
 	// --- Projekte
 	public Vector<String> getProjectVector(){
@@ -174,12 +184,44 @@ public class Model extends Observable {
 	public void setCodeVector(Vector<String> codeVector) {
 		this.codeVector = codeVector;
 	}
-				// Projekt Sequenz Vektor
-	public Vector<Integer> getSequenceVector() {
-		return sequenceVector;
+	
+	// Projekt Sequenz Vektor
+	public Vector<Vector<Integer>> getGroupMatrix() {
+		return codeLine_GroupMatrix;
 	}
-	public void setSequenceVector(Vector<Integer> sequenceVector) {
-		this.sequenceVector = sequenceVector;
+	public void setGroupMatrixEntry(int yPosition, int xPosition, Object value){
+		String string = (String)value;
+		string=string.trim();
+		try{
+		codeLine_GroupMatrix.get(xPosition).set(yPosition, Integer.parseInt(string));
+			}
+			catch(NumberFormatException e){}
+		setChanged();
+		notifyObservers();
+	}
+	// Testrelevante Daten
+	public void addTestGroup(){
+		Vector<Integer> codeGroup=new Vector<Integer>();
+		for (Iterator<String> iterator = codeVector.iterator(); iterator.hasNext();) {
+			iterator.next();
+			codeGroup.add(new Integer(0));
+		}
+		codeLine_GroupMatrix.add(codeGroup);
+		setChanged();
+		notifyObservers();
+	}
+	public void removeTestGroup(int index){
+		if(index < codeLine_GroupMatrix.size())
+			codeLine_GroupMatrix.remove(index);	
+		setChanged();
+		notifyObservers();
+	}
+	public Vector<String> getTestExpressionsVector() {
+		return testExpressionsVector;
+	}
+	public void setTestExpressionsVector(Vector<String> testVector) {
+		System.out.println(testVector+"asd");
+		this.testExpressionsVector = testVector;
 	}
 
 	// Code zum puzzeln
@@ -198,21 +240,35 @@ public class Model extends Observable {
 	}
 	
 	// --- Vom Schüler zusammengepuzzelter Code
-	public ArrayList<String> getSaveList() {
-		return saveList;
+	
+	public LinkedList<Integer> getSollution(){
+		return sortedCode;
 	}
-	public void setSaveList(ArrayList<String> listModelToSave) {
-		saveList = listModelToSave;
+	// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
+	public void insertInSollution(int index, String value){
+		sortedCode.add(index, codeMap.get(value.trim()));
+	}
+	public void replaceInSollution(int index, String value){
+		sortedCode.remove(index);
+		sortedCode.add(index, codeMap.get(value.trim()));
+	}
+	public void removeInSollution(int index){
+		sortedCode.remove(index);
 	}
 	
-	// --- Datenbank zurücksetzen
-	public boolean isResetDB() {
-		return resetDB;
+
+	/**
+	 * @return the jUnitFailures
+	 */
+	public LinkedList<Failure> getjUnitFailures() {
+		return jUnitFailures;
 	}
-	public void setResetDB(boolean resetDB) {
-		this.resetDB = resetDB;
-		setChanged();
-		notifyObservers();
+
+	/**
+	 * @param jUnitFailures the jUnitFailures to set
+	 */
+	public void addjUnitFailure(Failure failure) {
+		this.jUnitFailures.add(failure);
 	}
 
 	// ------------------------------------ Datenbankinteraktionen----------------------------------------
@@ -231,8 +287,8 @@ public class Model extends Observable {
 	/**
 	 * Speichert das Projekt. Für den Fall, dass das Projekt umbenannt wurde, <br>
 	 * wird projectName und der gewählte Eintrag ind projectList auf Ungleichheit geprüft.
-	 * Neuer Codeinhalt @param codeString
-	 * Neuer Projektname @param projectName
+	 * @param codeString Neuer Codeinhalt 
+	 * @param projectName Neuer Projektname 
 	 * @param linelength
 	 */
 	public boolean saveProject(String codeString, String projectName, String projectDescription,int linelength) {
@@ -340,16 +396,23 @@ public class Model extends Observable {
 			try {
 				this.projectCode = userDBaccess.getCode(projectList.get(projectID));
 				String[] stringField = this.getRandomCode();
-				this.codeList = new ArrayList<String>();
-				this.saveList = new ArrayList<String>();
+				
 				this.codeVector = new Vector<String>();
-				this.sequenceVector = new Vector<Integer>();
+				this.testExpressionsVector = new Vector<String>();
+				this.codeMap = new LinkedHashMap<String, Integer>();
+				this.sortedCode= new LinkedList<Integer>();
+				this.codeLine_GroupMatrix = new Vector<Vector<Integer>>();
+				sortedCode= new LinkedList<Integer>();
+				Vector<Integer> codeLine_Group= new Vector<Integer>();
 				for(String line: stringField){
-					codeList.add(line);
-					saveList.add(new String());
+					
+					// FIXME: save list wird eventuell nicht mehr benötigt
 					codeVector.add(line);
-					sequenceVector.add(0);
+					testExpressionsVector.add(new String());
+					codeMap.put(line.trim(), codeVector.size()-1);
+					codeLine_Group.add(new Integer(0));
 				}		
+				codeLine_GroupMatrix.add(codeLine_Group);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -358,6 +421,17 @@ public class Model extends Observable {
 			}
 		}
 	}
+	// --- Datenbank zurücksetzen
+		public boolean isResetDB() {
+			return resetDB;
+		}
+		public void setResetDB(boolean resetDB) {
+			this.resetDB = resetDB;
+			setChanged();
+			notifyObservers();
+		}
+
+		
 }
 
 

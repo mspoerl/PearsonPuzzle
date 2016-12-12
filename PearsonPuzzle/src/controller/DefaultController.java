@@ -5,10 +5,18 @@ import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableModel;
 
 import java.util.ArrayList;
 
 import javax.swing.*;
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
+import compiler.TestCompiler;
 
 import model.AccessGroup;
 import model.Model;
@@ -21,6 +29,8 @@ import view.teacher.ConfigEditor;
 import view.teacher.ProjectConfiguration;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
+
+import CodeTest.LineOrderTest;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
@@ -36,32 +46,32 @@ public class DefaultController extends Controller {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// !!!ACHTUNG!!! hier wird eine Exception geworfen, falls zu diesem Action Event kein Kommando existiert!
-		act(DCCommand.valueOf(e.getActionCommand()));
+		act(DCCommand.valueOf(e.getActionCommand()), e);
 	}
 
 	/**
 	 * Legt fest, was bei einem Action Event (z.B. Button drücken) passiert
 	 */
-	private void act(DCCommand cmd){
+	private void act(DCCommand cmd, ActionEvent e){
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
 		if(view.getClass().equals(TextEditor.class)  
-				&& cmd!=DCCommand.saveProject
+				&& cmd!=DCCommand.SaveProject
 				&& model.hasChanged()){
 			Integer allert=view.showMessage(Allert.notSaved);
 			if(allert==JOptionPane.YES_OPTION)
-				this.act(DCCommand.saveProject);
+				this.act(DCCommand.SaveProject, null);
 			else if(allert==JOptionPane.NO_OPTION)
 				model.fetchAll();				
 			else if(allert==JOptionPane.CANCEL_OPTION)
 				return;
 		}
 		switch(cmd){
-			case submitPassword:
+			case SubmitPassword:
 				if(view.getClass().equals(LoginView.class)){
 					((LoginView)view).submitChangeToController();
 				}
 				break;
-			case editProject:
+			case EditProject:
 				if(model.getProjectListID()==null){
 					view.showMessage(Allert.noProjectSelected);
 				}
@@ -71,13 +81,13 @@ public class DefaultController extends Controller {
 					view.addController(this);
 				}
 				break;
-			case newProject:
+			case NewProject:
 				model.selectProject(null);
 				view.quitView();
 				this.view=new TextEditor(model);
 				view.addController(this);
 				break;
-			case openProject:
+			case OpenProject:
 				if(model.getProjectListID()==null){
 					view.showMessage(Allert.noProjectSelected);
 				}
@@ -87,7 +97,7 @@ public class DefaultController extends Controller {
 					view.addController(this);
 				}
 				break;
-			case projectList:
+			case ProjectList:
 				view.quitView();
 				if(model.getAccessGroup().equals(AccessGroup.PUPIL)){
 					this.view= new PupilView(model);
@@ -97,18 +107,14 @@ public class DefaultController extends Controller {
 				}
 				view.addController(this);
 				break;
-			case admin:
+			case Admin:
 				if(model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					view.quitView();
 					this.view=new ConfigEditor(model);
 					view.addController(this);
 				}
 				break;
-			case saveChanges:
-				model.setSaveList(model.getCodeList());
-				view.update();
-				break;
-			case logout:
+			case Logout:
 				view.quitView();
 				this.model=new Model();
 				LoginView startView= new LoginView(model);
@@ -117,7 +123,7 @@ public class DefaultController extends Controller {
 				this.view=startView;
 				view.update();
 				break;
-			case saveProject:
+			case SaveProject:
 				// Berechtigung wird geprüft
 				if(view.getClass().equals(TextEditor.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
@@ -135,7 +141,7 @@ public class DefaultController extends Controller {
 						// ---- Es wird versucht das Projekt zu speichern, schlägt dies fehl, so existiert bereits ein Projekt mit gleichem Namen
 						if(model.saveProject(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(), ((TextEditor)view).getProjectDescription(),150))
 						{
-							act(DCCommand.setTextConfig);
+							act(DCCommand.SetTextConfig, null);
 							model.saveProjectSettings();
 							view.showMessage(Allert.projectSaved);
 						}
@@ -145,7 +151,7 @@ public class DefaultController extends Controller {
 					}
 				}
 				break;
-			case deleteProject:
+			case DeleteProject:
 				if(view.getClass().equals(TeacherView.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					if(model.getProjectListID()==null){
@@ -162,24 +168,57 @@ public class DefaultController extends Controller {
 					}
 				}
 				break;
-			case setConfig:
+			case SetConfig:
 				if(model.getAccessGroup()==AccessGroup.TEACHER){
 					model.updateConfig();
 				}
 				break;
-			case configureProject:
+			case ConfigureProject:
 				if(model.getAccessGroup()==AccessGroup.TEACHER){
 					view.quitView();
 					this.view = new ProjectConfiguration(model);
 					view.addController(this);
 				}
-			case setTextConfig:
-				ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
-				model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
-				model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+			case SetTextConfig:
+				if(view.getClass().equals(TextEditor.class)){
+					ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
+					model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
+					model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+				}
+				break;
+			case StartGroupSelection:
+				((JButton)e.getSource()).setEnabled(false);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(1)).setEnabled(true);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(3)).setEnabled(true);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(false);
+				model.addTestGroup();
+				break;
+			case CancelGroupSelection:
+				((JButton)e.getSource()).setEnabled(false);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(0)).setEnabled(true);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(3)).setEnabled(false);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
+				model.removeTestGroup(model.getGroupMatrix().size()-1);
+				break;
+			case SaveGroupSelection:
+				((JButton)((JButton)e.getSource()).getParent().getComponent(0)).setEnabled(true);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(1)).setEnabled(false);
+				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
+				break;
+			case Compile:
+				TestCompiler.compileCode(model.getProjectCode());
+				break;
+			case TestCode:
+				System.out.println(model.getSollution());
+				Result result = JUnitCore.runClasses(LineOrderTest.class);
+			    for (Failure failure : result.getFailures()) {
+			    	if(failure!=null)
+			    	model.addjUnitFailure(failure);
+			    }
+			    view.showMessage(Allert.Failure);
 				break;
 			default:
-				break;				
+				break;
 		}
 	}
 
@@ -226,12 +265,13 @@ public class DefaultController extends Controller {
 	            int maxIndex = lsm.getMaxSelectionIndex();
 	            for (int i = minIndex; i <= maxIndex; i++) {
 	                if (lsm.isSelectedIndex(i)) {
-	                    view.update();
+	                    System.out.println(i);
 	                }
 	             }
 	        }
 		}
-		else
+		else if(view.getClass().equals(TeacherView.class)
+			|| view.getClass().equals(PupilView.class))
 		{
 			ListSelectionModel lsm = (ListSelectionModel)e.getSource();
 	        if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
@@ -255,7 +295,7 @@ public class DefaultController extends Controller {
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		// ----- Reset Knopf in: view.teacher.ConfigEditor
-		if(((AbstractButton) e.getItem()).getActionCommand()==DCCommand.resetDB.toString()){
+		if(((AbstractButton) e.getItem()).getActionCommand()==DCCommand.ResetDB.toString()){
 			if(e.getStateChange() == ItemEvent.SELECTED
 				&& !model.isResetDB()){
 					if(view.showMessage(Allert.reset)==JOptionPane.YES_OPTION)
@@ -290,9 +330,9 @@ public class DefaultController extends Controller {
 		System.out.println(e);
 		if(e.getButton()==MouseEvent.BUTTON3){
 			if(e.getComponent().getName().equals("dropList")){
-				ListSelectionModel lsm= ((JList) (e.getComponent())).getSelectionModel();
+				//ListSelectionModel lsm= ((JList<String>) (e.getComponent())).getSelectionModel();
 				//System.out.println(e.getComponent().getComponentAt(e.getLocationOnScreen()).getName());
-				System.out.println(e.getComponent().getComponentAt(e.getPoint()));
+				//System.out.println(e.getComponent().getComponentAt(e.getPoint()));
 			}
 		}
 			
@@ -316,6 +356,31 @@ public class DefaultController extends Controller {
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void tableChanged(TableModelEvent e) {
+		if(view.getClass().equals(ProjectConfiguration.class)){
+			int row = e.getFirstRow();
+			int column = e.getColumn();
+	        TableModel tableModel = (TableModel)e.getSource();
+	        String columnName = tableModel.getColumnName(column);
+	        System.out.println(row+" "+column);
+	        // damit beim Aktualisieren der Tabelle nichts getan wird
+	        if(row>=0 && column>=0){
+	        	Object data = tableModel.getValueAt(row, column);
+	        	if(columnName.equals("Codezeile")){
+	        		// nichts zu tun
+	        	}
+	        	else if(columnName.equals("Testausdruck")){    	
+	        		// FIXME: Testausdruck verändern
+	        	}
+	        	else {
+	        		model.setGroupMatrixEntry(row, column, data);
+	        	}
+	        }
+		}
 		// TODO Auto-generated method stub
 		
 	}

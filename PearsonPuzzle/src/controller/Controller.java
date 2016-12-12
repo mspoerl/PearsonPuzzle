@@ -7,6 +7,8 @@ import java.awt.event.MouseListener;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelListener;
+
 import view.JView;
 import model.Model;
 /**
@@ -18,7 +20,7 @@ import model.Model;
  * @author workspace
  *
  */
-public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener, ItemListener, FocusListener, MouseListener{
+public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener, ItemListener, FocusListener, MouseListener, TableModelListener{
 	protected Model model;
 	protected JView view;
 	public Controller(Model model, JView view){

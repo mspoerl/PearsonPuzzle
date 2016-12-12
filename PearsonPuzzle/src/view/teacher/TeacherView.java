@@ -79,9 +79,9 @@ public class TeacherView extends JView{
 		// Buttons hinufügen
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		enter.setActionCommand(DCCommand.editProject.toString());
-		newProject.setActionCommand(DCCommand.newProject.toString());
-		delete.setActionCommand(DCCommand.deleteProject.toString());
+		enter.setActionCommand(DCCommand.EditProject.toString());
+		newProject.setActionCommand(DCCommand.NewProject.toString());
+		delete.setActionCommand(DCCommand.DeleteProject.toString());
 		buttonPanel.add(newProject);
 		buttonPanel.add(enter);
 		buttonPanel.add(delete);

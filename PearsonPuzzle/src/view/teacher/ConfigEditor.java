@@ -35,7 +35,7 @@ public class ConfigEditor extends JView{
 		
 		// - Damit Button im Border Layout (mainPanel) richtige Größe erhät, wird er in eigenes Panel gekapselt
 		submit=new JButton("Übernehmen");
-		submit.setActionCommand(DCCommand.resetDB.toString());
+		submit.setActionCommand(DCCommand.ResetDB.toString());
 		JPanel submitPanel = new JPanel();
 		submitPanel.add(submit);
 		mainPanel.add(submitPanel, BorderLayout.SOUTH);
