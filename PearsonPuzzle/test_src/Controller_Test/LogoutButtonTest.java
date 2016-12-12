@@ -1,14 +1,12 @@
-package Controller_Test;
+package Controller;
 
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
-
-import model.Model;
-
 import org.junit.*;
 
+import model.Model;
 import view.*;
 import view.pupil.CodeSortView;
 import view.pupil.PupilView;
@@ -41,48 +39,59 @@ public class LogoutButtonTest {
 		JView view = new LoginView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
+		sleep(100);
 		ActionEvent e = new ActionEvent(testButton, 1, DCCommand.logout.toString());
 		controller.actionPerformed(e);
 		assertEquals(controller.getView().getClass(), LoginView.class);
-		sleep(1000);
 	}
 
 	@Test 
 	public void logout_LogoutPupilView(){
+		//model.setAccessGroup(AccessGroup.PUPIL);
 		JView view = new PupilView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
+		sleep(100);
 		ActionEvent e = new ActionEvent(testButton, 1, DCCommand.logout.toString());
 		controller.actionPerformed(e);
 		assertEquals(controller.getView().getClass(), LoginView.class);
-		sleep(1000);
 	}
 	@Test 
 	public void logout_CodeSortView(){
+		//model.setAccessGroup(AccessGroup.PUPIL);
 		JView view = new CodeSortView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
+		sleep(100);
 		ActionEvent e = new ActionEvent(testButton, 1, DCCommand.logout.toString());
 		controller.actionPerformed(e);
 		assertEquals(controller.getView().getClass(), LoginView.class);
-		sleep(1000);
 	}
 	@Test 
 	public void logout_TeacherView(){
+		//model.setAccessGroup(AccessGroup.TEACHER);
 		JView view = new TeacherView(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
+		sleep(100);
 		ActionEvent e = new ActionEvent(testButton, 1, DCCommand.logout.toString());
 		controller.actionPerformed(e);
 		assertEquals(controller.getView().getClass(), LoginView.class);
 	}
 	@Test 
 	public void logout_TextEditorView(){
+		//model.setAccessGroup(AccessGroup.TEACHER);
 		JView view = new TextEditor(model);
 		Controller controller = new DefaultController(model, view);
 		JButton testButton = new JButton();
+		sleep(100);
 		ActionEvent e = new ActionEvent(testButton, 1, DCCommand.logout.toString());
 		controller.actionPerformed(e);
 		assertEquals(controller.getView().getClass(), LoginView.class);
+	}
+	
+	@After
+	public void sleep(){
+		sleep(10);
 	}
 }

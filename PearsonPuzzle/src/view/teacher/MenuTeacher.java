@@ -5,10 +5,12 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 import view.Menu;
 
 import controller.Controller;
+import controller.DCCommand;
 
 public class MenuTeacher extends Menu{
 	/**
@@ -33,16 +35,19 @@ public class MenuTeacher extends Menu{
 		JMenu configMenu = new JMenu("Account");
 		
 		menuItems.add(new JMenuItem("Neues Projekt"));
-		menuItems.get(menuItems.size()-1).setActionCommand("newProject");
+		menuItems.get(menuItems.size()-1).setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_N, 
+		        java.awt.Event.CTRL_MASK));
+		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.newProject.toString());
 		menuItems.add(new JMenuItem("Projekte anzeigen"));
-		menuItems.get(menuItems.size()-1).setActionCommand("projectList");
+		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.projectList.toString());
 		menuItems.add(new JMenuItem("Klassen verwalten"));
 		menuItems.get(menuItems.size()-1).setActionCommand("editClass");
 		
 		menuItems.add(new JMenuItem("Account verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand("admin");
+		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.admin.toString());
 		menuItems.add(new JMenuItem("Logout"));
-		menuItems.get(menuItems.size()-1).setActionCommand("logout");
+		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.logout.toString());
 		
 		this.add(mainMenu);
 		this.add(classMenu);

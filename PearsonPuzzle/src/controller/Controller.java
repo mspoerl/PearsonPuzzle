@@ -1,6 +1,8 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import view.JView;
@@ -14,7 +16,7 @@ import model.Model;
  * @author workspace
  *
  */
-public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener{
+public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener, ItemListener{
 	protected Model model;
 	protected JView view;
 	public Controller(Model model, JView view){
@@ -23,9 +25,7 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 		view.addController(this);
 	}
 	
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-	}
+	public abstract void actionPerformed(ActionEvent arg0);
 	
 	public abstract void valueChanged(ListSelectionEvent arg0);
 	

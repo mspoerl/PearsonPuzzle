@@ -21,12 +21,18 @@ import controller.Controller;
  */
 
 public abstract class JView implements Observer {
-	protected static JFrame frame = new JFrame("PearsonPuzzle");
+	private static JFrame frame = new JFrame("PearsonPuzzle");
+	// BorderLayout mit 5 horizontalem und 1 vertikalem Versatz zwischen den Komponenten
+	// mainPanel = new JPanel(new BorderLayout(5,1));
 	protected static JPanel mainPanel = new JPanel(new BorderLayout(5,1));
 	protected Menu menu;
 	protected Model model;
 	private Controller controller;
 	public JView(Model model){
+			// main Panel wird bereinigt
+			// da mainPanel static ist, ist dies notwendig (nur eine einzige Instanz existeiert) 
+			// XXX: Herangehensweise ändern (protected static ist nicht optimal
+			mainPanel.removeAll();
 			this.model=model;
 			model.addObserver(this);
 		}
@@ -39,16 +45,9 @@ public abstract class JView implements Observer {
 		 */
 		protected DefaultListModel<String> makeDefaultListModel(List<String> stringList){
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
-			for(String listElement : stringList){
-				listModel.add(listModel.size(),  listElement);
-			}
-			return listModel;
-		}
-		protected DefaultListModel<String> makeDefaultListModel(String[] strings){
-			DefaultListModel<String> listModel = new DefaultListModel<String>();
 			
 			// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
-			for(String string : strings){
+			for(String string : stringList){
 				String tab=" ";
 				for(int i=0;i<model.getTabSize();i++){
 					tab=tab+" ";
@@ -59,6 +58,7 @@ public abstract class JView implements Observer {
 			return listModel;
 		}
 		
+		
 		/**
 		 * Methode soll vom Controller ausgeführt werden, um sich selbst <br>
 		 * als konkreter Controller für einen konkreten View hinzuzufügen.
@@ -67,23 +67,22 @@ public abstract class JView implements Observer {
 		public void setController(Controller controller){
 			this.controller=controller;
 		}
-		public void addController(Controller controller){
-		}
+		public abstract void addController(Controller controller);
+		
 		/**
 		 * Methode, um das Fenster aufzusetzen ung grundlegende Fenstereinstellungen festzulegen. <br>
 		 * Wird nur zu Beginn aufgerufen, wenn ein neues Fesnter erstellt werden soll, dies ist <br>
 		 * in der Regel nur zu Beginn des Programms der Fall.
 		 */
 		public void setupFrame(){
-			//frame = new JFrame("PearsonPuzzle");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setLayout(new FlowLayout());
-			System.out.println("Neuer Frame wurde erstell");
-			// BorderLayout mit 5 horizontalem und 1 vertikalem Versatz zwischen den Komponenten
-			//mainPanel = new JPanel(new BorderLayout(5,1));
 			frame.add(mainPanel);
 			frame.setSize(800,500);
 			frame.setLocationRelativeTo(null);
+		}
+		public void addMenuToFrame(JMenuBar menuBar){
+			frame.setJMenuBar(menuBar);
 		}
 		
 		/**
@@ -103,7 +102,7 @@ public abstract class JView implements Observer {
 		 * Controller dieses View @return
 		 */
 		public Controller getController(){
-			// !!! Return kann nulle sein
+			// TODO: !!! Return kann noch null sein
 			return controller;
 		}
 		
@@ -128,7 +127,7 @@ public abstract class JView implements Observer {
 		 * Nachricht @param message
 		 */
 		public void allert(String message) {
-			JOptionPane.showMessageDialog(frame, message);	
+			JOptionPane.showMessageDialog(frame, message);
 		}
 		
 		/**
@@ -136,6 +135,24 @@ public abstract class JView implements Observer {
 		 */
 		public void exit() {
 		    frame.dispose();
-		    // TODO Auto-generated method stub
-		}		
+		}
+		
+		/**
+		 * Es wird eine Nachricht, Meldung oder Warnung ausgegeben
+		 * @param allert
+		 * Antwort des Benutzers @return
+		 */
+		public Integer showMessage(Allert allert){
+			if(allert==Allert.projectSaved){
+				menu.add(new JLabel("Projekt wurde gespeichert"));
+				return null;
+			}
+			else
+				return allert.allert();
+		}
+		public void closeAllert(){
+			
+			//optionPane.setVisible(false);
+			//frame.remove(optionPane);
+		}
 }

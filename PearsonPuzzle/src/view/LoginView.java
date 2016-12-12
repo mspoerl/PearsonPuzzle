@@ -28,7 +28,7 @@ public class LoginView extends JView{
 		super(model);
 		setupFrame();
 		setupLoginPanel();
-		frame.setJMenuBar(new JMenuBar());
+		this.addMenuToFrame(new JMenuBar());
 		draw();
 	}
 	

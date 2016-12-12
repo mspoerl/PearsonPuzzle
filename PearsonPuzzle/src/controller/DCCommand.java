@@ -1,7 +1,8 @@
 package controller;
 
+
 public enum DCCommand {
-	submitPassword, editProject, newProject, openProject, projectList, saveChanges, saveProject, logout;
+	submitPassword, editProject, newProject, openProject, projectList, saveChanges, saveProject, logout, deleteProject, admin, resetDB, setConfig;
 	
 	@Override
 	public String toString(){
@@ -22,9 +23,16 @@ public enum DCCommand {
 			return "submitPassword";
 		case logout:
 			return "logout";
+		case deleteProject:
+			return "deleteProject";
+		case admin:
+			return "admin";
+		case resetDB: 
+			return "resetDB";
+		case setConfig:
+			return "setConfig";
 		default:
 			return "doNothing";
 		}
 	}
-	
 }

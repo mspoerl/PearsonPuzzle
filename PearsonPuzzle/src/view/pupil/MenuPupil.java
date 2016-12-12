@@ -1,16 +1,17 @@
 package view.pupil;
 
-import java.awt.MenuItem;
-
 import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import controller.Controller;
 import view.Menu;
 
 public class MenuPupil extends Menu{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JMenuItem enterProject;
 	JMenuItem logout;
 	MenuPupil(){
@@ -39,6 +40,4 @@ public class MenuPupil extends Menu{
 		enterProject.addActionListener(controller);
 		logout.addActionListener(controller);
 	}
-
-
 }
