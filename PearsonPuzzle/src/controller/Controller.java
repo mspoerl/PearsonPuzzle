@@ -1,17 +1,16 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MenuListener;
+import javax.swing.event.TableModelListener;
 
 import view.JView;
-import view.PupilView;
-import view.TeacherView;
 import model.Model;
-import model.accessGroup;
 /**
  * Oberklasse der verschiedenen Controller, die alle dafür zuständig sind, <br>
  * Daten vom Model an den jeweiligen darstellenden View weiterzureichen und <br>
@@ -21,7 +20,7 @@ import model.accessGroup;
  * @author workspace
  *
  */
-public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener{
+public abstract class Controller implements java.awt.event.ActionListener,  ListSelectionListener, ItemListener, FocusListener, MouseListener, TableModelListener{
 	protected Model model;
 	protected JView view;
 	public Controller(Model model, JView view){
@@ -30,36 +29,11 @@ public abstract class Controller implements java.awt.event.ActionListener,  List
 		view.addController(this);
 	}
 	
-	/**
-	 * Soll eventuell ins Modell ausgelagert werden
-	 * Nutzername @param username
-	 * Passwort @param password
-	 */
-	public void login(String username, char[] password){
-		model.setPassword(password);
-		model.setUsername(username);
-		if(username.isEmpty() || password.length==0){
-			view.allert("Bitte Nutzernamen und Passwort eingeben");
-		}
-		else if(model.getAccessGroup()==accessGroup.TEACHER){
-			view.quitView();
-			this.view=new TeacherView(model);
-			view.addController(this);
-		}
-		else if(model.getAccessGroup()==accessGroup.PUPIL){
-			view.quitView();
-			this.view=new PupilView(model);
-			view.addController(this);
-		}
-		else{
-			view.allert("Zugang verweigert");
-		}
-	}
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
+	public abstract void actionPerformed(ActionEvent arg0);
+	
 	public abstract void valueChanged(ListSelectionEvent arg0);
 	
+	public JView getView(){
+		return view;
+	}
 }

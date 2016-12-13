@@ -1,17 +1,19 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.MenuEvent;
+import javax.swing.event.TableModelEvent;
 
 import model.Model;
 import view.JView;
 
-public class LoginController extends Controller implements ActionListener{
+public class LoginController extends Controller{
 	public LoginController(Model model, JView view) {
 		super(model, view);
 	}
@@ -23,12 +25,47 @@ public class LoginController extends Controller implements ActionListener{
         this.password = password;
     }
 	public void actionPerformed(ActionEvent e) {
-		model.setPassword(password.getPassword());
 		model.setUsername(username.getText());
 		view.update();
 	}
 	@Override
 	public void valueChanged(ListSelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void tableChanged(TableModelEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
