@@ -92,7 +92,7 @@ public abstract class JView implements Observer {
 		 */
 		public void quitView(){
 			mainPanel.removeAll();
-			model.deleteObserver(this);
+			//model.deleteObserver(this);
 		}
 		
 		/**

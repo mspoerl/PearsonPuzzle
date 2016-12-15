@@ -197,7 +197,8 @@ public class Model extends Observable {
 		try{
 		codeLine_GroupMatrix.get(xPosition).set(yPosition, Integer.parseInt(string));
 			}
-			catch(NumberFormatException e){}
+			catch(NumberFormatException e){
+			}
 		setChanged();
 		notifyObservers();
 	}
@@ -448,6 +449,10 @@ public class Model extends Observable {
 			this.resetDB = resetDB;
 			setChanged();
 			notifyObservers();
+		}
+
+		public Vector<String> getUsers(String accessGroup, String grade) {
+			return userDBaccess.getUsers(accessGroup, grade);
 		}
 
 		

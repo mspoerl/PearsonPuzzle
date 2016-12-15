@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class UserDBaccess {
 
@@ -512,4 +513,11 @@ public class UserDBaccess {
 			}
 			return true;
 		}
+
+	public Vector<String> getUsers(String accessGroup, String grade) {
+		Vector <String> users = new Vector<String>();
+		
+		// TODO Auto-generated method stub
+		return null;
+	}
 	}

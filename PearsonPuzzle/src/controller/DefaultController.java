@@ -224,6 +224,10 @@ public class DefaultController extends Controller {
 			    }
 			    view.showMessage(Allert.Failure);
 				break;
+			case SetGrade:
+				JComboBox selectedChoice = (JComboBox) e.getSource();
+				model.setGrade(Integer.parseInt(selectedChoice.getSelectedItem().toString()));
+			    break;
 			default:
 				break;
 		}
