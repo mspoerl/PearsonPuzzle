@@ -61,7 +61,7 @@ public class TestCompiler {
 		 public static boolean compileCode(String src){
 			 src = "class testCode { "+src+" }";
 			 System.out.println(src);
-			 StringJavaFileObject javaFile = new StringJavaFileObject( "gen_src/testCode", src );
+			 StringJavaFileObject javaFile = new StringJavaFileObject( "testCode", src );
 		
 			 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			 DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
@@ -99,7 +99,7 @@ public class TestCompiler {
 				 return false;
 			 }
 			 try {
-				 Class.forName( "A", true, classLoader );
+				 Class.forName( "testCode", true, classLoader );
 			 } catch (ClassNotFoundException e) {
 				 return false;
 			 }    // Java Compiler API 2

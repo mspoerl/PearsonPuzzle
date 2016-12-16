@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
 
+import model.CodeModel;
 import model.Model;
 
 /**
@@ -53,10 +54,11 @@ public class ToSaveTransferHandler extends TransferHandler {
         	dragSameElement=true;
         	defaultDropmode=DropMode.INSERT;
         	Vector<String> codeVector = model.getCodeVector();
-        	if(model.getSollution().isEmpty())
+        	if(model.getSolution().isEmpty())
         		for(int i=0;i<codeVector.size();i++){
         			System.out.println(i);
-        			model.insertInSollution(i, codeVector.get(i));
+        			//model.getCodeModel().insertInSollution(i, codeVector.get(i));
+        			model.changeSolution(CodeModel.INSERT, i, codeVector.get(i));
         		}
         	break;
         case 1:
@@ -144,7 +146,8 @@ public class ToSaveTransferHandler extends TransferHandler {
     	if(internDnD){
     		// Wenn Drag and Drop Liste gleich ist
     		listModel.insertElementAt(data, dropIndex);
-    		model.insertInSollution(dropIndex, data);
+    		model.changeSolution(CodeModel.INSERT, dropIndex, data);
+    		//model.changeSollution(insertInSollution(dropIndex, data);
 
         	
     		Rectangle rect = list.getCellBounds(dropIndex, dropIndex);
@@ -161,10 +164,12 @@ public class ToSaveTransferHandler extends TransferHandler {
         else{
         	listModel.insertElementAt(data, dropIndex);
         	if(list.getDropLocation().isInsert()){
-        		model.insertInSollution(dropIndex, data);
+        		//model.insertInSollution(dropIndex, data);
+        		model.changeSolution(CodeModel.INSERT, dropIndex, data);
         	}
         	else{
-        		model.replaceInSollution(dropIndex, data);
+        		model.changeSolution(CodeModel.REPLACE, dropIndex, data);
+        		//model.getCodeModel().replaceInSollution(dropIndex, data);
         		listModel.remove(dropIndex+1);
         	}
             Rectangle rect = list.getCellBounds(dropIndex, dropIndex);
@@ -199,7 +204,8 @@ public class ToSaveTransferHandler extends TransferHandler {
         if(removeElements && action==0 ){
         	// FIXME: Insert muss besser gehandelt werden
         	dropDList.removeElementAt(dragIndex);
-        	model.removeInSollution(dragIndex);
+        	model.changeSolution(CodeModel.REMOVE, dropIndex, null);
+        	//model.getCodeModel().removeInSollution(dragIndex);
         	if(defaultDropmode==DropMode.ON){
         		dropDList.addElement("");
         	}
@@ -210,10 +216,12 @@ public class ToSaveTransferHandler extends TransferHandler {
         	System.out.println(action);
         	if(dragIndex<=dropIndex){
         		dropDList.removeElementAt(dragIndex);
-        		model.removeInSollution(dragIndex);
+        		model.changeSolution(CodeModel.REMOVE, dragIndex, null);
+        		//model.getCodeModel().removeInSollution(dragIndex);
         	}
         	else if(dragIndex>dropIndex){
-        		model.removeInSollution(dragIndex+1);
+        		model.changeSolution(CodeModel.REMOVE, dragIndex+1, null);
+        		//model.getCodeModel().removeInSollution(dragIndex+1);
         		dropDList.removeElementAt(dragIndex+1);
         	}
         }

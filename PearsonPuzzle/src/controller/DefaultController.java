@@ -206,11 +206,11 @@ public class DefaultController extends Controller {
 				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
 				break;
 			case Compile:
-				TestCompiler.compileCode(model.getSolutionStrings());
+				TestCompiler.compileCode(model.getSolution());
 				break;
 			case TestCode:
-				System.out.println(model.getSollution());
-				if(model.isExactOrder())
+				System.out.println(model.getSolution());
+				if(model.isExactSollution())
 					System.out.println("Herzlichen Glückwunsch, richtige Reihenfolge!");
 				else
 					System.out.println("Reihenfolge nicht 1:1, Test auf Korrektheit folgt");

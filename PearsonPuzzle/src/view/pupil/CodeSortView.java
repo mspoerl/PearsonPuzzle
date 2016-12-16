@@ -197,4 +197,8 @@ public class CodeSortView extends JView {
 		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model));	
 	}
 
+	public DefaultListModel<String> getSolution() {
+		return saveDropModel;
+	}
+
 }
