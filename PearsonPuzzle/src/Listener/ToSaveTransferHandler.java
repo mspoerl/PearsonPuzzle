@@ -140,7 +140,10 @@ public class ToSaveTransferHandler extends TransferHandler {
 
         JList<String> list = (JList<String>)support.getComponent();
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
-        
+        // Daten von Extern werden nicht erkannt
+        if(!model.getCodeVector().contains(data)){
+        	return false;
+        }
     	if(internDnD){
     		// Wenn Drag and Drop Liste gleich ist
     		listModel.insertElementAt(data, dropIndex);
