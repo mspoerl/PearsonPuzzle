@@ -29,16 +29,17 @@ public class ToSaveTransferHandler extends TransferHandler {
 	private DropMode defaultDropmode;
 	private JList<String> dropJList;
 	private int dragIndex = 0;
-	private int dropIndex = 0;
+	private Integer dropIndex;
 	private boolean internDnD;
 	private boolean dragSameElement;
 	private boolean removeElements;
+	private boolean deleteElements = false;
 	private Model model;
 	
 	// Puzzlemodus 0: Reines Drag and Drop
 	public final static int DnD_simple=0;
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
-	//public final static int BuggerDnD=1;
+	public final static int BuggerDnD=1;
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
 	public final static int DnD_Bugger_OneWay=2;
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
@@ -60,7 +61,10 @@ public class ToSaveTransferHandler extends TransferHandler {
         		}
         	break;
         case 1:
-        	// FIXME: Zu füllen
+        	action=TransferHandler.MOVE;
+        	removeElements=true;
+        	dragSameElement=true;
+        	defaultDropmode=DropMode.INSERT;
         	break;
         case 2:
         	action=TransferHandler.MOVE;
@@ -72,11 +76,12 @@ public class ToSaveTransferHandler extends TransferHandler {
         	action=TransferHandler.COPY;
         	removeElements=true;
         	dragSameElement=true;
+        	deleteElements=true;
         	defaultDropmode=DropMode.ON_OR_INSERT;
         	break;
         default:      
         	action = TransferHandler.MOVE;
-        	removeElements=true;
+        	removeElements=false;
         	dragSameElement=false;
         	defaultDropmode=DropMode.INSERT;
         	break;
@@ -140,7 +145,10 @@ public class ToSaveTransferHandler extends TransferHandler {
 
         JList<String> list = (JList<String>)support.getComponent();
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
-        
+        // Daten von Extern werden nicht erkannt
+        if(!model.getCodeVector().contains(data)){
+        	return false;
+        }
     	if(internDnD){
     		// Wenn Drag and Drop Liste gleich ist
     		listModel.insertElementAt(data, dropIndex);
@@ -155,7 +163,7 @@ public class ToSaveTransferHandler extends TransferHandler {
     	}
     	else if(listModel.contains(data)
         		&& !dragSameElement){
-    		// Gleiches Element kann nicht 2x aus der rechten Liste gezogen werden.
+    		// Gleiches Element wird nicht 2x aus der rechten Liste gezogen.
         	return false;
         }
         else{
@@ -193,20 +201,28 @@ public class ToSaveTransferHandler extends TransferHandler {
     }
     
     public void exportDone(JComponent comp, Transferable trans, int action) {
-    	
+    	System.out.println(comp.getParent().getParent().getParent().getClass().toString());
+    	System.out.println(comp.getRootPane().getComponent(1).getClass().toString());
     	System.out.print(action);
     	// Elemente werden entfernt 
-        if(removeElements && action==0 ){
-        	// FIXME: Insert muss besser gehandelt werden
+        if(dropIndex==null && removeElements && action!=0){
         	dropDList.removeElementAt(dragIndex);
         	model.removeInSollution(dragIndex);
         	if(defaultDropmode==DropMode.ON){
         		dropDList.addElement("");
         	}
         }
+        else if(deleteElements && action==0){
+        	dropDList.removeElementAt(dragIndex);
+        	model.removeInSollution(dragIndex);
+        	if(defaultDropmode==DropMode.ON){
+        		dropDList.addElement("");
+        	}
+        }
+
         
         // Internes DnD
-        if(internDnD && action!=0){
+        else if(internDnD && action!=0){
         	System.out.println(action);
         	if(dragIndex<=dropIndex){
         		dropDList.removeElementAt(dragIndex);
@@ -221,13 +237,13 @@ public class ToSaveTransferHandler extends TransferHandler {
         dropJList.clearSelection();
         internDnD=false;
         dropJList.setDropMode(defaultDropmode);
+        dropIndex=null;
         return;
     }
 
 	public boolean isDragSameElement() {
 		return dragSameElement;
 	}
-
 	public void setDragSameElement(boolean dragSameElement) {
 		this.dragSameElement = dragSameElement;
 	}

@@ -44,7 +44,7 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
-	private int Puzzlemodus=ToSaveTransferHandler.DnD_Bugger_OneWay;
+	private int Puzzlemodus=0;
 	public CodeSortView(Model model) {
 		super(model);
 		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
@@ -62,7 +62,7 @@ public class CodeSortView extends JView {
 			saveDropList=new JList<String>(saveDropModel);
 			dragModel=makeDefaultListModel();
 			dragList=new JList<String>(dragModel);
-			TransferHandler dragTransferH = new FromTransferHandler(dragModel, dragList);
+			FromTransferHandler dragTransferH = new FromTransferHandler(dragModel, dragList, model);
 			ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
 			
 			switch(Puzzlemodus){
@@ -77,16 +77,21 @@ public class CodeSortView extends JView {
 					saveDropList.setTransferHandler(dragDropTransferH);
 					break;
 				case 1:
-					// TODO: umsetzten
+					saveDropList.setDropMode(DropMode.INSERT);
+					dragList.setDropMode(DropMode.INSERT);
+					saveDropList.setTransferHandler(dragDropTransferH);
+					dragList.setTransferHandler(dragTransferH);
 					break;
 				case 2:
 					// Elemte werden rechts entfernt, können links nicht entfernt werden
 					saveDropList.setDropMode(DropMode.INSERT);
+					dragTransferH.setCanRevertAction(false);
 					saveDropList.setTransferHandler(dragDropTransferH);
 					dragList.setTransferHandler(dragTransferH);
 					break;
 				case 3:
-					saveDropList.setDropMode(DropMode.ON_OR_INSERT);					
+					saveDropList.setDropMode(DropMode.ON_OR_INSERT);
+					dragTransferH.setCanRevertAction(false);
 					saveDropList.setTransferHandler(dragDropTransferH);
 					dragList.setTransferHandler(dragTransferH);
 					break;
@@ -123,6 +128,7 @@ public class CodeSortView extends JView {
 			}
 			description.setLineWrap(true);
 			description.setWrapStyleWord(true);
+			description.setEditable(false);
 			JScrollPane scrollPane_description = new JScrollPane(description);
 			scrollPane_description.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPane_description.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -193,7 +199,7 @@ public class CodeSortView extends JView {
 		saveDropModel=new DefaultListModel <String>();
 		dragList=new JList<String>(dragModel);
 		saveDropList=new JList<String>(saveDropModel);
-		dragList.setTransferHandler(new FromTransferHandler(dragModel, dragList));
+		dragList.setTransferHandler(new FromTransferHandler(dragModel, dragList, model));
 		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model));	
 	}
 
