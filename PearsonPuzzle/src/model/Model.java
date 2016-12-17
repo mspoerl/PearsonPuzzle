@@ -38,6 +38,7 @@ public class Model extends Observable {
 	
 	private List<String> projectList;
 	private Vector<String> projectVector;
+	private Vector<Integer> tabVector;
 	private Integer projectID;
 	private int tabSize;
 	private boolean randomMode;
@@ -97,6 +98,9 @@ public class Model extends Observable {
 		if(projectID!=null)
 			return tabSize;
 		return 0;
+	}
+	public Vector<Integer> getTabVector(){
+		return tabVector;
 	}
 
 	// --- Zufallsmodus
@@ -274,6 +278,17 @@ public class Model extends Observable {
 		 	return true;
 		return false;
 	}
+	/**
+	 * Gibt Aufschluss, ob die Lösungsmatrix die Codezeile enthält.
+	 * Leerzeichen und Tabs werden nicht berücksichtigt.
+	 * @param codeLine Codezeile, die geprüft werden soll
+	 * @return Lösungsmatrix enthält Codezeile
+	 */
+	public boolean codeContains(String codeLine){
+		if(codeMap.containsValue(codeLine.trim()))
+			return true;
+		return false;
+	}
 	
 
 	/**
@@ -425,8 +440,17 @@ public class Model extends Observable {
 				Vector<Integer> codeLine_Group= new Vector<Integer>();
 				for(String line: stringField){
 					
-					// FIXME: save list wird eventuell nicht mehr benötigt
-					codeVector.add(line);
+					// Dies ist notwendig, damit im Text sort view die Tabs richtig dargestellt werden.
+					String tab;
+					if(tabSize==0)
+						tab="";
+					else
+						tab=" ";
+					for(int i=0;i<tabSize;i++){
+						tab=tab+" ";
+					}
+					String bString = line.replaceAll("\t", tab);
+					codeVector.add(bString);
 					testExpressionsVector.add(new String());
 					codeMap.put(line.trim(), codeVector.size()-1);
 					codeLine_Group.add(new Integer(0));
