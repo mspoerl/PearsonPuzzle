@@ -6,8 +6,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DragSourceEvent;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -17,35 +15,52 @@ import model.Model;
 
 /**
  * 
- * 
  * @author workspace
  *
  */
 public class FromTransferHandler extends TransferHandler {
-	private Model model;
-	private boolean internDnD=false;
-	private boolean canInvertAction=true;
 	private static final long serialVersionUID = 1L;
+	
+	private Model model;
+	
+	private int action;					// COPY oder MOVE
+	private boolean internDnD;			// Gibt Auskunft, ob es sich um ein Listeninternes DnD Event handelt (wird beim Export gesetzt und beim Import ausgelesen)
+	private boolean canRevertAction;	// Gibt an, ob Elemente wieder zurück in die Liste gedropt werden können.
+	 private Integer dragIndex;			// Index des Elements, das gedragt wird.
 	private JList<String> dragJList;
 	private DefaultListModel<String> dragDList;
-	private final static int action = TransferHandler.MOVE;
 	
-	//DefaultListModel from;
 	public FromTransferHandler(DefaultListModel<String> dragDList, JList<String> dragJList, Model model){
 		this.dragDList=dragDList;
 		this.dragJList=dragJList;
 		this.model=model;
+		internDnD = false;
+		canRevertAction = true;
+		action = TransferHandler.MOVE;
 	}
 	
-	public void setCanRevertAction(boolean canRevert){
-		canInvertAction=canRevert;
+	public void setAction(int action){
+		this.action=action;
 	}
-	// --------------- Import Methoden
+	/**
+	 * Ermöglicht, dass Elemente wieder zurück in die Liste gedropt werden.
+	 */
+	public void enableRevert(){
+		canRevertAction=true;
+	}
+	/**
+	 * Elemente können dann nicht mehr zur Liste hinzugefügt/gedragt werden.
+	 */
+	public void disableRevert(){
+		canRevertAction=false;
+	}
+	
+	// ---- Import Methoden
+	@Override
     public boolean canImport(TransferHandler.TransferSupport support) {
     	if(internDnD)
     		return false;
-    	if(!canInvertAction)
-    		return false;
+    	
         if (!support.isDrop())
         	return false;
         if (!support.isDataFlavorSupported(DataFlavor.stringFlavor))
@@ -57,11 +72,12 @@ public class FromTransferHandler extends TransferHandler {
         }
         return false;
     }
-
+	@Override
     public boolean importData(TransferHandler.TransferSupport support) {
-        if (!canImport(support)) {
+        if (!canImport(support))
             return false;
-        }
+        if(!canRevertAction)
+    		return false;
         JList.DropLocation dl = (JList.DropLocation)support.getDropLocation();
         Integer dropIndex = dl.getIndex();
         
@@ -74,9 +90,9 @@ public class FromTransferHandler extends TransferHandler {
             return false;
         }
 
-        JList<String> list = (JList<String>)support.getComponent();
+		JList<String> list = (JList<String>)support.getComponent();
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
-        // Daten von Extern werden nicht erkannt
+        // Daten von Extern werden nicht anerkannt
         if(!model.getCodeVector().contains(data)){
         	return false;
         }
@@ -89,19 +105,19 @@ public class FromTransferHandler extends TransferHandler {
     }
     
 	// ----- ExportMethoden
+	@Override
     public int getSourceActions(JComponent comp) {
         return COPY_OR_MOVE;
     }
-    
-    private int index = 0;
+    @Override
     public Transferable createTransferable(JComponent comp) {
-        index = dragJList.getSelectedIndex();        
-        if (index < 0 || index >= dragDList.getSize())
+        dragIndex = dragJList.getSelectedIndex();        
+        if (dragIndex < 0 || dragIndex >= dragDList.getSize())
             return null;
         internDnD=true;
         return new StringSelection((String)dragJList.getSelectedValue());
     }
-    
+    @Override
     public void exportDone(JComponent comp, Transferable trans, int action) {
     	internDnD = false;
     	if (action != MOVE) {
@@ -109,7 +125,7 @@ public class FromTransferHandler extends TransferHandler {
     		return;
         }
         if(action == MOVE){
-        	dragDList.removeElementAt(index);
+        	dragDList.removeElementAt(dragIndex);
         	dragJList.clearSelection();
         	return;
         }
