@@ -33,7 +33,6 @@ public abstract class JView implements Observer {
 			// XXX: Herangehensweise ändern (protected static ist nicht optimal
 			this.model=model;
 			model.addObserver(this);
-			quitView();
 		}
 		
 		

@@ -1,0 +1,82 @@
+package model;
+
+import static org.junit.Assert.*;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Vector;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class OrderFailures_test {
+	
+	private LinkedList<Integer> sortedCode;
+	private LinkedList<Boolean> groupFailures;
+	private Vector<Vector<Integer>> codeLine_GroupMatrix;
+	private LinkedHashMap<String, Integer> codeMap;
+	private Vector<String> codeVector_normal;
+	
+	
+	@Before
+	public void initialize(){
+		
+	}
+	private void getTestCase(int testCase){
+		groupFailures = new LinkedList<Boolean>();
+		codeVector_normal = new Vector<String>();
+		sortedCode = new LinkedList<Integer> () ;
+		codeLine_GroupMatrix = new Vector<Vector<Integer>>();
+		codeMap = new LinkedHashMap<String, Integer>();
+		String[] codeLines;
+		Integer[] sortedLines;
+		Integer[][] ruleGroup;
+		switch (testCase) {
+		case 0:
+			codeLines= new String[]			{"Line0","Line1","Line2","Line3","Line4","Line5"};
+			sortedLines = new Integer[]		{5,2,3,1,4,0};
+			ruleGroup = new Integer[][] 	{{0,1,1,2,3,0}, {1,1,1,1,1,1}};
+			break;
+		case 1:
+			codeLines= new String[]			{"Line0","Line0","Line2","Line3","Line2","Line5"};
+			sortedLines = new Integer[]		{1,0,4,2,5,3};
+			ruleGroup = new Integer[][] 	{{1,2,3,0,0,4}, {1,1,2,3,0,0}};
+			break;
+		default:
+			codeLines= new String[] 		{"Line0","Line1","Line2","Line3","Line4","Line5"};
+			sortedLines = new Integer[] 	{0,1,2,3,4,5};
+			ruleGroup = new Integer[][]		{{1,2,3,4,5,6}, {0,0,0,1,1,1}, {0,1,0,1,0,1}};
+			break;
+		} 
+		for (int i = 0; i < ruleGroup.length; i++) {
+			codeLine_GroupMatrix.add(new Vector<Integer>());
+		}
+		for(int i=0; i<codeLines.length;i++){
+			codeVector_normal.add(codeLines[i]);
+			sortedCode.add(sortedLines[i]);
+			for(int j=0; j<codeLine_GroupMatrix.size(); j++){
+				codeLine_GroupMatrix.get(j).add(ruleGroup[j][i]);
+			}
+			codeMap.put(codeLines[i], i);
+		}	
+	}
+
+	@Test
+	public void test() {		
+		getTestCase(0);
+		OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		assertFalse(groupFailures.get(0));
+		assertTrue(groupFailures.get(1));
+		
+		getTestCase(1);
+		OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		assertTrue(groupFailures.get(0));
+		assertTrue(groupFailures.get(1));
+		
+		getTestCase(10);
+		OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		assertTrue(groupFailures.get(0));
+		
+	}
+
+}
