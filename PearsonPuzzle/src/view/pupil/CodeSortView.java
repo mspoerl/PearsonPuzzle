@@ -3,6 +3,7 @@ package view.pupil;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -47,6 +48,7 @@ public class CodeSortView extends JView {
 	private DefaultListModel <String> saveDropModel;
 	private JButton compileButton;
 	private JButton testButton;
+	private JTextArea description;
 	
 	public CodeSortView(Model model) {
 		super(model);
@@ -128,7 +130,7 @@ public class CodeSortView extends JView {
 			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
 		
 		// Arbeitsanweisung und Ergebnisse
-		JTextArea description=new JTextArea(defaultDescription);
+		description=new JTextArea(defaultDescription);
 		if(!model.getProjectDescription().trim().equals(""))
 			description.setText(model.getProjectDescription());
 		description.setLineWrap(true);
@@ -145,7 +147,7 @@ public class CodeSortView extends JView {
 	 * Buttoons werden definiert. Hizufügen eines Action Listeners noch notwendig.
 	 */
 	private void setupButtons(){
-		compileButton=new JButton("Compilieren");
+		compileButton=new JButton("Kompilieren");
 		testButton = new JButton("Test starten");
 		JPanel topPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		topPanel.add(compileButton);
@@ -188,7 +190,22 @@ public class CodeSortView extends JView {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		update();	
+		if(arg1==DCCommand.Compile){
+			// Fehlerbericht oder Erfolg ausgeben
+			Vector<HashMap<String, String>> failures = model.getCompileFailures();
+			if(failures.isEmpty())
+				description.setText("Kompilieren war erfolgreich!");
+			else{
+				String failureText = "Kompilieren war nicht erfolgreich. \nAufgetretenen Fehler: ";
+				for(HashMap<String, String> failure : failures){
+					failureText = failureText+"\n "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
+				}
+				description.setText(failureText);
+			}
+			dragList.setEnabled(false);
+			saveDropList.setEnabled(false);
+		}
+		update();
 	}
 
 	@Override

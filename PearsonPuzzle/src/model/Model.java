@@ -2,6 +2,7 @@ package model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -10,6 +11,8 @@ import java.util.Observable;
 import java.util.Vector;
 
 import org.junit.runner.notification.Failure;
+
+import controller.DCCommand;
 
 /**
  * Klasse dient dazu, alle für die Benutzer notwendigen Daten einzulesen, zu
@@ -23,7 +26,8 @@ import org.junit.runner.notification.Failure;
 public class Model extends Observable {
 	private String username;
 	
-	private Vector<String> codeVector;
+	private Vector<String> codeVector_random;
+	private Vector<String> codeVector_normal;
 	
 	// Bei einer LinkedHaspMap ist auch die Reihenfolge der eingefügten Elemente einsehbar.
 	// Die linked Hash Map soll NICHT frei verfügbar sein 
@@ -38,7 +42,7 @@ public class Model extends Observable {
 	
 	private List<String> projectList;
 	private Vector<String> projectVector;
-	private Vector<Integer> tabVector;
+	private Vector<Integer> tabVector;	// TODO: Tab Vector nutzen 
 	private Integer projectID;
 	private int tabSize;
 	private boolean randomMode;
@@ -48,9 +52,13 @@ public class Model extends Observable {
 	private AccessGroup accessGroup;
 	
 	private LinkedList<Failure> jUnitFailures;
+	private Vector<HashMap<String, String>> compileFailures;
+	private LinkedList<Boolean> groupFailures;
 
 	public Model() {
 		jUnitFailures=new LinkedList<Failure>();
+		compileFailures = new Vector<HashMap<String,String>>();
+		groupFailures = new LinkedList<Boolean>();
 		// Datenbankverbindung wird aufgebaut
 		try {
 			userDBaccess = new UserDBaccess();
@@ -185,10 +193,10 @@ public class Model extends Observable {
 	}
 				// Projektvektor
 	public Vector<String> getCodeVector() {
-		return codeVector;
+		return codeVector_random;
 	}
 	public void setCodeVector(Vector<String> codeVector) {
-		this.codeVector = codeVector;
+		this.codeVector_random = codeVector;
 	}
 	
 	// Projekt Sequenz Vektor
@@ -208,7 +216,7 @@ public class Model extends Observable {
 	// Testrelevante Daten
 	public void addTestGroup(){
 		Vector<Integer> codeGroup=new Vector<Integer>();
-		for (Iterator<String> iterator = codeVector.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = codeVector_random.iterator(); iterator.hasNext();) {
 			iterator.next();
 			codeGroup.add(new Integer(0));
 		}
@@ -252,9 +260,8 @@ public class Model extends Observable {
 	}
 	public Vector<String> getSolutionStrings(){
 		Vector<String> solution = new Vector<String>(codeMap.size());
-		int i=0;
 		for(Integer index: sortedCode){
-			solution.add(codeVector.get(index));
+			solution.add(codeVector_random.get(index));
 		}
 		return solution;
 	}
@@ -269,14 +276,20 @@ public class Model extends Observable {
 	public void removeInSollution(int index){
 		sortedCode.remove(index);
 	}
-	public boolean isExactOrder(){
-		String sollutionString = new String();
-		for (String string : getSolutionStrings()){
-			sollutionString=sollutionString+string+"\n";
-		}
-		if(sollutionString.equals(projectCode))
-		 	return true;
-		return false;
+	public boolean testSolution(){
+		Boolean result = OrderFailures.testOrder_simple(this, projectCode);
+		result = result & OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		setChanged();
+		notifyObservers(DCCommand.TestCode);
+		return result;
+//		
+//		String sollutionString = new String();
+//		for (String string : getSolutionStrings()){
+//			sollutionString=sollutionString+string+"\n";
+//		}
+//		if(sollutionString.equals(projectCode))
+//		 	return true;
+//		return false;
 	}
 	/**
 	 * Gibt Aufschluss, ob die Lösungsmatrix die Codezeile enthält.
@@ -303,6 +316,18 @@ public class Model extends Observable {
 	 */
 	public void addjUnitFailure(Failure failure) {
 		this.jUnitFailures.add(failure);
+	}
+
+	/**
+	 * @return the compileFailures
+	 */
+	public Vector<HashMap<String,String>> getCompileFailures() {
+		return compileFailures;
+	}
+	public void setCompilerFailures(Vector<HashMap<String, String>> failures) {
+		this.compileFailures = failures;
+		setChanged();
+		notifyObservers(DCCommand.Compile);
 	}
 
 	// ------------------------------------ Datenbankinteraktionen----------------------------------------
@@ -429,9 +454,15 @@ public class Model extends Observable {
 			if(projectID!=null){
 			try {
 				this.projectCode = userDBaccess.getCode(projectList.get(projectID));
+				String[] strings = projectCode.split("/n");
+				codeVector_normal = new Vector<String>();
+				for(String string:strings){
+					codeVector_normal.add(string);
+				}
+				
 				String[] stringField = this.getRandomCode();
 				
-				this.codeVector = new Vector<String>();
+				this.codeVector_random = new Vector<String>();
 				this.testExpressionsVector = new Vector<String>();
 				this.codeMap = new LinkedHashMap<String, Integer>();
 				this.sortedCode= new LinkedList<Integer>();
@@ -450,9 +481,9 @@ public class Model extends Observable {
 						tab=tab+" ";
 					}
 					String bString = line.replaceAll("\t", tab);
-					codeVector.add(bString);
+					codeVector_random.add(bString);
 					testExpressionsVector.add(new String());
-					codeMap.put(line.trim(), codeVector.size()-1);
+					codeMap.put(line.trim(), codeVector_random.size()-1);
 					codeLine_Group.add(new Integer(0));
 				}		
 				codeLine_GroupMatrix.add(codeLine_Group);
@@ -473,7 +504,6 @@ public class Model extends Observable {
 			setChanged();
 			notifyObservers();
 		}
-
 		
 }
 
