@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
 
 import java.util.ArrayList;
 
@@ -29,8 +30,10 @@ import view.teacher.ConfigEditor;
 import view.teacher.ProjectConfiguration;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
+import view.teacher.UnitEditor;
 
 import CodeTest.LineOrderTest;
+import JUnitUmgebung.JUnitRunner;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
@@ -106,6 +109,13 @@ public class DefaultController extends Controller {
 				if(model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					view.quitView();
 					this.view=new ConfigEditor(model);
+					view.addController(this);
+				}
+				break;
+			case EditJUnit:
+				if(model.getAccessGroup().equals(AccessGroup.TEACHER)){
+					view.quitView();
+					this.view= new UnitEditor(model);
 					view.addController(this);
 				}
 				break;
@@ -200,24 +210,33 @@ public class DefaultController extends Controller {
 				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
 				break;
 			case Compile:
-				TestCompiler.compileCode(model.getSolutionStrings());
+				if(model.getAccessGroup()==AccessGroup.PUPIL)
+					TestCompiler.compileCode(model.getSolutionStrings());
+				else if(model.getAccessGroup()==AccessGroup.TEACHER)
+					TestCompiler.compileCode(((UnitEditor)view).getText());
 				model.setCompilerFailures(TestCompiler.getFailures());
 				break;
 			case TestCode:
-				System.out.println(model.getSollution());
-				//model.testSolution();
-				if(model.testSolution())
-					System.out.println("Herzlichen Glückwunsch, richtige Reihenfolge!");
-				else
-					System.out.println("Reihenfolge nicht 1:1, Test auf Korrektheit folgt");
-				Result result = JUnitCore.runClasses(LineOrderTest.class);
+				Result result;
+				if(model.getAccessGroup()==AccessGroup.PUPIL){
+					System.out.println(model.getSollution());
+					//model.testSolution();
+					if(model.testSolution())
+						System.out.println("Herzlichen Glückwunsch, richtige Reihenfolge!");
+					else
+						System.out.println("Reihenfolge nicht 1:1, Test auf Korrektheit folgt");
+					result = JUnitCore.runClasses(LineOrderTest.class);
+				}
+				else {
+					result = JUnitRunner.run(((UnitEditor)view).getText());
+				}
 				System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 			    for (Failure failure : result.getFailures()) {
 			    	if(failure!=null){
 			    		model.addjUnitFailure(failure);
 			    		System.out.println(failure);
 			    	}
-			    }
+				}
 			    view.showMessage(Allert.Failure);
 				break;
 			default:

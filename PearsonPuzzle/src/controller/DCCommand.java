@@ -7,8 +7,8 @@ package controller;
  *
  */
 public enum DCCommand {
-	SubmitPassword, EditProject, NewProject, OpenProject, ProjectList, SaveProject, Logout, 
-	DeleteProject, Admin, ResetDB, SetConfig, ConfigureProject, SetTextConfig, StartGroupSelection, SaveGroupSelection, CancelGroupSelection, Compile, TestCode;
+	SubmitPassword, EditProject, EditJUnit, NewProject, OpenProject, ProjectList, SaveProject, Logout, 
+	DeleteProject, Admin, ResetDB, SetConfig, ConfigureProject, SetTextConfig, StartGroupSelection, SaveGroupSelection, CancelGroupSelection, Compile, TestCode, SaveJUnit;
 	
 	@Override
 	public String toString(){
@@ -43,6 +43,10 @@ public enum DCCommand {
 			return "StartGroupSelection";
 		case SaveGroupSelection:
 			return "SaveGroupSelection";
+		case SaveJUnit: 
+			return "SaveJUnit";
+		case EditJUnit:
+			return "EditJUnit";
 		case CancelGroupSelection:
 			return "CancelGroupSelection";
 		case Compile:

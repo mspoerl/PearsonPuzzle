@@ -89,7 +89,8 @@ public class MenuTeacher extends Menu{
 			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.EditProject.toString());
 			extendedNavigation.add(new JButton("Reihenfolgen"));
 			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.ConfigureProject.toString());
-			extendedNavigation.add(new JButton("JUnit"));	
+			extendedNavigation.add(new JButton("JUnit"));
+			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.EditJUnit.toString());
 			for(JButton comp: extendedNavigation){
 				comp.setOpaque(true);
 				comp.setBackground(Color.WHITE);
