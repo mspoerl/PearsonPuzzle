@@ -381,8 +381,6 @@ public class DefaultController extends Controller {
 	        		model.setGroupMatrixEntry(row, column, data);
 	        	}
 	        }
-		}
-		// TODO Auto-generated method stub
-		
+		}		
 	}
 }
