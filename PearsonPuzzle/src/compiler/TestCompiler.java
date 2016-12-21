@@ -76,8 +76,8 @@ public class TestCompiler {
 					if(line.contains("class")){
 						if(className.isEmpty()){
 							className=line.substring(line.indexOf("class")+5, line.indexOf("{"));
-							System.out.println(className);
 							className=className.trim();
+							solutionString=solutionString+"\n"+line;
 						}
 						else{
 							ret= ret && compileCode(solutionString, className);
@@ -129,7 +129,6 @@ public class TestCompiler {
 			 CompilationTask task = compiler.getTask( null, fileManager, diagnostics, null, null, units );
 			 boolean success = task.call();
 		
-			 
 			 System.out.println( success ); // Compilieren erfolgreich oder nicht
 
 			 // Diagnose (bei aufgetretenem Fehler)
