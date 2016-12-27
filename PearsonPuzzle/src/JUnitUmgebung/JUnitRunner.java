@@ -12,6 +12,7 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
+import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -22,7 +23,13 @@ public class JUnitRunner {
 		if(!unitText.contains(" class "))
 			return new Result();
 		String className = new String();
+		final String[] imports = {"import org.junit.Test; \n", "import static org.junit.Assert.*"};
+		
 		className=unitText.substring(unitText.indexOf("class")+5, unitText.indexOf("{")).trim();
+		for(String importString: imports){
+			if(!unitText.contains(importString))
+				unitText=importString+unitText;
+		}
 		System.out.println(className);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		MemClassLoader classLoader = new MemClassLoader();
