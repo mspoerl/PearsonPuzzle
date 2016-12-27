@@ -19,8 +19,8 @@ import org.junit.runner.notification.Failure;
 
 import compiler.TestCompiler;
 
-import model.AccessGroup;
 import model.Model;
+import model.access.AccessGroup;
 import view.Allert;
 import view.LoginView;
 import view.JView;
@@ -229,6 +229,7 @@ public class DefaultController extends Controller {
 				}
 				else{
 					result = JUnitRunner.run(((UnitEditor) view).getText());
+					System.out.println(result.getFailures());
 					System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 					model.setJunitFailures(result);
 				}

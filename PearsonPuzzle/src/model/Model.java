@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Vector;
 
+import model.access.AccessGroup;
+
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
@@ -131,7 +133,7 @@ public class Model extends Observable {
 		} else if (userDBaccess.lookUpteacher(username, password)) {
 			return AccessGroup.TEACHER;
 		} else
-			return AccessGroup.UNKNOWN;
+			return AccessGroup.UNAUTHORIZED;
 	}
 	public AccessGroup getAccessGroup(){
 		return accessGroup;
