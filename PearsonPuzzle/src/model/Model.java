@@ -8,18 +8,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import model.access.AccessGroup;
-import model.database.UserDBaccess;
 import model.database.dbTransaction;
 
-import org.apache.derby.catalog.GetProcedureColumns;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import view.Allert;
 import view.pearsonPuzzleException;
 
 import controller.DCCommand;

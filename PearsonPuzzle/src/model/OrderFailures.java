@@ -1,13 +1,8 @@
 package model;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -48,7 +43,6 @@ public class OrderFailures {
 			for(Integer rule : groupRule){
 				if(rule!= null && rule !=0){
 					String keyString = codeVector_normal.get(line);
-					Set<Integer> valueSet = new TreeSet<Integer>();
 					
 					// Regel nicht auf gleicher Ebene wie vorhergehende
 					if(ruleLayer<rule){

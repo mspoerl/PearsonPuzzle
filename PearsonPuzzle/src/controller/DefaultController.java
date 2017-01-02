@@ -7,17 +7,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
-import javax.swing.text.JTextComponent;
 
 import java.util.ArrayList;
-import java.util.Vector;
-
 import javax.swing.*;
-
-import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
-
 import compiler.TestCompiler;
 
 import model.Model;
@@ -34,7 +27,6 @@ import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
 
-import CodeTest.LineOrderTest;
 import JUnitUmgebung.JUnitRunner;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 

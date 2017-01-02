@@ -1,18 +1,14 @@
 package view.teacher;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import controller.Controller;
 import controller.DCCommand;
@@ -131,59 +127,6 @@ public class ProjectConfiguration extends JView{
 		tableModel.addColumn("Codezeile", model.getCodeVector());
 		tableModel.addColumn("Testausdruck", model.getTestExpressionsVector());
 	}
-	
-	/*private void setupConfigPanel_old(){
-		JPanel configPanel=new JPanel();
-		
-		codeList = new JList <St<html><body style=\"text-align:center;\">Selektion<BR>abbrechen</body></html>ring>(model.getCodeVector());
-		codeList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		codeList.setFixedCellHeight(19);		
-		
-		ListSelectionModel codeListModel=codeList.getSelectionModel();
-		sequenceList = new JList<Integer> (model.getSequenceVector());
-		sequenceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		sequenceList.setFixedCellHeight(19);
-		
-		JPanel inputPanel = new JPanel();
-		inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-		inputPanel.setSize(new Dimension(50,350));
-		inputList=new ArrayList <JTextField>();
-		for(int index=0; index < model.getCodeVector().size();index++){
-			inputList.add(new JTextField(20));
-			inputList.get(index).setSize(18, 100);
-			inputPanel.add(inputList.get(index));
-		}
-		
-		JPanel editGroup_Buttons = new JPanel();
-		editGroup_Buttons.setLayout(new BoxLayout(editGroup_Buttons, BoxLayout.Y_AXIS));
-		newGroup = new JButton("Neue Gruppe");
-		newGroup.setActionCommand(DCCommand.StartGroupSelection.toString());
-		saveGroup= new JButton("<html><body>Gruppe<BR>speichern</html></body>");
-		saveGroup.setActionCommand(DCCommand.SaveGroupSelection.toString());
-		cancelGroup = new JButton("<html><body>Selektion<BR>abbrechen</html></body>");
-		cancelGroup.setActionCommand(DCCommand.CancelGroupSelection.toString());
-		editGroup_Buttons.add(newGroup);
-		editGroup_Buttons.add(saveGroup);
-		editGroup_Buttons.add(cancelGroup);
-		
-		save = new JButton();
-		// FIXME: Action Command definierenn
-		save.setActionCommand("saveProjectSettings");
-		
-		configPanel.add(codeList);
-		configPanel.add(sequenceList);
-		configPanel.add(inputPanel);
-		JScrollPane config_SP = new JScrollPane(configPanel);
-		config_SP.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		config_SP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		config_SP.setMaximumSize(new Dimension(400,500));
-		config_SP.setBorder(null);
-		
-		mainPanel.add(config_SP, BorderLayout.CENTER);
-		//mainPanel.add(editGroup_Buttons, BorderLayout.EAST);
-		mainPanel.add(save, BorderLayout.SOUTH);
-	}
-	*/
 
 	@Override
 	public void addController(Controller controller) {

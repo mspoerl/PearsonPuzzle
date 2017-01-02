@@ -2,13 +2,11 @@ package model.database;
 
 
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import view.pearsonPuzzleException;
 
-import model.Model;
 import model.database.UserDBaccess;
 
 /**
@@ -323,9 +321,10 @@ public class dbTransaction implements Transaction{
 //		}	
 //		}
 //	
-	private boolean deleteOrder(String projectname, int ordernumber){
+	@SuppressWarnings("unused")
+	private boolean deleteOrder(final String projectname, final int ordernumber){
 		   return userDBaccess.deleteOrder(projectname, ordernumber);
-	   }
+	 }
 	
 	private boolean deleteAllOrders(String projectname){
 		int i = 0;

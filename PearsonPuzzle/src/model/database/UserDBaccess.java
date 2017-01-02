@@ -138,56 +138,56 @@ public class UserDBaccess {
 			   		return false;}
 	   }
 
-
-	   private void normalDbUsage() throws SQLException {
-		   Statement stmt = conn.createStatement();
-
-		   /*Student*/
-		   ResultSet rsS;
-		   try{
-			   // query
-			   rsS = stmt.executeQuery("SELECT * FROM students");
-		   }
-		   catch(SQLException e){
-			   // Hier wird abgehandelt, wenn was schief läuft
-			   // bzw. wenn die Tabelle (noch) nicht existiert 
-			   try {
-				   stmt.executeUpdate("Drop Table students");
-			   } 
-			   catch (SQLException ex) { // schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
-			   }
-			   // create table 
-			   this.createTable_Students();
-			   rsS = stmt.executeQuery("SELECT * FROM students");
-		   }
-		   // print out query result
-		   while (rsS.next()) { 
-			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));
-		   }
-	       
-		   /*Teacher*/
-		   ResultSet rsT;
-		   try{
-			   rsT = stmt.executeQuery("SELECT * FROM teachers");
-		   }
-		   catch(SQLException e){
-			   // Hier wird abgehandelt, wenn was schief läuft
-			   // bzw. wenn die Tabelle (noch) nicht existiert 
-			   try {
-				   stmt.executeUpdate("Drop Table teachers");
-			   } 
-			   catch (SQLException ex){ // Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
-			   }   
-			   this.createTable_Teachers();
-			   // query
-			   rsT = stmt.executeQuery("SELECT * FROM teachers");
-		   }
-		   // print out query result
-		   while (rsT.next()) { 
-			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));			   
-		   }
-		   //stmt.close();
-	   }
+//
+//	   private void normalDbUsage() throws SQLException {
+//		   Statement stmt = conn.createStatement();
+//
+//		   /*Student*/
+//		   ResultSet rsS;
+//		   try{
+//			   // query
+//			   rsS = stmt.executeQuery("SELECT * FROM students");
+//		   }
+//		   catch(SQLException e){
+//			   // Hier wird abgehandelt, wenn was schief läuft
+//			   // bzw. wenn die Tabelle (noch) nicht existiert 
+//			   try {
+//				   stmt.executeUpdate("Drop Table students");
+//			   } 
+//			   catch (SQLException ex) { // schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
+//			   }
+//			   // create table 
+//			   this.createTable_Students();
+//			   rsS = stmt.executeQuery("SELECT * FROM students");
+//		   }
+//		   // print out query result
+//		   while (rsS.next()) { 
+//			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));
+//		   }
+//	       
+//		   /*Teacher*/
+//		   ResultSet rsT;
+//		   try{
+//			   rsT = stmt.executeQuery("SELECT * FROM teachers");
+//		   }
+//		   catch(SQLException e){
+//			   // Hier wird abgehandelt, wenn was schief läuft
+//			   // bzw. wenn die Tabelle (noch) nicht existiert 
+//			   try {
+//				   stmt.executeUpdate("Drop Table teachers");
+//			   } 
+//			   catch (SQLException ex){ // Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
+//			   }   
+//			   this.createTable_Teachers();
+//			   // query
+//			   rsT = stmt.executeQuery("SELECT * FROM teachers");
+//		   }
+//		   // print out query result
+//		   while (rsT.next()) { 
+//			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));			   
+//		   }
+//		   //stmt.close();
+//	   }
 	   
 	   
 
@@ -689,7 +689,10 @@ public class UserDBaccess {
 					   stmt.executeUpdate("DELETE FROM Projects WHERE pName = '"+projectname+"'");
 					   return true;
 				   }
-				   finally{ return false; }
+				   catch(SQLException e1){
+					   e1.printStackTrace();
+					   return false;
+				   }
 			   }
 			   else{
 				   e.printStackTrace();
