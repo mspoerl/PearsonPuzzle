@@ -29,5 +29,4 @@ public class TestCompiler_Test {
 			assertFalse(TestCompiler.compileCode(testString));
 		}
 	}
-
 }

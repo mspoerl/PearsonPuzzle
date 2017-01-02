@@ -299,8 +299,8 @@ public class DefaultController extends Controller {
 	            int maxIndex = lsm.getMaxSelectionIndex();
 	            for (int i = minIndex; i <= maxIndex; i++) {
 	                if (lsm.isSelectedIndex(i)) {
-	                    model.selectProject(i);
-	                    view.update();
+	                	model.selectProject(i);
+	                	//view.update();
 	                }
 	             }
 	        }

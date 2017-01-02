@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import model.database.UserDBaccess;
+
 import org.junit.*;
 
 public class DBAccess {
@@ -48,16 +50,16 @@ public class DBAccess {
 		}
 	}
 	
-	@Test void saveProject_Test2(){
-		db.saveProject(normalString, normalString, 0,0);
+	@Test void saveProject_Test2() throws SQLException{
+		db.saveProject(normalString, normalString.split("\n"),"" ,"", new ArrayList<Integer>(), 100, 0);
 	}
 	
 	@Test
-	public void saveProject_Test() {
+	public void saveProject_Test() throws SQLException {
 		for(String projectName : stringList){
 			for(String codeString : stringList){
 				// ---- Projekt wird gespeichert.
-				db.saveProject(projectName, codeString, 0, 0);
+				db.saveProject(projectName, codeString.split("\n"),"","",new ArrayList<Integer>(),100, 0);
 				
 				try{
 					// --- Projektname wird auf richtige Länge gebracht
@@ -172,7 +174,7 @@ public class DBAccess {
 	 */
 	private boolean isEqual(final String code, final String split_String, final String projectname, final int linelength){
 		try {
-			db.saveProject(code.split(split_String),projectname , linelength, 0);
+			db.saveProject(projectname, code.split(split_String),"" ,"", new ArrayList<Integer>(), linelength, 0);
 		} catch (SQLException e) {
 			fail("Problem beim Speichern");
 			e.printStackTrace();

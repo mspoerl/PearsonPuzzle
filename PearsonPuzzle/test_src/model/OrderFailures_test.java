@@ -45,7 +45,7 @@ public class OrderFailures_test {
 		default:
 			codeLines= new String[] 		{"Line0","Line1","Line2","Line3","Line4","Line5"};
 			sortedLines = new Integer[] 	{0,1,2,3,4,5};
-			ruleGroup = new Integer[][]		{{1,2,3,4,5,6}, {0,0,0,1,1,1}, {0,1,0,1,0,1}};
+			ruleGroup = new Integer[][]		{{1,2,3,4,5,6}, {0,0,0,1,1,1}, {0,1,0,1,1,1}};
 			break;
 		} 
 		for (int i = 0; i < ruleGroup.length; i++) {

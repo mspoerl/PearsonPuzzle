@@ -2,13 +2,14 @@ package model.access;
 
 import javax.swing.text.View;
 
-import model.UserDBaccess;
+import model.database.UserDBaccess;
+import model.database.dbTransaction;
 
 public class Access {
 	
 	private AccessGroup accessGroup;
 	
-	public Access(char[] password, String username, UserDBaccess database){
+	public Access(char[] password, String username, dbTransaction database){
 		if (database.lookUpstudent(username, password))
 			accessGroup = AccessGroup.PUPIL;
 		else if (database.lookUpteacher(username, password))
