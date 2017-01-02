@@ -48,6 +48,7 @@ public class ProjectConfiguration extends JView{
 	private void setupConfigPanel(){
 		tableModel = new DefaultTableModel();
 		projectTable = new JTable(tableModel);
+		projectTable.setName("projectTable");
 		updateTable();
 		JScrollPane projectTable_SP = new JScrollPane(projectTable);
 		projectTable_SP.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -68,7 +69,7 @@ public class ProjectConfiguration extends JView{
 		//newGroup.setEnabled(false);
 
 		saveGroup= new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>speichern</body></html>");
-		saveGroup.setActionCommand(DCCommand.SaveGroupSelection.toString());
+		saveGroup.setActionCommand(DCCommand.Save.toString());
 		saveGroup.setEnabled(false);
 		
 		deleteGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>löschen</body></html>");
@@ -91,7 +92,7 @@ public class ProjectConfiguration extends JView{
 		
 		JPanel save_Button = new JPanel();
 		save= new JButton("Änderungen Speichern");
-		save.setActionCommand("SaveProjectSettings");
+		save.setActionCommand(DCCommand.Save.toString());
 		save_Button.add(save);
 
 		mainPanel.add(editGroup_Buttons, BorderLayout.WEST);
@@ -193,6 +194,7 @@ public class ProjectConfiguration extends JView{
 		saveGroup.addActionListener(controller);
 		cancelSelection.addActionListener(controller);
 		tableModel.addTableModelListener(controller);
+		save.addActionListener(controller);
 		menu.addActionListener(controller);
 	}
 

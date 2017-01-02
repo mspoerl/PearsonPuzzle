@@ -84,6 +84,7 @@ public class OrderFailures {
 					// Lösungsstring wird durchsucht und 
 					for(int lineNr=startIndex; lineNr<codeVector_normal.size();lineNr++){
 					// man könnte hier auch direkt die Strings vergleichen, wäre aber evtl. langsamer
+						
 						if(codeMap.get(codeVector_normal.get(line))== codeMap.get(codeVector_normal.get(sortedCode.get(lineNr)))){
 							treeMap.get(rule).put(keyString, lineNr );
 							//System.out.println("Regelebene: "+rule+"\t String: "+keyString+"\t wurde in in Zeile "+lineNr+ " gefunden\t Linemax:"+linemax);

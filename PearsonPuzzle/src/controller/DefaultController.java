@@ -10,6 +10,7 @@ import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.*;
 
@@ -24,6 +25,7 @@ import model.access.AccessGroup;
 import view.Allert;
 import view.LoginView;
 import view.JView;
+import view.pearsonPuzzleException;
 import view.pupil.CodeSortView;
 import view.pupil.PupilView;
 import view.teacher.ConfigEditor;
@@ -58,11 +60,11 @@ public class DefaultController extends Controller {
 	private void act(DCCommand cmd, ActionEvent e){
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
 		if(view.getClass().equals(TextEditor.class)  
-				&& cmd!=DCCommand.SaveProject
+				&& cmd!=DCCommand.Save
 				&& model.hasChanged()){
 			Integer allert=view.showMessage(Allert.notSaved);
 			if(allert==JOptionPane.YES_OPTION)
-				this.act(DCCommand.SaveProject, null);
+				this.act(DCCommand.Save, null);
 			else if(allert==JOptionPane.NO_OPTION)
 				model.fetchAll();				
 			else if(allert==JOptionPane.CANCEL_OPTION)
@@ -128,8 +130,7 @@ public class DefaultController extends Controller {
 				this.view=startView;
 				view.update();
 				break;
-			case SaveProject:
-				// Berechtigung wird geprüft
+			case Save:
 				if(view.getClass().equals(TextEditor.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					
@@ -154,6 +155,13 @@ public class DefaultController extends Controller {
 							view.showMessage(Allert.projectExists);
 						}
 					}
+				}
+				else if(view.getClass().equals(UnitEditor.class)){
+					model.setJUnitCode(((UnitEditor) view).getContent());
+					model.saveProjectSettings();
+				}
+				else if(view.getClass().equals(ProjectConfiguration.class)){
+					model.saveGroupMatrix();
 				}
 				break;
 			case DeleteProject:
@@ -213,7 +221,7 @@ public class DefaultController extends Controller {
 				if(model.getAccessGroup()==AccessGroup.PUPIL)
 					TestCompiler.compileCode(model.getSolutionStrings());
 				else if(model.getAccessGroup()==AccessGroup.TEACHER)
-					TestCompiler.compileCode(((UnitEditor)view).getText());
+					TestCompiler.compileCode(((UnitEditor)view).getContent());
 				model.setCompilerFailures(TestCompiler.getFailures());
 				break;
 			case TestCode:
@@ -228,7 +236,7 @@ public class DefaultController extends Controller {
 					//result = JUnitRunner.run();
 				}
 				else{
-					result = JUnitRunner.run(((UnitEditor) view).getText());
+					result = JUnitRunner.run(((UnitEditor) view).getContent());
 					System.out.println(result.getFailures());
 					System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 					model.setJunitFailures(result);
@@ -299,8 +307,8 @@ public class DefaultController extends Controller {
 	            int maxIndex = lsm.getMaxSelectionIndex();
 	            for (int i = minIndex; i <= maxIndex; i++) {
 	                if (lsm.isSelectedIndex(i)) {
-	                    model.selectProject(i);
-	                    view.update();
+	                	model.selectProject(i);
+	                	//view.update();
 	                }
 	             }
 	        }
@@ -341,6 +349,7 @@ public class DefaultController extends Controller {
 		else if(e.getComponent().getName().equals("ProjectDescription")){
 			model.setProjectDescription(((JTextArea)(e.getComponent())).getText());
 		}
+		
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -393,6 +402,19 @@ public class DefaultController extends Controller {
 	        	}
 	        	else {
 	        		model.setGroupMatrixEntry(row, column, data);
+	        		// Daten werden geprüft
+	    			int max=0;
+	    			for(Integer rule : model.getGroupMatrix().get(column)){
+	    				if(rule<max && rule!=0){
+	    					try {
+	    						throw new pearsonPuzzleException("<html><body>Problem in Zeile "+(1+(Integer)row)+", Spalte "+((Integer)column+1)+"<BR> Die Einträge dürfen nicht der Vorgabe widersprechen.</body></html>");
+	    					} catch (pearsonPuzzleException e1) {
+	    							model.setGroupMatrixEntry(row, column, "0");
+	    							return;
+	    						}
+	    				}
+	    				max=rule;
+	    			}
 	        	}
 	        }
 		}		

@@ -160,7 +160,7 @@ public class TextEditor extends JView{
 	}
 	public void addController(Controller controller){
 		save.addActionListener(controller);
-		save.setActionCommand(DCCommand.SaveProject.toString());
+		save.setActionCommand(DCCommand.Save.toString());
 
 		configure.addActionListener(controller);
 		configure.setActionCommand(DCCommand.ConfigureProject.toString());

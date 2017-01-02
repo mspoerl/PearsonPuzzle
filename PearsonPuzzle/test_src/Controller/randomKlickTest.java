@@ -5,8 +5,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.JButton;
 
-import model.AccessGroup;
 import model.Model;
+import model.access.AccessGroup;
 
 import org.junit.*;
 
@@ -31,7 +31,7 @@ public class randomKlickTest {
 	}
 	@Test
 	public void randomKlicktestUnknown(){
-		randomSwingKlick(AccessGroup.UNKNOWN);
+		randomSwingKlick(AccessGroup.UNAUTHORIZED);
 	}
 	
 	private void randomSwingKlick(final AccessGroup accessGroup){
