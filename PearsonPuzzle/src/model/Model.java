@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Vector;
 
+import model.access.AccessGroup;
+
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import controller.DCCommand;
@@ -130,7 +133,7 @@ public class Model extends Observable {
 		} else if (userDBaccess.lookUpteacher(username, password)) {
 			return AccessGroup.TEACHER;
 		} else
-			return AccessGroup.UNKNOWN;
+			return AccessGroup.UNAUTHORIZED;
 	}
 	public AccessGroup getAccessGroup(){
 		return accessGroup;
@@ -314,8 +317,13 @@ public class Model extends Observable {
 	/**
 	 * @param jUnitFailures the jUnitFailures to set
 	 */
-	public void addjUnitFailure(Failure failure) {
-		this.jUnitFailures.add(failure);
+	public void setJunitFailures(Result result) {
+		for (Failure failure : result.getFailures()) {
+			if(failure!=null)
+				this.jUnitFailures.add(failure);
+		}
+		setChanged();
+		notifyObservers(DCCommand.TestCode);
 	}
 
 	/**

@@ -12,6 +12,7 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
+import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -22,21 +23,25 @@ public class JUnitRunner {
 		if(!unitText.contains(" class "))
 			return new Result();
 		String className = new String();
+		final String[] imports = {"import org.junit.Test; \n", "import static org.junit.Assert.*"};
+		
 		className=unitText.substring(unitText.indexOf("class")+5, unitText.indexOf("{")).trim();
+		for(String importString: imports){
+			if(!unitText.contains(importString))
+				unitText=importString+unitText;
+		}
 		System.out.println(className);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		MemClassLoader classLoader = new MemClassLoader();
 		JavaFileManager fileManager = new MemJavaFileManager( compiler, classLoader );
 		JavaFileObject javaFile = new StringJavaFileObject( className, unitText );
 		Collection<JavaFileObject> units = Collections.singleton( javaFile );
-		Set<String> options = new HashSet<String>();
-		System.out.println(compiler.isSupportedOption("-cp \"\\usr\\share\\eclipse\\dropins\\jdt\\plugins\\org.junit_4.8.2.dist\\junit.jar\""));
-		System.out.println(compiler.isSupportedOption("-cp \"lib\\junit.rar\""));
-		System.out.println(compiler.isSupportedOption("-cp \".;..junit.rar\""));
-		System.out.println(compiler.isSupportedOption("-cp \".;..\\hamcrest-1.3\\hamcrest-core-1.3.0.jar\""));
-		//options.add( "-cp \"lib/junit.rar\"");
+		Set<String> options = new HashSet<String>();		
+		options.add( "-verbose");
+		options.add("-deprecation");
 		CompilationTask task = compiler.getTask( null, fileManager,null, options, null, units );
-		System.out.println(task.call());
+		//System.out.println(task.call());
+		task.call();
 		try {
 			fileManager.close();
 		} catch (IOException e1) {
@@ -44,27 +49,34 @@ public class JUnitRunner {
 			e1.printStackTrace();
 		}
 		
-		
 		try {
-			System.out.println(unitText);
-			System.out.println(Class.forName(className,true, classLoader).newInstance().getClass());
-		} catch (ClassNotFoundException e) {
+			return JUnitCore.runClasses(classLoader.findClass(className));
+		} catch (ClassNotFoundException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+			return null;
 		}
-		try {
-			return JUnitCore.runClasses(Class.forName(className,true, classLoader).getClass());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new Result();
-			
+//		
+//		try {
+//			System.out.println(unitText);
+//			System.out.println(Class.forName(className,true, classLoader).newInstance().getClass());
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (InstantiationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//
+//		try {
+//			return JUnitCore.runClasses(Class.forName(className, false, classLoader).getClass());
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 }

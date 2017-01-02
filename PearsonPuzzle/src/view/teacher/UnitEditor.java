@@ -38,7 +38,7 @@ public class UnitEditor extends JView{
 		textArea.setLineWrap(false);
 		textArea.setName("JUnitCode");
 		textArea.setTabSize(3);
-		textArea.setText("import org.junit.Test; \n class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\nassertTrue(true);\n\t}\n"+"}");
+		textArea.setText("import org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\nassertTrue(true);\n\t}\n"+"}");
 		JScrollPane textScrollPane = new JScrollPane(textArea);
 		textScrollPane.setVerticalScrollBarPolicy(
 		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -102,6 +102,7 @@ public class UnitEditor extends JView{
 			}
 		}
 		if(arg==DCCommand.TestCode){
+			// FIXME: Nur, falls ein Test existeiert! Zusätzlich noch Reihenfolgentest.
 			String failureText = new String("Ergebnis des Unit-Test:\n"+model.getjUnitFailures().size()+" Fehler");
 			for(Failure failure: model.getjUnitFailures()){
 				failureText=failureText+"\n"+failure;

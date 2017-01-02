@@ -155,9 +155,28 @@ public class ToSaveTransferHandler extends TransferHandler {
         }
         
         JList<String> list = (JList<String>)support.getComponent();
+        
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
+        
+        // Hier wird die Anzahl der Elemente gleichen Namens (in CodeString und in der DragList) gezählt 
+        int ocNumber_main=0;
+        for(String string: model.getCodeVector()){
+        	if(string.equals(data)){
+        		ocNumber_main++;
+        	}
+        }
+        int ocNumber=0;
+        for(int i = 0; i<listModel.size();i++){
+        	if(listModel.get(i).trim().equals(data))
+        		ocNumber++;
+        }
+        
         if(!model.getCodeVector().contains(data))
         	// Daten von Extern werden nicht anerkannt
+        	return false;
+        
+        else if(ocNumber_main<=ocNumber)
+        	// Daten von extern werden nicht anerkannt
         	return false;
     	if(internDnD){
     		// Wenn internes DnD, werden Elemente nur verschoben, nicht ersetzt

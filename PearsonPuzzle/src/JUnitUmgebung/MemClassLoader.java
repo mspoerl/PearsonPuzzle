@@ -1,6 +1,7 @@
 package JUnitUmgebung;
 
 import java.util.*;
+import junit.textui.TestRunner;
 
 public class MemClassLoader extends ClassLoader
 {
@@ -9,7 +10,8 @@ public class MemClassLoader extends ClassLoader
 
   public MemClassLoader()
   {
-    super( ClassLoader.getSystemClassLoader() );
+    //super( ClassLoader.getSystemClassLoader() );
+	super(JUnitRunner.class.getClassLoader());
   }
 
   public void addClassFile( MemJavaFileObject memJavaFileObject )

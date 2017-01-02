@@ -19,8 +19,8 @@ import org.junit.runner.notification.Failure;
 
 import compiler.TestCompiler;
 
-import model.AccessGroup;
 import model.Model;
+import model.access.AccessGroup;
 import view.Allert;
 import view.LoginView;
 import view.JView;
@@ -225,19 +225,14 @@ public class DefaultController extends Controller {
 						System.out.println("Herzlichen Glückwunsch, richtige Reihenfolge!");
 					else
 						System.out.println("Reihenfolge nicht 1:1, Test auf Korrektheit folgt");
-					result = JUnitCore.runClasses(LineOrderTest.class);
+					//result = JUnitRunner.run();
 				}
-				else {
-					result = JUnitRunner.run(((UnitEditor)view).getText());
+				else{
+					result = JUnitRunner.run(((UnitEditor) view).getText());
+					System.out.println(result.getFailures());
+					System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+					model.setJunitFailures(result);
 				}
-				System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
-			    for (Failure failure : result.getFailures()) {
-			    	if(failure!=null){
-			    		model.addjUnitFailure(failure);
-			    		System.out.println(failure);
-			    	}
-				}
-			    view.showMessage(Allert.Failure);
 				break;
 			default:
 				break;
