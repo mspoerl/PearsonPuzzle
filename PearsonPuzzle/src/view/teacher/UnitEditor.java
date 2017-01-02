@@ -38,7 +38,9 @@ public class UnitEditor extends JView{
 		textArea.setLineWrap(false);
 		textArea.setName("JUnitCode");
 		textArea.setTabSize(3);
-		textArea.setText("import org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\nassertTrue(true);\n\t}\n"+"}");
+		textArea.setText(model.getJUnitCode());
+		if(textArea.getText().equals(""))
+			textArea.setText("// Automatisch erstellte Vorlage für JUnit Test\n \nimport org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n"+"}");
 		JScrollPane textScrollPane = new JScrollPane(textArea);
 		textScrollPane.setVerticalScrollBarPolicy(
 		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -62,7 +64,7 @@ public class UnitEditor extends JView{
 		compile = new JButton("Test Kompilieren");
 		compile.setActionCommand(DCCommand.Compile.toString());
 		save = new JButton("Speichern");
-		save.setActionCommand(DCCommand.SaveJUnit.toString());
+		save.setActionCommand(DCCommand.Save.toString());
 		test = new JButton("Run Test");
 		test.setActionCommand(DCCommand.TestCode.toString());
 		buttonPanel.add(compile);
@@ -101,7 +103,7 @@ public class UnitEditor extends JView{
 				messageBox.setText(failureText);
 			}
 		}
-		if(arg==DCCommand.TestCode){
+		else if(arg==DCCommand.TestCode){
 			// FIXME: Nur, falls ein Test existeiert! Zusätzlich noch Reihenfolgentest.
 			String failureText = new String("Ergebnis des Unit-Test:\n"+model.getjUnitFailures().size()+" Fehler");
 			for(Failure failure: model.getjUnitFailures()){
@@ -113,7 +115,7 @@ public class UnitEditor extends JView{
 		
 	}
 
-	public String getText() {
+	public String getContent() {
 		return textArea.getText();
 	}
 

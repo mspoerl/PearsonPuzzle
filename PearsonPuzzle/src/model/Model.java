@@ -15,9 +15,11 @@ import model.access.AccessGroup;
 import model.database.UserDBaccess;
 import model.database.dbTransaction;
 
+import org.apache.derby.catalog.GetProcedureColumns;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import view.Allert;
 import view.pearsonPuzzleException;
 
 import controller.DCCommand;
@@ -59,6 +61,7 @@ public class Model extends Observable {
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
 	
+	private String JUnitCode;
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
 	private LinkedList<Boolean> groupFailures;
@@ -76,6 +79,7 @@ public class Model extends Observable {
 		
 		try{
 			dataBase = new dbTransaction();
+			
 		}
 		catch(pearsonPuzzleException e){
 			if(e.getMessage().equals(pearsonPuzzleException.anotherInstanceIsRunnign)){
@@ -206,6 +210,8 @@ public class Model extends Observable {
 	}
 				// Projektvektor
 	public Vector<String> getCodeVector() {
+		if(accessGroup == AccessGroup.TEACHER)
+			return codeVector_normal;
 		return codeVector_random;
 	}
 	public void setCodeVector(Vector<String> codeVector) {
@@ -225,6 +231,11 @@ public class Model extends Observable {
 			catch(NumberFormatException e){}
 		setChanged();
 		notifyObservers();
+	}
+	
+	public void saveGroupMatrix(){
+
+		dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
 	}
 	// Testrelevante Daten
 	public void addTestGroup(){
@@ -247,7 +258,6 @@ public class Model extends Observable {
 		return testExpressionsVector;
 	}
 	public void setTestExpressionsVector(Vector<String> testVector) {
-		System.out.println(testVector+"asd");
 		this.testExpressionsVector = testVector;
 	}
 
@@ -291,8 +301,10 @@ public class Model extends Observable {
 	}
 	public boolean testSolution(){
 		Boolean result = OrderFailures.testOrder_simple(this, projectCode);
+		System.out.println(result);
 		result = result & OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		setChanged();
+		System.out.println(result);
 		notifyObservers(DCCommand.TestCode);
 		return result;
 //		
@@ -334,6 +346,14 @@ public class Model extends Observable {
 		}
 		setChanged();
 		notifyObservers(DCCommand.TestCode);
+	}
+
+	public String getJUnitCode() {
+		return JUnitCode;
+	}
+
+	public void setJUnitCode(String jUnitCode) {
+		JUnitCode = jUnitCode;
 	}
 
 	/**
@@ -399,9 +419,12 @@ public class Model extends Observable {
 	}
 	
 	public void saveProjectSettings(){
-		if(projectID!=null)
+		if(projectID!=null){
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
+			dataBase.saveJUnitTest(getProjectName(),JUnitCode);
+		}
 	}
+	
 
 	/**
 	 * Löscht das mit <b>projectID</b> selektierte Projekt <br>und löscht es aus der Datenbank <br>
@@ -458,6 +481,7 @@ public class Model extends Observable {
 			catch(SQLException e){
 				this.projectDescription="Noch keine Beschreibung vorhanden";
 				}
+			setJUnitCode(dataBase.getJUnitCode(getProjectName()));
 		}
 		else{
 			this.projectDescription = new String();
@@ -469,8 +493,9 @@ public class Model extends Observable {
 	 */
 	private void fetchProjectCode(){
 			if(projectID!=null){
+				this.setJUnitCode(dataBase.getJUnitCode(getProjectName()));
 				this.projectCode = dataBase.getCode(projectList.get(projectID));
-				String[] strings = projectCode.split("/n");
+				String[] strings = projectCode.split("\n");
 				codeVector_normal = new Vector<String>();
 				for(String string:strings){
 					codeVector_normal.add(string);
@@ -483,8 +508,9 @@ public class Model extends Observable {
 				this.codeMap = new LinkedHashMap<String, Integer>();
 				this.sortedCode= new LinkedList<Integer>();
 				this.codeLine_GroupMatrix = new Vector<Vector<Integer>>();
+				this.codeLine_GroupMatrix=dataBase.getOrdervektor(getProjectName());
 				sortedCode= new LinkedList<Integer>();
-				Vector<Integer> codeLine_Group= new Vector<Integer>();
+
 				for(String line: stringField){
 					
 					// Dies ist notwendig, damit im Text sort view die Tabs richtig dargestellt werden.
@@ -500,9 +526,7 @@ public class Model extends Observable {
 					codeVector_random.add(bString);
 					testExpressionsVector.add(new String());
 					codeMap.put(line.trim(), codeVector_random.size()-1);
-					codeLine_Group.add(new Integer(0));
-				}		
-				codeLine_GroupMatrix.add(codeLine_Group);
+				}
 			}
 	}
 	// --- Datenbank zurücksetzen

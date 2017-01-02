@@ -376,6 +376,23 @@ public class UserDBaccess {
 		   			e.printStackTrace();
 		   		}
 		}
+	   public void saveJUnitTest (String projectname, String jUnitCode) {
+		   Statement stmt;
+		   try {
+			   stmt = conn.createStatement();
+			   stmt.executeUpdate("UPDATE Projects SET jUnitCode='"+jUnitCode+"' WHERE pName='"+projectname+"'");
+		   		} catch (SQLException e) {
+		   			if(e.getSQLState().equals("42X14")){ // 42X14: 'JUNITCODE' is not a column in table or VTI 'APP.PROJECTS'
+		   				try {
+							stmt = conn.createStatement();
+							stmt.executeUpdate("ALTER TABLE Projects ADD jUnitCode varchar(1000)");
+						} catch (SQLException e1) {
+						}
+		   			}
+		   			// XXX: Auto-generated catch block
+		   			e.printStackTrace();
+		   		}			
+		}
 	   
 	   
 	   //-------------------------- Code aus Datenbank auslesen -------------------------------	   
@@ -704,4 +721,11 @@ public class UserDBaccess {
 			}
 			return true;
 	   }
+
+	public String getJUnitCode(String projectName) throws SQLException {
+		Statement stmt = conn.createStatement();
+		ResultSet rs=stmt.executeQuery("SELECT junitcode FROM Projects WHERE pName='"+projectName+"'");
+		rs.next();
+		return rs.getString("junitcode");
+	}
 }
