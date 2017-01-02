@@ -78,8 +78,7 @@ public class Model extends Observable {
 		this.grade = 0;
 		
 		try{
-			dataBase = new dbTransaction();
-			
+			dataBase = new dbTransaction();			
 		}
 		catch(pearsonPuzzleException e){
 			if(e.getMessage().equals(pearsonPuzzleException.anotherInstanceIsRunnign)){

@@ -401,7 +401,9 @@ public class dbTransaction implements Transaction{
 		try {
 			return userDBaccess.getJUnitCode(projectName);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			if(e.getSQLState().equals("42X05")){ // Table/View '<objectName>' does not exist.
+				return null;
+			}
 			e.printStackTrace();
 			return null;
 		}
