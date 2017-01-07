@@ -20,6 +20,7 @@ import view.JView;
 
 import controller.Controller;
 import controller.DCCommand;
+import controller.DefaultController;
 import model.Model;
 
 /**
@@ -32,7 +33,7 @@ public class TextEditor extends JView{
 	private JButton configure;
 	//private JEditorPane editorPane;
 	private JTextArea textArea;
-	private final static String defaultCode = "Hier müssen Sie den darzustellenden Inhalt einfügen";
+	public final static String defaultCode = "Hier müssen Sie den darzustellenden Inhalt einfügen";
 	private JTextArea description;
 	private JTextField projectName;
 	private ArrayList <JTextField> configFields;
@@ -73,7 +74,6 @@ public class TextEditor extends JView{
 		textArea.setEditable(true);
 		textArea.setLineWrap(false);
 		textArea.setTabSize(model.getTabSize());
-		textArea.setName("ProjectCode");
 		
 		JScrollPane textScrollPane = new JScrollPane(textArea);
 		textScrollPane.setVerticalScrollBarPolicy(
@@ -100,6 +100,7 @@ public class TextEditor extends JView{
 
 		ArrayList <JLabel> labels = new ArrayList <JLabel>();
 		configFields.add(new JTextField(""+textArea.getTabSize()));
+		configFields.get(configFields.size()-1).setName("TabSize");
 		labels.add(new JLabel("Tabbreite"));
 		
 		configFields.add(new JTextField(""+model.getGrade()));
@@ -129,7 +130,6 @@ public class TextEditor extends JView{
 		
 		JPanel descriptionPanel=new JPanel(new BorderLayout());
 		
-		description.setName("ProjectDescription");
 		JScrollPane textScrollPane = new JScrollPane(description);
 		textScrollPane.setVerticalScrollBarPolicy(
 		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -165,11 +165,20 @@ public class TextEditor extends JView{
 		configure.addActionListener(controller);
 		configure.setActionCommand(DCCommand.ConfigureProject.toString());
 		
-		textArea.addFocusListener(controller);
-		description.addFocusListener(controller);
+		textArea.addFocusListener((DefaultController)controller);
+		textArea.setName("ProjectCode");
+		textArea.addPropertyChangeListener((DefaultController)controller);
+		description.addFocusListener((DefaultController)controller);
+		
+		projectName.addPropertyChangeListener((DefaultController)controller);
+		projectName.setName("ProjectName");
+		
+		description.addPropertyChangeListener((DefaultController)controller);
+		description.setName("ProjectDescription");
 		
 		for(JTextField comp: configFields){
 			comp.addActionListener(controller);
+			comp.addPropertyChangeListener((DefaultController)controller);
 			comp.setActionCommand(DCCommand.SetTextConfig.toString());
 		}
 		menu.addActionListener(controller);
@@ -207,5 +216,12 @@ public class TextEditor extends JView{
 		description.setText(model.getProjectDescription());
 		this.draw();
 		// TODO Auto-generated method stub	
+	}
+	
+	@Override
+	public Object get(String string){
+		if(string.equals("projectname"))
+			return projectName.getText();
+		return null;
 	}
 }

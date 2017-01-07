@@ -16,7 +16,7 @@ import model.database.dbTransaction;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import view.pearsonPuzzleException;
+import view.PPException;
 
 import controller.DCCommand;
 
@@ -61,12 +61,18 @@ public class Model extends Observable {
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
 	private LinkedList<Boolean> groupFailures;
+	
+	private PPException exception;
+
+	private HashMap<String, String> personMap;
+
 	// private Exception exceptionModel;
 
 	public Model() {
 		jUnitFailures=new LinkedList<Failure>();
 		compileFailures = new Vector<HashMap<String,String>>();
 		groupFailures = new LinkedList<Boolean>();
+		personMap = new HashMap<String, String>();
 		
 		// Default Werte werden gesetzt
 		this.tabSize = 0;
@@ -74,15 +80,19 @@ public class Model extends Observable {
 		this.grade = 0;
 		
 		try{
-			dataBase = new dbTransaction();			
+			dataBase = new dbTransaction(this);			
 		}
-		catch(pearsonPuzzleException e){
-			if(e.getMessage().equals(pearsonPuzzleException.anotherInstanceIsRunnign)){
-				System.exit(0);				
+		catch(PPException e){
+			if(e.getMessage().equals(PPException.anotherInstanceIsRunnign)){
+				e.handleException(this);
+				System.exit(0);			
 			}
-			if(e.getMessage().equals(pearsonPuzzleException.noDatabaseExists)){
-				
+			else if(e.getMessage().equals(PPException.noDatabaseExists)){
+				e.handleException(this);
 			}
+			else 
+				e.printStackTrace();
+			
 		}
 		// Datenbankverbindung wird aufgebaut
 		
@@ -90,6 +100,16 @@ public class Model extends Observable {
 		
 		// Holt Daten aus der Datenbank
 		this.fetchAll();
+	}
+	
+	public void setException(PPException exception){
+		this.exception = exception;
+		setChanged();
+		notifyObservers(exception);
+	}
+	
+	public PPException getException(){
+		return exception;
 	}
 
 	// ------------------------------------ Getter und Setter ------------------------------
@@ -132,12 +152,12 @@ public class Model extends Observable {
 
 	// --- Zugriffsgruppe
 	// TODO: in accessGroup auslagern
-	public void setAccessGroup(AccessGroup accessGroup) {
-		this.accessGroup=accessGroup;		
+	public void login(String username, char[] password){
+		this.accessGroup = getAccessGroup(username, password);
 	}
 	public AccessGroup getAccessGroup(String username, char[] password) {
 		if (dataBase.lookUpstudent(username, password)) {
-			return AccessGroup.PUPIL;
+			return AccessGroup.STUDENT;
 		} else if (dataBase.lookUpteacher(username, password)) {
 			return AccessGroup.TEACHER;
 		} else
@@ -178,7 +198,7 @@ public class Model extends Observable {
 		if(projectID!=null){
 			return projectList.get(projectID);
 		}
-		return new String();
+		return "";
 	}
 			// - Projektbeschreibung
 	public void setProjectDescription(String descriptionString) {
@@ -189,7 +209,7 @@ public class Model extends Observable {
 		if(projectID!=null){
 		return projectDescription;
 		}
-		else return null;
+		return "";
 	}
 			// - Projektcode
 	public String getProjectCode() {
@@ -197,7 +217,7 @@ public class Model extends Observable {
 		if(projectID!=null){
 			return projectCode;
 		}
-		else return null;
+		else return "";
 	}
 	public void setProjectCode(String codeString){
 		projectCode=codeString;
@@ -416,7 +436,8 @@ public class Model extends Observable {
 	public void saveProjectSettings(){
 		if(projectID!=null){
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
-			dataBase.saveJUnitTest(getProjectName(),JUnitCode);
+			if(JUnitCode!=null)
+				dataBase.saveJUnitTest(getProjectName(),JUnitCode);
 		}
 	}
 	
@@ -533,9 +554,66 @@ public class Model extends Observable {
 			setChanged();
 			notifyObservers();
 		}
-		
-}
 
+		public void setPersons(HashMap <String, String> person_password) {
+			this.personMap = person_password;
+		}
+
+		public boolean saveUser(Object username, Object password, Object accessgroup) {
+			
+			String userName = (String)username;
+			char[] passWord = (char[]) password;
+			AccessGroup accessGroup = (AccessGroup) accessgroup;
+			this.setChanged();
+			
+			if(accessGroup==null)
+				notifyObservers("accessgroup_unset");
+			
+			else if(userName == null 
+					|| userName.equals(""))
+				notifyObservers("username_unset");
+			else if(userName.length()<3)
+				notifyObservers("username_toShort");
+			
+			else if(password == null
+					|| passWord.length<1)
+				notifyObservers("password_unset");
+			else if(passWord.length<8)
+				notifyObservers("password_toShort");
+			else if(!proovePassword(passWord))
+				notifyObservers("password_unsave");
+			else{
+				dataBase.addUser(accessGroup.toString(), userName, new String (passWord));
+				notifyObservers();
+				return true;
+			}
+			return false;
+			
+		}	
+
+	private boolean proovePassword(char[] password){
+		boolean number = false;
+		boolean specialChar = false;
+		boolean upperCase = false;
+		boolean lowerCase = false;
+		
+		for(char c : password){
+			if(Character.isDigit(c))
+				number = true;
+			if(Character.isLowerCase(c))
+				lowerCase = true;
+			if(Character.isUpperCase(c))
+				upperCase = true;
+			int asci = (int)c;
+			System.out.println(c);
+			if(asci < 32 || asci >126 )	// auf nicht erlaubte Zeichen prüfen
+				return false;
+			else if(asci<48 || (asci > 57 && asci <65) || (asci >90 && asci < 97) || asci >123) // auf Sonderzeichen prüfen
+				specialChar = true;
+		}
+		return (number && specialChar && upperCase && lowerCase);
+	}
+}
 
 /*
 public class Model extends Observable {

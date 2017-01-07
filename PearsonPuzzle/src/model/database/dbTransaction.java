@@ -5,8 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import view.pearsonPuzzleException;
+import view.PPException;
 
+import model.Model;
 import model.database.UserDBaccess;
 
 /**
@@ -22,26 +23,30 @@ public class dbTransaction implements Transaction{
 	private final static int MIN_line_length_Code = 10;
 	 
 	private UserDBaccess userDBaccess;
+	private Model model;
 	
-	public dbTransaction() throws pearsonPuzzleException{
+	public dbTransaction(Model model) throws PPException{
+		this.model=model;
 		try {
 			userDBaccess = new UserDBaccess();
 			//userDBaccess.resetAll();
 		} catch (SQLException e) {
 			if(((SQLException) e).getSQLState().equals("XJ040")){ // Failed to start database '<databaseName>', see the next exception for details.
-				throw(new pearsonPuzzleException(pearsonPuzzleException.anotherInstanceIsRunnign));
+				PPException exception = new PPException(PPException.anotherInstanceIsRunnign);
+				throw exception;
 			}
 			else if(e.getSQLState().equals("XJ004")){ // Database '<databaseName>' not found.
-				throw new pearsonPuzzleException(pearsonPuzzleException.noDatabaseExists);
+				PPException exception = new PPException(PPException.noDatabaseExists);
+				throw exception;
 			}
 			else if(e.getSQLState().equals("42X05")){ // Table/View '<objectName>' does not exist.
-				throw new pearsonPuzzleException(pearsonPuzzleException.noDatabaseExists);
+				PPException exception = new PPException(PPException.noDatabaseExists);
+				throw exception;
 			}
 			else{
 				//System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
-			
 		}
 	}
 	
@@ -51,12 +56,30 @@ public class dbTransaction implements Transaction{
 	//------------------------------- Teacher Student Tabellen ---------------------------
 	//------------------------------------------------------------------------------------
 		   
-	public boolean addUser(String tablename, String username, String password){
-		if(!userDBaccess.doesUserExists(username)){
-		 return userDBaccess.addUser(tablename, username, password);
+	public void addUser(String tablename, String username, String password){
+		try {
+			if(!userDBaccess.doesUserExists(username)){
+				userDBaccess.addUser(tablename, username, password);
+			}
+			else
+				throw new PPException("Nutzername existiert bereeits in der Datenbank.");
 		}
-		System.out.println("person already exists");
-		return false;
+		catch(SQLException e){
+			   if(e.getSQLState().equals("XSCB1")	 // Container <containerName> not found.
+					   || e.getSQLState().equals("42X05")){ // Table/View <table> does not exist.
+				   	try {
+						userDBaccess.recreateTable_Student();
+						userDBaccess.recreateTable_Teacher();
+						userDBaccess.addUser(tablename, username, password);
+				   	} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+				   		e1.printStackTrace();
+				   	}
+			   }
+		} catch (PPException e) {
+			e.handleException(model);
+			return;
+		}
 	}
 	
 	//gibt nur die namen aus der tabelle table zurück
@@ -73,47 +96,84 @@ public class dbTransaction implements Transaction{
 	}
 	
 	
-	 public boolean deleteUser(String username, String table){
-		 if(userDBaccess.doesUserExists(username)){
-		 boolean success = userDBaccess.deleteUser(username, table);
-		 if(!success){
-			 System.out.println("person does exist in other table, not deleted");}
-		 return success;
-		 }
-		 else{
-			 //die Person existiert nicht
-			 System.out.println("person does not exist");
-			 return false;
-		 }
-	 }
-	 
-	 public boolean deleteUser(String username){
-		 if(userDBaccess.doesUserExists(username)){
-			 if(!userDBaccess.deleteUser(username, "students")){
-				 return userDBaccess.deleteUser(username, "teachers");
-			 }
-			 else{
-				 return true;
-			 }
-		 }
-			 
-			 else{
-				 //die Person existiert nicht
-				 System.out.println("person does not exist");
-				 return false;
-			 }
-		 
+	 public void deleteUser(String username, String table){
+		 try {
+			userDBaccess.deleteUser(username, table);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		 if(userDBaccess.doesUserExists(username)){
+//		 boolean success = userDBaccess.deleteUser(username, table);
+//		 if(!success){
+//			 System.out.println("person does exist in other table, not deleted");}
+//		 return success;
+//		 }
+//		 else{
+//			 //die Person existiert nicht
+//			 System.out.println("person does not exist");
+//			 return false;
+//		 }
 	 }
 	
 	
 	public boolean lookUpstudent(String name, char[] password){
 		String passwordstring = new String(password);
-		return userDBaccess.lookUpstudent(name, passwordstring);
+		try {
+			return userDBaccess.lookUpstudent(name, passwordstring);
+		} catch (SQLException e) {
+			if(e.getSQLState().equals("42X05")){
+				try {
+					throw new PPException(PPException.databaseIsEmpty);
+				} catch (PPException e1) {
+						e1.handleException(model);
+						return false;
+					}
+				}
+			e.printStackTrace();
+
+			}
+			return false;
 	   }
 	
 	public boolean lookUpteacher(String name, char[] password){
 		String passwordstring = new String(password);
-		return userDBaccess.lookUpteacher(name, passwordstring);
+		try {
+			return userDBaccess.lookUpteacher(name, passwordstring);
+		} catch (SQLException e) {if(e.getSQLState().equals("42X05")){
+			try {
+				throw new PPException(PPException.databaseIsEmpty);
+			} catch (PPException e1) {
+				e1.handleException(model);
+				try {
+					return userDBaccess.lookUpteacher(name, passwordstring);
+				} catch (SQLException e2) {
+					e2.printStackTrace();
+				}
+//				throw new PPException(PPException.noDatabaseExists);
+//			} catch (PPException e1) {
+//				e1.handleException(model);
+//				if(e1.getAnswer().equals("Ja")){
+//					try {
+//						userDBaccess.createTable_Projects();
+//						userDBaccess.createTable_Students();
+//						userDBaccess.createTable_Teachers();
+//						
+//					} catch (SQLException e2) {
+//						JOptionPane.showMessageDialog(null, "Konnte Datenbank nicht erstellen.", "Ernsthaftes Problem aufgetreten!", JOptionPane.ERROR_MESSAGE, null);
+//						e2.printStackTrace();
+//					}
+//				}
+//				else if(e1.getAnswer().equals("Nein"))
+//					System.exit(0);
+//				else 
+//					System.exit(0);
+//				
+				e1.printStackTrace();
+			}
+		}
+		return false; 
+		}
 	   }
 	
 	//-----------------------------------------------------------------------------
@@ -190,8 +250,8 @@ public class dbTransaction implements Transaction{
 	public void saveJUnitTest(String projectname,String jUnitCode) {
 		if(jUnitCode.length()>1000)
 			try {
-				throw new pearsonPuzzleException("JUnit Code ist zu lang und konnte deshalb nicht gespeichert werden!");
-			} catch (pearsonPuzzleException e) {
+				throw new PPException("JUnit Code ist zu lang und konnte deshalb nicht gespeichert werden!");
+			} catch (PPException e) {
 				e.printStackTrace();
 				return;
 			}
@@ -292,8 +352,8 @@ public class dbTransaction implements Transaction{
 		} catch(SQLException e){
 			if(e.getSQLState().equals("42X05")){ // Table/View '<objectName>' does not exist.
 				try {
-					throw new pearsonPuzzleException("Dieses Projekt enthält keinen Inhalt");
-				} catch (pearsonPuzzleException e1) {} 
+					throw new PPException("Dieses Projekt enthält keinen Inhalt");
+				} catch (PPException e1) {} 
 			}
 			e.printStackTrace();
 			return new String();
@@ -344,9 +404,12 @@ public class dbTransaction implements Transaction{
 		 } catch (SQLException e) {
 			 e.printStackTrace();
 			try {
-				throw new pearsonPuzzleException("Keine Projekte vorhanden. \nBitte legen Sie ein neues Projekt an.");
-			} catch (pearsonPuzzleException e1) {
-				e1.showDialog();
+				if(e.getSQLState().equals("42X05"))
+					userDBaccess.recreateTable_Projects();
+					return userDBaccess.getProjects(grade);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			return new ArrayList<String>();
 		 }
@@ -363,21 +426,15 @@ public class dbTransaction implements Transaction{
 	 }
 	 
 	 private void createTable_Projects() throws SQLException{
-		 userDBaccess.createTable_Projects();
-		 saveProject(
-					"HalloWorld", 
-					"public static void main(String args[]){ \n\t System.out.println(\"hallo world\");\n }" , 
-					"",
-					"",
-					0);
+		 saveProject("TestProject", "public static void main(String args[]){ \n\t System.out.println(\"hallo world\");\n }", "", "Beschreibung", 2);
 	 }
 			
 	 private void createTable_Students() throws SQLException{
-		 userDBaccess.createTable_Students();
+		 userDBaccess.recreateTable_Student();
 	 }
 	 
 	 private void createTable_Teachers() throws SQLException{
-		 userDBaccess.createTable_Teachers();
+		 userDBaccess.recreateTable_Teacher();
 	 }
 	 
 	 public void resetAll() throws SQLException{

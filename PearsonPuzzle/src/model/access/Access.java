@@ -11,7 +11,7 @@ public class Access {
 	
 	public Access(char[] password, String username, dbTransaction database){
 		if (database.lookUpstudent(username, password))
-			accessGroup = AccessGroup.PUPIL;
+			accessGroup = AccessGroup.STUDENT;
 		else if (database.lookUpteacher(username, password))
 			accessGroup = AccessGroup.TEACHER;
 		else

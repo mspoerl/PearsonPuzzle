@@ -80,6 +80,9 @@ public class LoginView extends JView{
 
 	@Override
 	public void update(Observable o, Object arg) {
+		if(arg.getClass().equals(PPException.class)){
+			this.showDialog((PPException) arg, true);
+		}
 		// TODO Auto-generated method stub
 		
 	}

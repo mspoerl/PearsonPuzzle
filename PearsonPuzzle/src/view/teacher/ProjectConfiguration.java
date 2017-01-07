@@ -12,6 +12,7 @@ import javax.swing.table.TableCellRenderer;
 
 import controller.Controller;
 import controller.DCCommand;
+import controller.DefaultController;
 import view.JView;
 import model.Model;
 
@@ -110,7 +111,7 @@ public class ProjectConfiguration extends JView{
 			}
 		};
 		
-		if(!model.getGroupMatrix().isEmpty())
+		if(model.getGroupMatrix()!=null && !model.getGroupMatrix().isEmpty())
 		{
 			for(int i=0; i<model.getGroupMatrix().size();i++)
 			{
@@ -136,7 +137,7 @@ public class ProjectConfiguration extends JView{
 		newSelection.addActionListener(controller);
 		saveGroup.addActionListener(controller);
 		cancelSelection.addActionListener(controller);
-		tableModel.addTableModelListener(controller);
+		tableModel.addTableModelListener((DefaultController)controller);
 		save.addActionListener(controller);
 		menu.addActionListener(controller);
 	}

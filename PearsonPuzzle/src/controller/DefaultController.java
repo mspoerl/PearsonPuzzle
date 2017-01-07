@@ -1,12 +1,20 @@
 package controller;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
 
 import java.util.ArrayList;
 import javax.swing.*;
@@ -18,7 +26,7 @@ import model.access.AccessGroup;
 import view.Allert;
 import view.LoginView;
 import view.JView;
-import view.pearsonPuzzleException;
+import view.PPException;
 import view.pupil.CodeSortView;
 import view.pupil.PupilView;
 import view.teacher.ConfigEditor;
@@ -33,10 +41,14 @@ import JUnitUmgebung.JUnitRunner;
  * mit dem Controller zu verknüpfen.
  * @author workspace
  */
-public class DefaultController extends Controller {
-	
-	public DefaultController(Model model, JView view) {
-		super(model, view);
+public class DefaultController implements Controller, TableModelListener, MouseListener, FocusListener, PropertyChangeListener{
+	private Model model;
+	private JView view;
+	private boolean unsavedChanges = false;
+	public DefaultController(Model model, JView view){
+		this.model=model;
+		this.view=view;
+		view.addController(this);
 		view.setController(this);
 	}
 	
@@ -52,24 +64,35 @@ public class DefaultController extends Controller {
 	private void act(DCCommand cmd, ActionEvent e){
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
 		if(view.getClass().equals(TextEditor.class)  
-				&& cmd!=DCCommand.Save
-				&& model.hasChanged()){
-			Integer allert=view.showMessage(Allert.notSaved);
-			if(allert==JOptionPane.YES_OPTION)
-				this.act(DCCommand.Save, null);
-			else if(allert==JOptionPane.NO_OPTION)
-				model.fetchAll();				
-			else if(allert==JOptionPane.CANCEL_OPTION)
+				&& cmd!=DCCommand.Save){
+			if(unsavedChanges){
+				Integer allert=view.showDialog(Allert.notSaved);
+				if(allert==JOptionPane.YES_OPTION)
+					this.act(DCCommand.Save, null);
+				else if(allert==JOptionPane.NO_OPTION){
+					unsavedChanges=false;
+					model.fetchAll();
+				}
+				else if(allert==JOptionPane.CANCEL_OPTION)
+					return;
+			}
+			else if(view.get("projectname")==""){
+				view.showDialog(Allert.noContentInput);
 				return;
+			}
+			
 		}
 		switch(cmd){
 			case SubmitPassword:
 				if(view.getClass().equals(LoginView.class))
 					((LoginView)view).submitChangeToController();
 				break;
+			case AddUser:
+				view.showDialog(cmd, false);
 			case EditProject:
-				if(model.getProjectListID()==null)
-					view.showMessage(Allert.noProjectSelected);
+				if(model.getProjectListID()==null
+						&& view.getClass()==TeacherView.class)
+					view.showDialog(Allert.noProjectSelected);
 				else{
 					view.quitView();
 					this.view=new TextEditor(model);
@@ -84,7 +107,7 @@ public class DefaultController extends Controller {
 				break;
 			case OpenProject:
 				if(model.getProjectListID()==null)
-					view.showMessage(Allert.noProjectSelected);
+					view.showDialog(Allert.noProjectSelected);
 				else{
 					view.quitView();
 					this.view=new CodeSortView(model);
@@ -93,7 +116,7 @@ public class DefaultController extends Controller {
 				break;
 			case ProjectList:
 				view.quitView();
-				if(model.getAccessGroup().equals(AccessGroup.PUPIL))
+				if(model.getAccessGroup().equals(AccessGroup.STUDENT))
 					this.view= new PupilView(model);
 				else
 					this.view= new TeacherView(model);
@@ -123,6 +146,7 @@ public class DefaultController extends Controller {
 				view.update();
 				break;
 			case Save:
+				unsavedChanges = false;
 				if(view.getClass().equals(TextEditor.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					
@@ -131,7 +155,7 @@ public class DefaultController extends Controller {
 							|| (((TextEditor) view).getCode()).equals("")
 							|| (((TextEditor) view).getProjectName()).equals("")){
 					
-						view.showMessage(Allert.noContentInput);
+						view.showDialog(Allert.noContentInput);
 					}
 					
 					else{
@@ -141,10 +165,10 @@ public class DefaultController extends Controller {
 						{
 							act(DCCommand.SetTextConfig, null);
 							model.saveProjectSettings();
-							view.showMessage(Allert.projectSaved);
+							view.showDialog(Allert.projectSaved);
 						}
 						else{
-							view.showMessage(Allert.projectExists);
+							view.showDialog(Allert.projectExists);
 						}
 					}
 				}
@@ -160,13 +184,13 @@ public class DefaultController extends Controller {
 				if(view.getClass().equals(TeacherView.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					if(model.getProjectListID()==null)
-						view.showMessage(Allert.noProjectSelected);
+						view.showDialog(Allert.noProjectSelected);
 					else{
 						view.allert("Sind Sie sicher, dass Sie das Projekt löschen wollen?");
 						// TODO: Auswahlmöglichkeit zu Allert hinzufügen
 						if(model.removeProject())
 						{
-							view.showMessage(Allert.projectDeleted);
+							view.showDialog(Allert.projectDeleted);
 							view.update();
 						}
 					}
@@ -210,7 +234,7 @@ public class DefaultController extends Controller {
 				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
 				break;
 			case Compile:
-				if(model.getAccessGroup()==AccessGroup.PUPIL)
+				if(model.getAccessGroup()==AccessGroup.STUDENT)
 					TestCompiler.compileCode(model.getSolutionStrings());
 				else if(model.getAccessGroup()==AccessGroup.TEACHER)
 					TestCompiler.compileCode(((UnitEditor)view).getContent());
@@ -218,7 +242,7 @@ public class DefaultController extends Controller {
 				break;
 			case TestCode:
 				Result result;
-				if(model.getAccessGroup()==AccessGroup.PUPIL){
+				if(model.getAccessGroup()==AccessGroup.STUDENT){
 					System.out.println(model.getSollution());
 					//model.testSolution();
 					if(model.testSolution())
@@ -249,14 +273,13 @@ public class DefaultController extends Controller {
 		if(username.isEmpty() || password.length==0){
 			view.allert("Bitte Nutzernamen und Passwort eingeben");
 		}
-		else if(model.getAccessGroup(username, password)==AccessGroup.TEACHER){
-			model.setAccessGroup(AccessGroup.TEACHER);
+		model.login(username, password);
+		if(model.getAccessGroup()==AccessGroup.TEACHER){
 			view.quitView();
 			this.view=new TeacherView(model);
 			view.addController(this);
 		}
-		else if(model.getAccessGroup(username, password)==AccessGroup.PUPIL){
-			model.setAccessGroup(AccessGroup.PUPIL);
+		else if(model.getAccessGroup()==AccessGroup.STUDENT){
 			view.quitView();
 			this.view=new PupilView(model);
 			view.addController(this);
@@ -315,7 +338,7 @@ public class DefaultController extends Controller {
 		if(((AbstractButton) e.getItem()).getActionCommand()==DCCommand.ResetDB.toString()){
 			if(e.getStateChange() == ItemEvent.SELECTED
 				&& !model.isResetDB()){
-					if(view.showMessage(Allert.reset)==JOptionPane.YES_OPTION)
+					if(view.showDialog(Allert.reset)==JOptionPane.YES_OPTION)
 					model.setResetDB(true);
 					else
 					model.setResetDB(false);
@@ -399,8 +422,8 @@ public class DefaultController extends Controller {
 	    			for(Integer rule : model.getGroupMatrix().get(column)){
 	    				if(rule<max && rule!=0){
 	    					try {
-	    						throw new pearsonPuzzleException("<html><body>Problem in Zeile "+(1+(Integer)row)+", Spalte "+((Integer)column+1)+"<BR> Die Einträge dürfen nicht der Vorgabe widersprechen.</body></html>");
-	    					} catch (pearsonPuzzleException e1) {
+	    						throw new PPException("<html><body>Problem in Zeile "+(1+(Integer)row)+", Spalte "+((Integer)column+1)+"<BR> Die Einträge dürfen nicht der Vorgabe widersprechen.</body></html>");
+	    					} catch (PPException e1) {
 	    							model.setGroupMatrixEntry(row, column, "0");
 	    							return;
 	    						}
@@ -410,5 +433,34 @@ public class DefaultController extends Controller {
 	        	}
 	        }
 		}		
+	}
+
+	@Override
+	public JView getView() {
+		return view;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(view.getClass()==TextEditor.class){
+			String componentName = ((Component) evt.getSource()).getName();
+			String componentText = ((JTextComponent) evt.getSource()).getText();
+			if(componentName!=null)
+			{
+				if(componentName.equals("ProjectName") 
+						&& !componentText.equals(model.getProjectName()))
+					unsavedChanges = true;
+				else if(componentName.equals("ProjectCode")
+						&& !componentText.equals(model.getProjectCode())
+						&& !componentText.equals(TextEditor.defaultCode))
+					unsavedChanges = true;
+				else if(componentName.equals("TabSize")
+						&& !componentText.equals(Integer.toString(model.getTabSize())))
+					unsavedChanges = true;
+				else if(componentName.equals("ProjectDescription")
+						&& !componentText.equals(model.getProjectDescription()))
+					unsavedChanges = true;
+			}
+		}	
 	}
 }

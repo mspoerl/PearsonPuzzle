@@ -7,12 +7,14 @@ package controller;
  *
  */
 public enum DCCommand {
-	SubmitPassword, EditProject, EditJUnit, NewProject, OpenProject, ProjectList, Save, Logout, 
+	SubmitPassword, EditProject, EditJUnit, AddUser, NewProject, OpenProject, ProjectList, Save, Logout, 
 	DeleteProject, Admin, ResetDB, SetConfig, ConfigureProject, SetTextConfig, StartGroupSelection, CancelGroupSelection, Compile, TestCode, SaveProjectConfiguration, SaveGroupSelection;
 	
 	@Override
 	public String toString(){
 		switch(this){
+		case AddUser:
+			return "AddUser";
 		case EditProject:
 			return "EditProject";
 		case NewProject:

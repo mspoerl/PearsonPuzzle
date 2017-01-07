@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import model.access.AccessGroup;
+
 public class UserDBaccess {
 
 	 Connection conn;
@@ -44,8 +46,8 @@ public class UserDBaccess {
 		   stmt.executeUpdate("INSERT INTO "+tablename+" values ('"+username+"','"+password+"')");
 		   return true;}
 		   catch(SQLException e){	//username bereits vorhanden => false (falls handling erforderlich)
-			   if(e.getSQLState().equals("23505")){
-				   
+			   if(e.getSQLState().equals("23505")){ // The statement was aborted because it would have caused a 
+				   // duplicate key value in a unique or primary key constraint or unique index identified by '<value>' defined on '<value>'.	   
 				   return false;
 			   }
 			   return false;
@@ -54,19 +56,13 @@ public class UserDBaccess {
 	 }
 	 
 //	 Sagt ob eine Person mit Namen username in einer der Tabellen students oder teacher existiert
-	 public boolean doesUserExists(String username){
-		 try{	  
+	 public boolean doesUserExists(String username) throws SQLException{	  
 			   Statement stmt = conn.createStatement();
-			   ResultSet rs = stmt.executeQuery("SELECT * FROM students WHERE username= '" + username+"'");	
-			   ResultSet te = stmt.executeQuery("SELECT * FROM teachers WHERE username= '" + username+"'");	
+			   ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE username= '" + username+"'");	
+			   ResultSet te = stmt.executeQuery("SELECT * FROM teacher WHERE username= '" + username+"'");	
 			   
 				   //stmt.close();
 				   return rs.next()||te.next();
-			   
-		   }
-		   catch(Exception e){
-			   return false;
-		   }
 		   
 	   }
 	 
@@ -88,17 +84,9 @@ public class UserDBaccess {
 		 return namevector;
 	 }
 	 
-	 public boolean deleteUser(String username, String table){
-		 try{	  
-			   Statement stmt = conn.createStatement();
-			  
+	 public void deleteUser(String username, String table) throws SQLException{
+		 Statement stmt = conn.createStatement();	  
 		 stmt.executeUpdate("DELETE FROM "+table+" WHERE username = '"+username+"'");
-		 return true;
-		 }
-		 catch(Exception e){
-			 return false;
-			
-		 }
 	 }
 	 
 
@@ -112,30 +100,18 @@ public class UserDBaccess {
 	  
 	   
 	   // -----  Nutzername und Passwort Vergleich Schüler
-	   public boolean lookUpstudent(String name, String passwordstring){
-		   try{	  
+	   public boolean lookUpstudent(String name, String passwordstring) throws SQLException{
 			   Statement stmt = conn.createStatement();
-			   ResultSet rs = stmt.executeQuery("SELECT * FROM students WHERE username= '" + name + "' AND password = '"+passwordstring+"'");	
-			 //stmt.close();
-			   return rs.next();		     
-			   
-		   }
-		   catch(Exception e){
-			   return false;
-		   }
-		   
+			   ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE username= '" + name + "' AND password = '"+passwordstring+"'");
+			   return rs.next();		     		   
 	   }
 	   
 	   // ----- Nutzername und Passwort Vergleich Lehrer
-	   public boolean lookUpteacher(String name, String passwordstring) {
-		   try{
-			   
-			   Statement stmt = conn.createStatement();
-			   ResultSet te = stmt.executeQuery("SELECT * FROM teachers WHERE username = '" + name + "' AND password = '"+passwordstring+"'");	
+	   public boolean lookUpteacher(String name, String passwordstring) throws SQLException{
+		  Statement stmt = conn.createStatement();
+		  ResultSet te = stmt.executeQuery("SELECT * FROM teacher WHERE username = '" + name + "' AND password = '"+passwordstring+"'");	
 			 //stmt.close();
-			   return te.next();
-		   } catch(Exception e){
-			   		return false;}
+		 return te.next();
 	   }
 
 //
@@ -381,11 +357,14 @@ public class UserDBaccess {
 		   try {
 			   stmt = conn.createStatement();
 			   stmt.executeUpdate("UPDATE Projects SET jUnitCode='"+jUnitCode+"' WHERE pName='"+projectname+"'");
+		   		
 		   		} catch (SQLException e) {
 		   			if(e.getSQLState().equals("42X14")){ // 42X14: 'JUNITCODE' is not a column in table or VTI 'APP.PROJECTS'
 		   				try {
 							stmt = conn.createStatement();
 							stmt.executeUpdate("ALTER TABLE Projects ADD jUnitCode varchar(1000)");
+							stmt.executeUpdate("UPDATE Projects SET jUnitCode='"+jUnitCode+"' WHERE pName='"+projectname+"'");
+							return;
 						} catch (SQLException e1) {
 						}
 		   			}
@@ -558,7 +537,7 @@ public class UserDBaccess {
 			   
 		   } catch (SQLException e1) {
 			   try{
-				   this.createTable_Projects();
+				   this.recreateTable_Projects();
 				   return this.getProjects(grade);
 			   } catch(SQLException e2){
 				   throw(e2);
@@ -602,7 +581,7 @@ public class UserDBaccess {
 		   return 0;
 		   
 		}
-	   protected void createTable_Projects() throws SQLException{
+	   protected void recreateTable_Projects() throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   // TODO: Allert soll erfolgen, der abfrägt, ob dies das erst Projekt ist, das man erstellt. Erst bei ja soll DROP TABLE erfolgen (sonst werden eventuell vorhandenen DAten verworfen)
 		   try{stmt.executeUpdate("DROP TABLE Projects");
@@ -618,24 +597,41 @@ public class UserDBaccess {
 		   //stmt.close();
 	   }
 	   
+	   protected void createTable(AccessGroup accessGroup) throws SQLException{
+		   Statement stmt = conn.createStatement();
+		   stmt.executeUpdate("Create table "+accessGroup.toString()+" (" +
+			   		"username varchar(30) UNIQUE, " +
+			   		"password varchar(8) NOT NULL default 'student')");
+	   }
+	   
+	   protected void dropTable(AccessGroup accessGroup){
+		   try{
+			   Statement stmt = conn.createStatement();
+			   stmt.executeUpdate("DROP TABLE student");
+		   //stmt.close();
+		   }
+		   catch(SQLException e){
+			   e.printStackTrace();
+		   }
+	   }
 	   
 	   /**
 	    * Schülertabelle wird verworfen, falls vorhanden und neu kreiert.<br>
 	    * <b>!!!ACHTUNG!!!</b> Löscht eventuell vorhanenden Daten!
 	    * @throws SQLException
 	    */
-	   protected void createTable_Students() throws SQLException{
+	   protected void recreateTable_Student() throws SQLException{
 		   Statement stmt = conn.createStatement();
-		   try{stmt.executeUpdate("DROP TABLE students");
+		   try{stmt.executeUpdate("DROP TABLE student");
 		   //stmt.close();
 		   }
 		   catch(SQLException e){}
-		   stmt.executeUpdate("Create table students (" +
+		   stmt.executeUpdate("Create table student (" +
 		   		"username varchar(30) UNIQUE, " +
 		   		"password varchar(8) NOT NULL default 'student')");  
 		   // insert 2 rows
-		   stmt.executeUpdate("insert into students values ('tom','tom')");
-		   stmt.executeUpdate("insert into students values ('peter','peter')");
+		   //stmt.executeUpdate("insert into students values ('tom','tom')");
+		   //stmt.executeUpdate("insert into students values ('peter','peter')");
 		   //stmt.close();
 	   }
 	   
@@ -644,18 +640,18 @@ public class UserDBaccess {
 	    * <b>!!!ACHTUNG!!!</b> Löscht eventuell vorhanenden Daten!
 	    * @throws SQLException
 	    */
-	   protected void createTable_Teachers() throws SQLException{
+	   protected void recreateTable_Teacher() throws SQLException{
 		   Statement stmt = conn.createStatement();
-		   try{stmt.executeUpdate("DROP TABLE teachers");
+		   try{stmt.executeUpdate("DROP TABLE teacher");
 		   //stmt.close();
 		   }
 		   catch(SQLException e){}
-		   stmt.executeUpdate("CREATE TABLE teachers (" +
+		   stmt.executeUpdate("CREATE TABLE teacher (" +
 		   		"username varchar(30) UNIQUE, " +
 		   		"password varchar(8)  NOT NULL default 'teacher')");
-		   stmt.executeUpdate("insert into teachers values ('Herr','Herr')");
-		   stmt.executeUpdate("insert into teachers values ('Frau','Frau')");
-		   stmt.executeUpdate("insert into teachers values ('TUM','TUM')");
+		   //stmt.executeUpdate("insert into teachers values ('Herr','Herr')");
+		   //stmt.executeUpdate("insert into teachers values ('Frau','Frau')");
+		   //stmt.executeUpdate("insert into teachers values ('TUM','TUM')");
 		   //stmt.close();
 	   }
 	   
@@ -664,9 +660,9 @@ public class UserDBaccess {
 	    * @throws SQLException
 	    */
 	   public void resetAll() throws SQLException{
-		   createTable_Projects();
-		   createTable_Students();
-		   createTable_Teachers();
+		   recreateTable_Projects();
+		   recreateTable_Student();
+		   recreateTable_Teacher();
 	   }
 
 	   /**

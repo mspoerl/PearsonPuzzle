@@ -8,7 +8,7 @@ package model.access;
  */
 public enum AccessGroup {
 	TEACHER(new Teacher()),
-	PUPIL(new Pupil()), 
+	STUDENT(new Student()), 
 	UNAUTHORIZED(new Unauthorized());
 	
 	private AccessInterface accessInterface;
@@ -20,5 +20,7 @@ public enum AccessGroup {
 	public AccessInterface object(){
 		return accessInterface;
 	}
+	
+	
 	
 	}

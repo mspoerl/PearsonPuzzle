@@ -22,7 +22,7 @@ public class randomKlickTest {
 	
 	@Test
 	public void randomKlicktestPupil() {
-		randomSwingKlick(AccessGroup.PUPIL);
+		randomSwingKlick(AccessGroup.STUDENT);
 		
 	}
 	@Test
@@ -44,7 +44,7 @@ public class randomKlickTest {
 		for(int i=0; i<numberOfKlicks;i++){
 			int randomInt = new java.util.Random().nextInt(commandList.size());
 			Model model = new Model();
-			model.setAccessGroup(accessGroup);
+			//model.setAccessGroup(accessGroup);
 			JView view = new PupilView(model);
 			Controller controller = new DefaultController(model, view); 
 			JButton testButton = new JButton();
