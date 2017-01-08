@@ -34,6 +34,7 @@ import view.teacher.ProjectConfiguration;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
+import view.teacher.UserEditor;
 
 import JUnitUmgebung.JUnitRunner;
 /**
@@ -88,7 +89,17 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 					((LoginView)view).submitChangeToController();
 				break;
 			case AddUser:
+				if(!this.view.getClass().equals(LoginView.class)
+						&& !this.view.getClass().equals(UserEditor.class)){
+					act(DCCommand.EditUsers, e);
+				}
 				view.showDialog(cmd, false);
+				break;
+			case EditUsers:
+				view.quitView();
+				this.view = new UserEditor(model);
+				view.addController(this);
+				break;
 			case EditProject:
 				if(model.getProjectListID()==null
 						&& view.getClass()==TeacherView.class)
@@ -178,6 +189,13 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				}
 				else if(view.getClass().equals(ProjectConfiguration.class)){
 					model.saveGroupMatrix();
+				}
+				else if(view.getClass().equals(UserEditor.class)){
+					view.showDialog(Allert.deleteUser);
+					model.deleteUsers(((UserEditor)view).getUsers());
+					//view.addController(this);
+					act(DCCommand.EditUsers, null);
+					System.out.println(((UserEditor)view).getUsers());
 				}
 				break;
 			case DeleteProject:
@@ -284,7 +302,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 			this.view=new PupilView(model);
 			view.addController(this);
 		}
-		else{
+		else if(model.getAccessGroup()==AccessGroup.UNAUTHORIZED){
 			view.allert("Zugang verweigert");
 		}
 	}
@@ -345,6 +363,15 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 			}
 			else
 			model.setResetDB(e.getStateChange()==ItemEvent.SELECTED);
+		}
+		if(view.getClass()==UserEditor.class){
+			if(e.getSource().getClass()==JRadioButton.class){
+				model.setUserGroup_toEdit(AccessGroup.valueOf(( (Component) e.getSource()).getName()));
+				act(DCCommand.EditUsers, null);
+			}
+			else if(e.getSource().getClass()==JCheckBox.class){
+			}
+			System.out.println(((Component) e.getSource()).getName());
 		}
 	}
 

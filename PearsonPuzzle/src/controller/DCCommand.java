@@ -7,7 +7,7 @@ package controller;
  *
  */
 public enum DCCommand {
-	SubmitPassword, EditProject, EditJUnit, AddUser, NewProject, OpenProject, ProjectList, Save, Logout, 
+	SubmitPassword, EditProject, EditUsers, EditJUnit, AddUser, NewProject, OpenProject, ProjectList, Save, Logout, 
 	DeleteProject, Admin, ResetDB, SetConfig, ConfigureProject, SetTextConfig, StartGroupSelection, CancelGroupSelection, Compile, TestCode, SaveProjectConfiguration, SaveGroupSelection;
 	
 	@Override
@@ -15,6 +15,8 @@ public enum DCCommand {
 		switch(this){
 		case AddUser:
 			return "AddUser";
+		case EditUsers:
+			return "EditUsers";
 		case EditProject:
 			return "EditProject";
 		case NewProject:

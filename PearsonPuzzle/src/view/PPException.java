@@ -11,9 +11,9 @@ public class PPException extends Exception{
 	 */
 	private static final long serialVersionUID = 1L;
 	public final static String noDatabaseExists = "Es existiert noch keine Datenbank. \nWollen Sie eine neue Datenbank anlegen?";
-	public final static String anotherDatasetExists = "Datenbank mit gleichem Namen existiert bereits. \nWollen sie die existierende Datenbank überschreiben?";
+	public final static String anotherDatasetExists = "<html>Datensatz mit gleichem Namen existiert bereits.<br>Wollen sie die existierende Datensatz überschreiben?</html>";
 	public final static String anotherInstanceIsRunnign = "<html><body>Das Programm läuft bereits.<br>Sollte das Problem in einigen Minuten weiterhin auftreten,<br>versuchen Sie, das Programm über den Task Manager zu beenden.<br><b>Vorsicht:</b> dabei können ungespeicherte Änderungen verloren gehen.</body></html>";
-	public final static String databaseIsEmpty = "Keine Einträge in der Datnbank gefunden";
+	public final static String databaseIsEmpty = "Keine Einträge in der Datenbank gefunden";
 	private String answer;
 	String[] yesNoCancelOptions = { "Ja", "Nein", "Abbrechen" };
 	String[] yesNoOptions = {"Ja", "Nein"};
@@ -26,6 +26,12 @@ public class PPException extends Exception{
 		super();
 		this.reason = exceptionKind;
 	}
+	
+	public PPException(int maximaleLänge, int aktuelleLänge, String betroffenesFeld) {
+		super();
+		this.reason = "<html>"+betroffenesFeld+" leider zu lang. ("+aktuelleLänge+" Zeichen)<br>Bitte maximal "+maximaleLänge+" Zeichen verwenden</html>";
+	}
+	
 	@Override
 	public String getMessage(){
 		return reason;
@@ -71,6 +77,10 @@ public class PPException extends Exception{
 //		this.model = model;
 //		this.view = new InitializeAccess(model);
 //		this.controller = new ExceptionController(model, view); 
+	}
+	
+	public void printMessage(){
+		handleException(null);
 	}
 	
 	public String getAnswer(){

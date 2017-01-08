@@ -33,14 +33,20 @@ public class dbTransaction implements Transaction{
 		} catch (SQLException e) {
 			if(((SQLException) e).getSQLState().equals("XJ040")){ // Failed to start database '<databaseName>', see the next exception for details.
 				PPException exception = new PPException(PPException.anotherInstanceIsRunnign);
+
+				System.out.println("1");
 				throw exception;
 			}
 			else if(e.getSQLState().equals("XJ004")){ // Database '<databaseName>' not found.
 				PPException exception = new PPException(PPException.noDatabaseExists);
+
+				System.out.println("2");
 				throw exception;
 			}
 			else if(e.getSQLState().equals("42X05")){ // Table/View '<objectName>' does not exist.
 				PPException exception = new PPException(PPException.noDatabaseExists);
+
+				System.out.println("3");
 				throw exception;
 			}
 			else{
@@ -56,30 +62,38 @@ public class dbTransaction implements Transaction{
 	//------------------------------- Teacher Student Tabellen ---------------------------
 	//------------------------------------------------------------------------------------
 		   
-	public void addUser(String tablename, String username, String password){
+	public boolean addUser(String tablename, String username, String password){
 		try {
 			if(!userDBaccess.doesUserExists(username)){
 				userDBaccess.addUser(tablename, username, password);
 			}
-			else
-				throw new PPException("Nutzername existiert bereeits in der Datenbank.");
-		}
+			else{
+				throw new PPException("<html>Nutzername existiert bereits. <br> Es können keine zwei Nutzer mit gleichem Namen angelegt werden.</html>");
+			}
+		} 
 		catch(SQLException e){
-			   if(e.getSQLState().equals("XSCB1")	 // Container <containerName> not found.
-					   || e.getSQLState().equals("42X05")){ // Table/View <table> does not exist.
-				   	try {
-						userDBaccess.recreateTable_Student();
-						userDBaccess.recreateTable_Teacher();
-						userDBaccess.addUser(tablename, username, password);
-				   	} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-				   		e1.printStackTrace();
-				   	}
-			   }
-		} catch (PPException e) {
-			e.handleException(model);
-			return;
+			// Von doesUserExist geworfene Exception:
+			if(e.getSQLState().equals("XSCB1")	 // Container <containerName> not found.
+					|| e.getSQLState().equals("42X05")){ // Table/View <table> does not exist.
+				try {
+					userDBaccess.recreateTable_Student();
+					userDBaccess.recreateTable_Teacher();
+					userDBaccess.addUser(tablename, username, password);
+				} catch (SQLException e1) {
+			   		e1.printStackTrace();
+			   		return false;
+			   	}
+			}
+			else{
+				e.printStackTrace();
+				return false;
+			}
+		} 
+		catch (PPException e) {
+			e.printMessage();
+			return false;
 		}
+		return true;
 	}
 	
 	//gibt nur die namen aus der tabelle table zurück
@@ -100,6 +114,8 @@ public class dbTransaction implements Transaction{
 		 try {
 			userDBaccess.deleteUser(username, table);
 		} catch (SQLException e) {
+			if(e.getSQLState().equals("42X05"))
+				return;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -125,15 +141,21 @@ public class dbTransaction implements Transaction{
 			if(e.getSQLState().equals("42X05")){
 				try {
 					throw new PPException(PPException.databaseIsEmpty);
-				} catch (PPException e1) {
-						e1.handleException(model);
-						return false;
+				} 
+				catch (PPException e1) {
+					e1.handleException(model);
+					try{
+						return userDBaccess.lookUpstudent(name, passwordstring);
+					} 
+					catch (SQLException e2) {
+						e2.printStackTrace();
 					}
+					e1.printStackTrace();
 				}
-			e.printStackTrace();
-
 			}
+			e.printStackTrace();
 			return false;
+			}
 	   }
 	
 	public boolean lookUpteacher(String name, char[] password){
@@ -402,11 +424,17 @@ public class dbTransaction implements Transaction{
 			return userDBaccess.getProjects(grade);
 		
 		 } catch (SQLException e) {
-			 e.printStackTrace();
 			try {
-				if(e.getSQLState().equals("42X05"))
+				if(e.getSQLState().equals("42X05")){
+					// Zentrale Stelle für Erstbenutzung
+					PPException pEx = new PPException(PPException.databaseIsEmpty);
+					pEx.handleException(model);
 					userDBaccess.recreateTable_Projects();
 					return userDBaccess.getProjects(grade);
+				}
+				else{
+					e.printStackTrace();
+				}
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

@@ -3,6 +3,7 @@ package view;
 import javax.swing.JOptionPane;
 
 import model.Model;
+import model.access.AccessGroup;
 
 /**
  * Klasse dient dazu, mögliche Allerts zu definieren und dem Nutzer <br>
@@ -10,7 +11,7 @@ import model.Model;
  * @author workspace
  */
 public enum Allert {
-	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure;
+	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser;
 	
 	public Integer allert(Model model){
 		Integer n;
@@ -40,6 +41,16 @@ public enum Allert {
 				          JOptionPane.QUESTION_MESSAGE,  // Icon
 				          null, yesNoCancelOptions,yesNoCancelOptions[0] );
 				return n;
+			case deleteUser:
+				n = JOptionPane.showOptionDialog( null,
+				          "<html>Sind sie sicher, dass Sie die angegeben Nutzer löschen wollen?<br>" +
+				          "Bei unbedachtem Einsatz können Sie dadurch den Zugriff <br>" +
+				          "auf die Datenbank verlieren.</html>",	// Nachricht/Frage
+				          "Benutzer Löschen.",	// Titel
+				          JOptionPane.YES_NO_OPTION,
+				          JOptionPane.QUESTION_MESSAGE,  // Icon
+				          null, yesNoOptions,yesNoOptions[0] );
+				return n;
 			case reset:
 				n = JOptionPane.showOptionDialog(null, 
 						"Sind Sie sicher, dass Sie die Datenbank zurücksetzten wollen? \nDies verwirft alle gespeicherten Projekte, Klassen und Schüler!",	// Nachricht/Frage
@@ -48,6 +59,18 @@ public enum Allert {
 						JOptionPane.WARNING_MESSAGE, // Icon
 						null, yesNoOptions, yesNoOptions[0]);
 				return n;
+			case chooseAccessGroup:
+				Object[] possibilities = AccessGroup.values();
+				n = JOptionPane.showOptionDialog(null, 		// Frame
+						"Wählen Sie ein Benutzerprofil aus:",	// Nachricht/Frage
+						"Benutzerprofil wählen",	// Titel
+						JOptionPane.OK_OPTION,
+						JOptionPane.QUESTION_MESSAGE, // Icon
+						null, 
+						possibilities, 	// Optionen
+						AccessGroup.TEACHER);
+				return n;
+				
 			case Failure: 
 				return null;
 			default:

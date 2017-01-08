@@ -1,8 +1,6 @@
 package model.access;
 
-import javax.swing.text.View;
 
-import model.database.UserDBaccess;
 import model.database.dbTransaction;
 
 public class Access {

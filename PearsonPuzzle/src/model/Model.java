@@ -56,6 +56,7 @@ public class Model extends Observable {
 	private int grade;
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
+	private AccessGroup userGroup_toEdit;
 	
 	private String JUnitCode;
 	private LinkedList<Failure> jUnitFailures;
@@ -583,9 +584,10 @@ public class Model extends Observable {
 			else if(!proovePassword(passWord))
 				notifyObservers("password_unsave");
 			else{
-				dataBase.addUser(accessGroup.toString(), userName, new String (passWord));
-				notifyObservers();
-				return true;
+				if(dataBase.addUser(accessGroup.toString(), userName, new String (passWord))){
+					notifyObservers(DCCommand.Save);
+					return true;
+				}
 			}
 			return false;
 			
@@ -613,6 +615,45 @@ public class Model extends Observable {
 		}
 		return (number && specialChar && upperCase && lowerCase);
 	}
+	
+	/**
+	 * Beschränkt auswahl auf übergebene Nutzergruppe. 
+	 * Wenn null übergeben wird, werden alle Nutzer zurückgegeben.
+	 * @param accessgroup
+	 * @return
+	 */
+	public Vector<String> getUsers(AccessGroup accessgroup) {
+		if(accessgroup==null){
+			Vector<String> namevector = new Vector<String>();
+			for(AccessGroup ac: AccessGroup.values())
+				namevector.addAll(dataBase.getNames(ac.toString()));
+			return namevector;
+		}
+		else 
+			return dataBase.getNames(accessgroup.toString());
+	}
+
+	public void deleteUsers(Vector<String> users) {
+		for(String user: users){
+			for(AccessGroup ac : AccessGroup.values())
+				dataBase.deleteUser(user, ac.toString());
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public AccessGroup getUserGroup_toEdit() {
+		if(userGroup_toEdit==null)
+			return AccessGroup.TEACHER;
+		return userGroup_toEdit;
+	}
+
+	public void setUserGroup_toEdit(AccessGroup userGroup_toEdit) {
+		this.userGroup_toEdit = userGroup_toEdit;
+		setChanged();
+		notifyObservers();
+	}
+	
 }
 
 /*

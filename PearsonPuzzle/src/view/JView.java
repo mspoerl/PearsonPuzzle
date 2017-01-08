@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.util.Observable;
 import java.util.Observer;
@@ -83,6 +84,10 @@ public abstract class JView implements Observer {
 			}
 		}
 		
+		public void setMainContent(Container contentPane){		
+			frame.setContentPane(contentPane);
+		}
+		
 		/**
 		 * @return Controller dieses View 
 		 */
@@ -137,8 +142,9 @@ public abstract class JView implements Observer {
 				return allert.allert(model);
 		}
 		public void showDialog(final PPException exception, boolean modal){
-			if(exception==null){
-				AddUserDialog dialog = new AddUserDialog(frame, model, "Nutzer hinzufügen");
+			if(exception.getMessage()==PPException.databaseIsEmpty){
+				// Titel "Ersten Nutzer anlegen" wichtig für Dialog Controller
+				AddUserDialog dialog = new AddUserDialog(frame, model, "Ersten Nutzer anlegen");
 				dialogController = new DialogController(model, dialog);
 				dialog.pack();
 				dialog.show();
@@ -146,6 +152,7 @@ public abstract class JView implements Observer {
 		}
 		public void showDialog(final DCCommand command, boolean modal){
 			if(command.equals(DCCommand.AddUser)){
+				// Titel "Nutzer hinzufügen" wichtig für Dialog Controller
 				AddUserDialog dialog = new AddUserDialog(frame, model, "Nutzer hinzufügen");
 				dialogController = new DialogController(model, dialog);
 				dialog.pack();

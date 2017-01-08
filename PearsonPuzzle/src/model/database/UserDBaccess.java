@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import view.PPException;
+
 import model.access.AccessGroup;
 
 public class UserDBaccess {
@@ -19,7 +21,6 @@ public class UserDBaccess {
 		String dbUrl = "jdbc:derby:database;create=true";
 		conn = DriverManager.getConnection(dbUrl);
 		//derby.ui.codeset
-		//this.normalDbUsage();
 		}
 	 
 	 public void connectionToDerby() {
@@ -43,27 +44,26 @@ public class UserDBaccess {
 		 Statement stmt;
 		try {
 			stmt = conn.createStatement();
-		   stmt.executeUpdate("INSERT INTO "+tablename+" values ('"+username+"','"+password+"')");
+			stmt.executeUpdate("INSERT INTO "+tablename+" values ('"+username+"','"+password+"')");
+			System.out.println("success");
 		   return true;}
 		   catch(SQLException e){	//username bereits vorhanden => false (falls handling erforderlich)
 			   if(e.getSQLState().equals("23505")){ // The statement was aborted because it would have caused a 
 				   // duplicate key value in a unique or primary key constraint or unique index identified by '<value>' defined on '<value>'.	   
 				   return false;
 			   }
+			   e.printStackTrace();
 			   return false;
 		   }
 		 
 	 }
 	 
 //	 Sagt ob eine Person mit Namen username in einer der Tabellen students oder teacher existiert
-	 public boolean doesUserExists(String username) throws SQLException{	  
-			   Statement stmt = conn.createStatement();
-			   ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE username= '" + username+"'");	
-			   ResultSet te = stmt.executeQuery("SELECT * FROM teacher WHERE username= '" + username+"'");	
-			   
-				   //stmt.close();
-				   return rs.next()||te.next();
-		   
+	 public boolean doesUserExists(String username) throws SQLException {
+		Statement stmt;
+		stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM student, teacher WHERE student.username= '" + username+"' OR teacher.username='"+username+"'");
+		return rs.next();
 	   }
 	 
 	 //gibt alle Namen der Tabelle table zurück
@@ -114,17 +114,27 @@ public class UserDBaccess {
 		 return te.next();
 	   }
 
-//
-//	   private void normalDbUsage() throws SQLException {
-//		   Statement stmt = conn.createStatement();
-//
-//		   /*Student*/
-//		   ResultSet rsS;
-//		   try{
-//			   // query
-//			   rsS = stmt.executeQuery("SELECT * FROM students");
-//		   }
-//		   catch(SQLException e){
+	   
+	   @SuppressWarnings("unused")
+	private void testDbUsage() throws PPException, SQLException {
+		   
+		   // Standardabfrage 
+		   ResultSet rsS;
+		   try{
+			   Statement stmt = conn.createStatement();
+			   rsS = stmt.executeQuery("SELECT * FROM student");
+			   rsS = stmt.executeQuery("SELECT * FROM teacher");
+			   rsS = stmt.executeQuery("SELECT * FROM projects");
+			   
+		   }
+		   catch(SQLException e){
+			   if(e.getSQLState().equals("42X05")){
+				   throw new PPException(PPException.databaseIsEmpty);
+			   }
+			   else 
+				   throw e;
+		   }
+	   }
 //			   // Hier wird abgehandelt, wenn was schief läuft
 //			   // bzw. wenn die Tabelle (noch) nicht existiert 
 //			   try {
@@ -164,7 +174,7 @@ public class UserDBaccess {
 //		   }
 //		   //stmt.close();
 //	   }
-	   
+   
 	   
 
 		//-----------------------------------------------------------------------------
@@ -525,27 +535,14 @@ public class UserDBaccess {
 		   //System.out.println("getprojects");
 		   Statement stmt;
 		   ResultSet te;
-		   try {
-			   stmt = conn.createStatement();
-			   te = stmt.executeQuery("SELECT pName FROM Projects");
-			   ArrayList<String> projectList = new ArrayList<String>();
-			   while (te.next()) { 
-				   projectList.add(te.getString("pName"));
+		   stmt = conn.createStatement();
+		   te = stmt.executeQuery("SELECT pName FROM Projects");
+		   ArrayList<String> projectList = new ArrayList<String>();
+		   while (te.next()) { 
+			   projectList.add(te.getString("pName"));
 				     }
 			   //stmt.close();
-			   return projectList;
-			   
-		   } catch (SQLException e1) {
-			   try{
-				   this.recreateTable_Projects();
-				   return this.getProjects(grade);
-			   } catch(SQLException e2){
-				   throw(e2);
-			   }
-		   // String[] codeString;
-		   // codeString= codeliste.toArray(new String[0]);
-		   // return codeString;
-		   }
+		   return projectList;
 	   	}
 	   
 	   /**

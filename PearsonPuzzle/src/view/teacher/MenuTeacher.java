@@ -57,6 +57,8 @@ public class MenuTeacher extends Menu{
 		
 		menuItems.add(new JMenuItem("Nutzer hinzufügen"));
 		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.AddUser.toString());
+		menuItems.add(new JMenuItem("Nutzer löschen"));
+		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.EditUsers.toString());
 		
 		menuItems.add(new JMenuItem("Account verwalten"));
 		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.Admin.toString());
@@ -72,7 +74,7 @@ public class MenuTeacher extends Menu{
 			if(seperator<2){
 				mainMenu.add(menuItem);
 			}
-			else if(seperator<3){
+			else if(seperator<4){
 				classMenu.add(menuItem);
 			}
 			else{

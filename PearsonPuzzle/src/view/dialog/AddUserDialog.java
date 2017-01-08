@@ -10,6 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import view.PPException;
+
+import controller.DCCommand;
 import controller.DialogController;
 
 import model.Model;
@@ -23,7 +26,7 @@ import java.awt.event.*;
 
 public class AddUserDialog extends JDialog
                    implements Observer {
-	
+
 	private static final long serialVersionUID = -7269510734285263261L;
 	private JOptionPane optionPane;
 	private JTextField userName;
@@ -92,15 +95,19 @@ public class AddUserDialog extends JDialog
 		userName = new JTextField(15);
 		userName.setSize(new Dimension(100,10));
 		userName.setAlignmentY(Component.TOP_ALIGNMENT);
-		userName.setText(model.getUsername());
+		if(this.getTitle().equals("Ersten Nutzer anlegen"))
+			userName.setText(model.getUsername());
 		password = new JPasswordField(15);
 
 		accessGroup = new JComboBox<AccessGroup>();
 		accessGroup.addItem(null);
 		AccessGroup[] possibleAccessGroups = AccessGroup.values();
-		for(int i=0; i<possibleAccessGroups.length;i++){
-			accessGroup.addItem(possibleAccessGroups[i]);
-		}
+		if(this.getTitle().equals("Ersten Nutzer anlegen"))
+			accessGroup.addItem(AccessGroup.TEACHER);
+		else
+			for(int i=0; i<possibleAccessGroups.length;i++){
+				accessGroup.addItem(possibleAccessGroups[i]);
+			}
 		
 		contentPanel.add(new JLabel("Nutzergruppe"));
 		contentPanel.add(accessGroup);
@@ -139,8 +146,12 @@ public class AddUserDialog extends JDialog
 	public void update(Observable obs, Object arg) {
 		String message;
 		if(arg==null){
-			message = "Nutzer wurde gespeichert";
+			message = " ";
 		}
+		else if(arg==DCCommand.Save)
+			message = "Nutzer wurde gespeichert";
+		else if(arg.getClass()==PPException.class)
+			message = ((PPException) arg).getMessage();
 		else if(arg.equals("username_unset"))
 			message = "Bitte geben Sie einen Nutzernamen an";
 		else if (arg.equals("password_unset"))
@@ -154,7 +165,7 @@ public class AddUserDialog extends JDialog
 		else if(arg.equals("password_unsave"))
 			message = "<html>Das angegebene Passwort ist unsicher. <br> Bitte verwenden Sie mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen.</html>";
 		else 
-			message = "Nutzer wurde gespeichert";
+			message = " ";
 		((JLabel)messagePanel.getComponent(0)).setText(message);
 		this.pack();
 	}
