@@ -62,9 +62,9 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	 */
 	private void act(DCCommand cmd, ActionEvent e){
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
-		if(view.getClass().equals(TextEditor.class)  
+		if( (view.getClass().equals(TextEditor.class)  
 				|| view.getClass().equals(UnitEditor.class)
-				|| view.getClass().equals(ConfigEditor.class)
+				|| view.getClass().equals(ConfigEditor.class))
 				&& cmd!=DCCommand.Save && cmd!=DCCommand.ConnectedComponent){
 			if(model.hasChanged()){
 				Integer allert=view.showDialog(Allert.notSaved);
@@ -158,18 +158,20 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				this.view=startView;
 				view.update();
 				break;
+			case ShowHelp:
+				view.showDialog(DCCommand.ShowHelp, false);
+				break;
 			case Save:
 				if(view.getClass().equals(TextEditor.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					if(((TextEditor) view).getCode()==null 
 							|| ((TextEditor)view).getProjectName()==null
-							|| (((TextEditor) view).getCode()).equals("")
-							|| (((TextEditor) view).getProjectName()).equals("")){
+							|| (((TextEditor) view).getCode()).trim().equals("")
+							|| (((TextEditor) view).getProjectName()).trim().equals("")){
 					
 						view.showDialog(Allert.noContentInput);
 					}		
-					else{
-						
+					else{						
 						// ---- Es wird versucht das Projekt zu speichern, schlägt dies fehl, so existiert bereits ein Projekt mit gleichem Namen
 						if(model.saveProject(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(), ((TextEditor)view).getProjectDescription(),150))
 						{
@@ -192,7 +194,6 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 					model.deleteUsers(((UserEditor)view).getUsers());
 					//view.addController(this);
 					act(DCCommand.EditUsers, null);
-					System.out.println(((UserEditor)view).getUsers());
 				}
 				break;
 			case DeleteProject:
@@ -212,7 +213,10 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				}
 				break;
 			case DeleteOrder:
-				Integer todo = view.showDialog(cmd, true);
+				if(model.getGroupMatrix().size()!=0)
+					view.showDialog(cmd, true);
+				else 
+					view.allert("Es sind keine Gruppen vorhanden, die man löschen könnte.");
 				break;
 			case SetConfig:
 				if(model.getAccessGroup()==AccessGroup.TEACHER)
@@ -259,24 +263,8 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 //					unsavedChanges = true;
 //				}
 				break;
-			case StartGroupSelection:
-				((JButton)e.getSource()).setEnabled(false);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(1)).setEnabled(true);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(3)).setEnabled(true);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(false);
+			case AddOrder:
 				model.addTestGroup();
-				break;
-			case CancelGroupSelection:
-				((JButton)e.getSource()).setEnabled(false);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(0)).setEnabled(true);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(3)).setEnabled(false);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
-				model.removeTestGroup(model.getGroupMatrix().size()-1);
-				break;
-			case SaveGroupSelection:
-				((JButton)((JButton)e.getSource()).getParent().getComponent(0)).setEnabled(true);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(1)).setEnabled(false);
-				((JButton)((JButton)e.getSource()).getParent().getComponent(4)).setEnabled(true);
 				break;
 			case Compile:
 				if(model.getAccessGroup()==AccessGroup.STUDENT)
@@ -350,7 +338,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	            int maxIndex = lsm.getMaxSelectionIndex();
 	            for (int i = minIndex; i <= maxIndex; i++) {
 	                if (lsm.isSelectedIndex(i)) {
-	                    System.out.println(i);
+	                    //System.out.println(i);
 	                }
 	             }
 	        }
@@ -368,7 +356,6 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	            for (int i = minIndex; i <= maxIndex; i++) {
 	                if (lsm.isSelectedIndex(i)) {
 	                	model.selectProject(i);
-	                	//view.update();
 	                }
 	             }
 	        }
@@ -398,7 +385,6 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 			}
 			else if(e.getSource().getClass()==JCheckBox.class){
 			}
-			System.out.println(((Component) e.getSource()).getName());
 		}
 	}
 
@@ -410,6 +396,9 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 					&& ((JTextArea)(e.getComponent())).getText().contains(((TextEditor)view).getDefaultText())){
 				((JTextArea)(e.getComponent())).setText("");
 			}
+		}
+		else if(view.getClass().equals(ConfigEditor.class)){
+			
 		}
 	}
 

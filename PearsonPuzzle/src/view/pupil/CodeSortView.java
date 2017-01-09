@@ -213,6 +213,13 @@ public class CodeSortView extends JView {
 			for(Failure failure: model.getjUnitFailures()){
 				failureText=failureText+"\n"+failure;
 			}
+			failureText = failureText + "\nReihenfolgenfehler:";
+			for(boolean success : model.getGroupFailures()){
+				// FIXME: arbeit arbiet arbiet
+				int failure = 0;
+				if(!success) failure = 1;
+				failureText = failureText +"\t"+failure;
+			}
 			messageBox.setText(failureText);
 		}
 		update();

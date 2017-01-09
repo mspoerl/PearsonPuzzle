@@ -159,11 +159,14 @@ public abstract class JView implements Observer {
 				dialog.pack();
 				dialog.show();
 			}
-			if(command.equals(DCCommand.DeleteOrder)){
+			else if(command.equals(DCCommand.DeleteOrder)){
 				DeleteOrderDialog dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
 				dialogController = new DialogController(model, dialog);
 				dialog.pack();
 				dialog.show();
+			}
+			else if(command.equals(DCCommand.ShowHelp)){
+				JOptionPane.showMessageDialog(frame, "Hilfetext");
 			}
 			return null;
 		}

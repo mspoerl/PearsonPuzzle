@@ -63,7 +63,7 @@ public class Model extends Observable {
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
 	private LinkedList<Boolean> groupFailures;
-	
+
 	private PPException exception;
 
 	private HashMap<String, String> personMap;
@@ -134,6 +134,18 @@ public class Model extends Observable {
 	}
 	public PPException getException(){
 		return exception;
+	}
+	
+
+	public LinkedList<Boolean> getGroupFailures() {
+		return groupFailures;
+	}
+
+	/**
+	 * @param groupFailures the groupFailures to set
+	 */
+	public void setGroupFailures(LinkedList<Boolean> groupFailures) {
+		this.groupFailures = groupFailures;
 	}
 	
 

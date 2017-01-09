@@ -44,7 +44,7 @@ public class UserDBaccess {
 		 Statement stmt;
 		try {
 			stmt = conn.createStatement();
-			stmt.executeUpdate("INSERT INTO "+tablename+" values ('"+username+"','"+password+"')");
+			stmt.executeUpdate("INSERT INTO "+tablename+" (username, password) values ('"+username+"','"+password+"')");
 			System.out.println("success");
 		   return true;}
 		   catch(SQLException e){	//username bereits vorhanden => false (falls handling erforderlich)
@@ -213,7 +213,7 @@ public class UserDBaccess {
 		   
 			  
 		   //Projekt in Projects Tabelle abspeichern
-		   try{stmt.execute("INSERT INTO Projects VALUES ("
+		   try{stmt.execute("INSERT INTO Projects (pName, imports, description, tabSize) VALUES ("
 		   		+ "'"+projectname+"',"
 		   		+ "'"+imports+"',"
 		   		+ "'"+description+"',"
@@ -234,6 +234,7 @@ public class UserDBaccess {
 				   
 				   createProject(projectname, codeString, randomKeys, linelength);
 		   }
+			   //e.printStackTrace();
 		   }
 		   
 		   
@@ -272,7 +273,7 @@ public class UserDBaccess {
 
 			   
 			   for(int i = 0; i < codeString.length;i++){
-				   stmt.executeUpdate("INSERT INTO "+projectname+" VALUES ("
+				   stmt.executeUpdate("INSERT INTO "+projectname+" (lineKey, codeLine, randomKey) VALUES ("
 				   		+ ""+i+","
 				   		+ "'"+codeString[i]+"',"
 				   		+ ""+randomKeys.get(i).intValue()+")");

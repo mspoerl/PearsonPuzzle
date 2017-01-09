@@ -15,6 +15,7 @@ import controller.DCCommand;
 import controller.DefaultController;
 import view.JView;
 import model.Model;
+import model.MyTableCellEditor;
 
 public class ConfigEditor extends JView{
 	
@@ -23,10 +24,7 @@ public class ConfigEditor extends JView{
 	private ArrayList <JTextField> inputList;
 	
 	private JButton save;
-	private JButton newSelection;
 	private JButton newGroup;
-	private JButton saveGroup;
-	private JButton cancelSelection;
 	private JButton deleteGroup;
 	private JButton showHelp;
 	
@@ -50,40 +48,34 @@ public class ConfigEditor extends JView{
 		JScrollPane projectTable_SP = new JScrollPane(projectTable);
 		projectTable_SP.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		projectTable_SP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		projectTable_SP.setPreferredSize(new Dimension(500,300));
-		projectTable_SP.setMaximumSize(new Dimension(500, 350));
+		projectTable_SP.setPreferredSize(new Dimension(650,300));
+		projectTable_SP.setMaximumSize(new Dimension(650, 350));
 		projectTable_SP.setBorder(null);
 		
 		JPanel editGroup_Buttons = new JPanel();
 		editGroup_Buttons.setLayout(new BoxLayout(editGroup_Buttons, BoxLayout.Y_AXIS));
-		newSelection = new JButton("<html><body style=\"text-align:center;\">Selektion<BR>starten</body></html>");
-		newSelection.setActionCommand(DCCommand.StartGroupSelection.toString());
 		
-		cancelSelection = new JButton("<html><body style=\"text-align:center;\">Selektion<BR>abbrechen</body></html>");
-		cancelSelection.setActionCommand(DCCommand.CancelGroupSelection.toString());
-		cancelSelection.setEnabled(false);
-		//newGroup = new JButton("<html><body style=\"text-align:center;\">Neue<BR>Gruppe</body></html>");
-		//newGroup.setEnabled(false);
-
-		saveGroup= new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>speichern</body></html>");
-		saveGroup.setActionCommand(DCCommand.Save.toString());
-		saveGroup.setEnabled(false);
-		
+		newGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>hinzufügen</body></html>");
 		deleteGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>löschen</body></html>");
-		
-		editGroup_Buttons.add(newSelection);
-		editGroup_Buttons.add(cancelSelection);
+
+
+//		saveGroup= new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>speichern</body></html>");
+//		saveGroup.setActionCommand(DCCommand.Save.toString());
+//		saveGroup.setEnabled(false);
+//		
+				
+		editGroup_Buttons.add(newGroup);
 		editGroup_Buttons.add(new JLabel(" "));
-		//editGroup_Buttons.add(newGroup);
-		editGroup_Buttons.add(saveGroup);
+		//editGroup_Buttons.add(saveGroup);
 		editGroup_Buttons.add(deleteGroup);
 		
 		JPanel testPhrase_Buttons = new JPanel();
 		testPhrase_Buttons.setLayout(new BoxLayout(testPhrase_Buttons, BoxLayout.Y_AXIS));
 		showHelp = new JButton("<html><body style=\"text-align:center;\">Hilfe<BR>anzeigen</body></html>");
 		JLabel helpField = new JLabel("<html><body><p>Der Testausdruck <br>sollte folgendermaßen<br> aufgebaut sein:</p></body></html>");
-		
-		testPhrase_Buttons.add(showHelp);
+		editGroup_Buttons.add(new JLabel(" "));
+		editGroup_Buttons.add(showHelp);
+		//testPhrase_Buttons.add(showHelp);
 		//testPhrase_Buttons.add(helpField);
 		
 		JPanel save_Button = new JPanel();
@@ -92,7 +84,7 @@ public class ConfigEditor extends JView{
 
 		mainPanel.add(editGroup_Buttons, BorderLayout.WEST);
 		mainPanel.add(projectTable_SP, BorderLayout.CENTER);
-		mainPanel.add(testPhrase_Buttons, BorderLayout.EAST);
+		//mainPanel.add(testPhrase_Buttons, BorderLayout.EAST);
 		mainPanel.add(save_Button, BorderLayout.SOUTH);
 	}
 	
@@ -131,16 +123,17 @@ public class ConfigEditor extends JView{
 	public void addController(Controller controller) {
 		menu.addActionListener(controller);
 //		sequenceList.getSelectionModel().addListSelectionListener(controller);
-//		codeList.getSelectionModel().addListSelectionListener(controller);
+//		codeList.getSelectionModel().addListSelectionListener(controller);	
 		
-		newSelection.addActionListener(controller);
-		saveGroup.addActionListener(controller);
-		cancelSelection.addActionListener(controller);
-		
+		newGroup.addActionListener(controller);
+		newGroup.setActionCommand(DCCommand.AddOrder.toString());
 		deleteGroup.addActionListener(controller);
 		deleteGroup.setActionCommand(DCCommand.DeleteOrder.toString());
+		showHelp.addActionListener(controller);
+		showHelp.setActionCommand(DCCommand.ShowHelp.toString());
 		
-		//projectTable.addFocusListener((DefaultController)controller);
+		projectTable.addFocusListener((DefaultController)controller);
+		//projectTable.setCellEditor(new MyTableCellEditor());
 		tableModel.addTableModelListener((DefaultController)controller);
 		
 		save.addActionListener(controller);
