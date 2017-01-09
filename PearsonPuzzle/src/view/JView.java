@@ -9,6 +9,7 @@ import java.util.Observer;
 import javax.swing.*;
 
 import view.dialog.AddUserDialog;
+import view.dialog.DeleteOrderDialog;
 
 import model.Model;
 import controller.Controller;
@@ -150,7 +151,7 @@ public abstract class JView implements Observer {
 				dialog.show();
 			}			
 		}
-		public void showDialog(final DCCommand command, boolean modal){
+		public Integer showDialog(final DCCommand command, boolean modal){
 			if(command.equals(DCCommand.AddUser)){
 				// Titel "Nutzer hinzufügen" wichtig für Dialog Controller
 				AddUserDialog dialog = new AddUserDialog(frame, model, "Nutzer hinzufügen");
@@ -158,6 +159,13 @@ public abstract class JView implements Observer {
 				dialog.pack();
 				dialog.show();
 			}
+			if(command.equals(DCCommand.DeleteOrder)){
+				DeleteOrderDialog dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
+				dialogController = new DialogController(model, dialog);
+				dialog.pack();
+				dialog.show();
+			}
+			return null;
 		}
 		public void closeAllert(){
 			

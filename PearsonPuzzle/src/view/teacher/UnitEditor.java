@@ -2,6 +2,7 @@ package view.teacher;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Vector;
@@ -14,6 +15,7 @@ import model.Model;
 
 import controller.Controller;
 import controller.DCCommand;
+import controller.DefaultController;
 import view.JView;
 
 public class UnitEditor extends JView{
@@ -36,7 +38,6 @@ public class UnitEditor extends JView{
 		textArea = new JTextArea();
 		textArea.setEditable(true);
 		textArea.setLineWrap(false);
-		textArea.setName("JUnitCode");
 		textArea.setTabSize(3);
 		textArea.setText(model.getJUnitCode());
 		if(textArea.getText().equals(""))
@@ -62,14 +63,12 @@ public class UnitEditor extends JView{
 		
 		JPanel buttonPanel = new JPanel();
 		compile = new JButton("Test Kompilieren");
-		compile.setActionCommand(DCCommand.Compile.toString());
 		save = new JButton("Speichern");
-		save.setActionCommand(DCCommand.Save.toString());
 		test = new JButton("Run Test");
-		test.setActionCommand(DCCommand.TestCode.toString());
 		buttonPanel.add(compile);
 		buttonPanel.add(test);
 		buttonPanel.add(save);
+		
 		mainPanel.add(textScrollPane);
 		mainPanel.add(messageScrollPane, BorderLayout.EAST);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -78,8 +77,15 @@ public class UnitEditor extends JView{
 	@Override
 	public void addController(Controller controller) {
 		menu.addActionListener(controller);
+		
+		textArea.setName("JUnitCode");
+		textArea.addFocusListener((DefaultController)controller);
+		
+		compile.setActionCommand(DCCommand.Compile.toString());
 		compile.addActionListener(controller);
+		save.setActionCommand(DCCommand.Save.toString());
 		save.addActionListener(controller);
+		test.setActionCommand(DCCommand.TestCode.toString());
 		test.addActionListener(controller);
 	}
 

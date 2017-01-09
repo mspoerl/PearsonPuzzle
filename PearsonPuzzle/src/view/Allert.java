@@ -35,8 +35,8 @@ public enum Allert {
 				return null;
 			case notSaved:
 				n = JOptionPane.showOptionDialog( null,
-				          "Projekt wurde noch nicht gespeichert.\nWollen Sie speichern bevor Sie fortfahren?",	// Nachricht/Frage
-				          "Projekt noch nicht gespeichert.",	// Titel
+				          "Änderungen am Projekt wurden noch nicht gespeichert.\nWollen Sie speichern bevor Sie fortfahren?",	// Nachricht/Frage
+				          "Änderungen noch nicht gespeichert.",	// Titel
 				          JOptionPane.YES_NO_CANCEL_OPTION,
 				          JOptionPane.QUESTION_MESSAGE,  // Icon
 				          null, yesNoCancelOptions,yesNoCancelOptions[0] );

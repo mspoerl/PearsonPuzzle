@@ -5,7 +5,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -36,10 +35,9 @@ public class AddUserDialog extends JDialog
 	private Model model;
 
 	public AddUserDialog(Frame frame, Model model, String title){
-    	super(frame, true);
-    	model.addObserver(this);
+    	super(frame, model, title);
+    	
     	this.model = model;
-    	setTitle(title);
     	setupContentPane();
     	setContentPane(optionPane);
     	setLocationRelativeTo(null);

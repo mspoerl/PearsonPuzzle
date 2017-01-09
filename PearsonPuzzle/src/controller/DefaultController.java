@@ -7,8 +7,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
@@ -16,7 +14,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
-import java.util.ArrayList;
 import javax.swing.*;
 import org.junit.runner.Result;
 import compiler.TestCompiler;
@@ -29,8 +26,8 @@ import view.JView;
 import view.PPException;
 import view.pupil.CodeSortView;
 import view.pupil.PupilView;
+import view.teacher.OptionConfiguration;
 import view.teacher.ConfigEditor;
-import view.teacher.ProjectConfiguration;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
@@ -42,10 +39,11 @@ import JUnitUmgebung.JUnitRunner;
  * mit dem Controller zu verknüpfen.
  * @author workspace
  */
-public class DefaultController implements Controller, TableModelListener, MouseListener, FocusListener, PropertyChangeListener{
+public class DefaultController implements Controller, TableModelListener, MouseListener, FocusListener{
+	
 	private Model model;
 	private JView view;
-	private boolean unsavedChanges = false;
+	
 	public DefaultController(Model model, JView view){
 		this.model=model;
 		this.view=view;
@@ -65,13 +63,14 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	private void act(DCCommand cmd, ActionEvent e){
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
 		if(view.getClass().equals(TextEditor.class)  
-				&& cmd!=DCCommand.Save){
-			if(unsavedChanges){
+				|| view.getClass().equals(UnitEditor.class)
+				|| view.getClass().equals(ConfigEditor.class)
+				&& cmd!=DCCommand.Save && cmd!=DCCommand.ConnectedComponent){
+			if(model.hasChanged()){
 				Integer allert=view.showDialog(Allert.notSaved);
 				if(allert==JOptionPane.YES_OPTION)
 					this.act(DCCommand.Save, null);
 				else if(allert==JOptionPane.NO_OPTION){
-					unsavedChanges=false;
 					model.fetchAll();
 				}
 				else if(allert==JOptionPane.CANCEL_OPTION)
@@ -112,6 +111,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				break;
 			case NewProject:
 				model.selectProject(null);
+				model.fetchAll();
 				view.quitView();
 				this.view=new TextEditor(model);
 				view.addController(this);
@@ -127,6 +127,8 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				break;
 			case ProjectList:
 				view.quitView();
+				// Daten werden aus der Datenbank geladen
+				model.fetchAll();
 				if(model.getAccessGroup().equals(AccessGroup.STUDENT))
 					this.view= new PupilView(model);
 				else
@@ -136,7 +138,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 			case Admin:
 				if(model.getAccessGroup().equals(AccessGroup.TEACHER)){
 					view.quitView();
-					this.view=new ConfigEditor(model);
+					this.view=new OptionConfiguration(model);
 					view.addController(this);
 				}
 				break;
@@ -157,25 +159,20 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				view.update();
 				break;
 			case Save:
-				unsavedChanges = false;
 				if(view.getClass().equals(TextEditor.class) 
 						&& model.getAccessGroup().equals(AccessGroup.TEACHER)){
-					
 					if(((TextEditor) view).getCode()==null 
 							|| ((TextEditor)view).getProjectName()==null
 							|| (((TextEditor) view).getCode()).equals("")
 							|| (((TextEditor) view).getProjectName()).equals("")){
 					
 						view.showDialog(Allert.noContentInput);
-					}
-					
+					}		
 					else{
 						
 						// ---- Es wird versucht das Projekt zu speichern, schlägt dies fehl, so existiert bereits ein Projekt mit gleichem Namen
 						if(model.saveProject(((TextEditor)view).getCode(), ((TextEditor)view).getProjectName(), ((TextEditor)view).getProjectDescription(),150))
 						{
-							act(DCCommand.SetTextConfig, null);
-							model.saveProjectSettings();
 							view.showDialog(Allert.projectSaved);
 						}
 						else{
@@ -187,7 +184,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 					model.setJUnitCode(((UnitEditor) view).getContent());
 					model.saveProjectSettings();
 				}
-				else if(view.getClass().equals(ProjectConfiguration.class)){
+				else if(view.getClass().equals(ConfigEditor.class)){
 					model.saveGroupMatrix();
 				}
 				else if(view.getClass().equals(UserEditor.class)){
@@ -214,6 +211,9 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 					}
 				}
 				break;
+			case DeleteOrder:
+				Integer todo = view.showDialog(cmd, true);
+				break;
 			case SetConfig:
 				if(model.getAccessGroup()==AccessGroup.TEACHER)
 					model.updateConfig();
@@ -221,16 +221,43 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 			case ConfigureProject:
 				if(model.getAccessGroup()==AccessGroup.TEACHER){
 					view.quitView();
-					this.view = new ProjectConfiguration(model);
+					this.view = new ConfigEditor(model);
 					view.addController(this);
 				}
 				break;
-			case SetTextConfig:
-				if(view.getClass().equals(TextEditor.class)){
-					ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents()); 
-					model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
-					model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+			case ConnectedComponent:
+				if(((Component) e.getSource()).getName()!=null){
+					String compName = ((Component) e.getSource()).getName();
+					String compValue = ((JTextComponent) e.getSource()).getText();
+//					if(compName.equals("ProjectCode"))
+//						model.setProjectCode(compValue);
+//					else if(compName.equals("ProjectDescription"))
+//						model.setProjectDescription(compValue);
+					if(compName.equals("TabSize"))
+						model.setTabSize(Integer.parseInt(compValue));
+					else if(compName.equals("ProjectName"))
+						model.setProjectName(compValue);
+					else if(compName.equals("Grade")){
+						model.setGrade(Integer.parseInt(compValue));
+					}
 				}
+				else 
+					throw new RuntimeException("View Componente falsch verknüpft!");
+				
+				
+				
+				
+				
+				
+				
+				
+
+//				if(view.getClass().equals(TextEditor.class)){
+//					ArrayList <JTextField> inputFields = (((TextEditor)view).getInputComponents());
+//					model.setTabSize(Integer.parseInt(inputFields.get(0).getText()) % 10);
+//					model.setGrade(Integer.parseInt(inputFields.get(1).getText()));
+//					unsavedChanges = true;
+//				}
 				break;
 			case StartGroupSelection:
 				((JButton)e.getSource()).setEnabled(false);
@@ -313,7 +340,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if(view.getClass().equals(ProjectConfiguration.class)){
+		if(view.getClass().equals(ConfigEditor.class)){
 			ListSelectionModel lsm = (ListSelectionModel)e.getSource();
 	        if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
 	        } 
@@ -378,20 +405,33 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	
 	public void focusGained(FocusEvent e) {
 		// Sorgt dafür, dass der Defaut Text im Text Editor verschwindet
-		if(e.getComponent().getClass().equals(JTextArea.class)
-				&& ((JTextArea)(e.getComponent())).getText().contains(((TextEditor)view).getDefaultText())){
-			((JTextArea)(e.getComponent())).setText("");
+		if(view.getClass().equals(TextEditor.class)){
+			if(e.getComponent().getClass().equals(JTextArea.class)
+					&& ((JTextArea)(e.getComponent())).getText().contains(((TextEditor)view).getDefaultText())){
+				((JTextArea)(e.getComponent())).setText("");
+			}
 		}
 	}
 
 	public void focusLost(FocusEvent e) {
-		if(e.getComponent().getName().equals("ProjectCode")){
-			model.setProjectCode(((JTextArea)(e.getComponent())).getText());
+		if(view.getClass().equals(TextEditor.class)
+				|| view.getClass().equals(UnitEditor.class)){
+			String compName = ((Component) e.getSource()).getName();
+			String compValue = ((JTextComponent) e.getSource()).getText();
+			if(compName.equals("ProjectCode"))
+				model.setProjectCode(compValue);
+			else if(compName.equals("ProjectDescription"))
+				model.setProjectDescription(compValue);
+			else if(compName.equals("TabSize"))
+				model.setTabSize(Integer.parseInt(compValue));
+			else if(compName.equals("ProjectName"))
+				model.setProjectName(compValue);
+			else if(compName.equals("Grade"))
+				model.setGrade(Integer.parseInt(compValue));
+			else if(compName.equals("JUnitCode"))
+				model.setJUnitCode(compValue);
+			//System.out.println("Focus Lost: "+e.getComponent().getName());
 		}
-		else if(e.getComponent().getName().equals("ProjectDescription")){
-			model.setProjectDescription(((JTextArea)(e.getComponent())).getText());
-		}
-		
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -428,7 +468,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	}
 
 	public void tableChanged(TableModelEvent e) {
-		if(view.getClass().equals(ProjectConfiguration.class)){
+		if(view.getClass().equals(ConfigEditor.class)){
 			int row = e.getFirstRow();
 			int column = e.getColumn();
 	        TableModel tableModel = (TableModel)e.getSource();
@@ -467,27 +507,29 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 		return view;
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if(view.getClass()==TextEditor.class){
-			String componentName = ((Component) evt.getSource()).getName();
-			String componentText = ((JTextComponent) evt.getSource()).getText();
-			if(componentName!=null)
-			{
-				if(componentName.equals("ProjectName") 
-						&& !componentText.equals(model.getProjectName()))
-					unsavedChanges = true;
-				else if(componentName.equals("ProjectCode")
-						&& !componentText.equals(model.getProjectCode())
-						&& !componentText.equals(TextEditor.defaultCode))
-					unsavedChanges = true;
-				else if(componentName.equals("TabSize")
-						&& !componentText.equals(Integer.toString(model.getTabSize())))
-					unsavedChanges = true;
-				else if(componentName.equals("ProjectDescription")
-						&& !componentText.equals(model.getProjectDescription()))
-					unsavedChanges = true;
-			}
-		}	
-	}
+//	@Override
+//	public void propertyChange(PropertyChangeEvent evt) {
+//		if(view.getClass()==TextEditor.class){
+//			String componentName = ((Component) evt.getSource()).getName();
+//			String componentText = ((JTextComponent) evt.getSource()).getText();
+//			if(componentName!=null)
+//			{
+//				if(componentName.equals("ProjectName") 
+//						&& !componentText.equals(model.getProjectName()))
+//					unsavedChanges = true;
+//				else if(componentName.equals("ProjectCode")
+//						&& !componentText.equals(model.getProjectCode())
+//						&& !componentText.equals(TextEditor.defaultCode))
+//					unsavedChanges = true;
+//				else if(componentName.equals("TabSize")
+//						&& !componentText.equals(Integer.toString(model.getTabSize()))){
+//					unsavedChanges = true;
+//				}
+//				else if(componentName.equals("ProjectDescription")
+//						&& !componentText.equals(model.getProjectDescription()))
+//					unsavedChanges = true;
+//			System.out.println(componentName);
+//			}
+//		}	
+//	}
 }

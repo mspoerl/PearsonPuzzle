@@ -104,6 +104,7 @@ public class TextEditor extends JView{
 		labels.add(new JLabel("Tabbreite"));
 		
 		configFields.add(new JTextField(""+model.getGrade()));
+		configFields.get(configFields.size()-1).setName("Grade");
 		labels.add(new JLabel("Klassenstufe"));
 		labels.get(labels.size()-1).setToolTipText(new String("<html><p>Mögliche Werte:</p><table><tr><td>0</td><td>undefiniert</td></tr><tr><td>5</td><td>5. Jahrgangsstufe</td></tr><tr><td>6</td><td>6. Jahrgangsstufe</td><tr><td>7</td><td>7. Jahrgangsstufe</td><tr><td>8</td><td>8. Jahrgangsstufe</td><tr><td>9</td><td>9. Jahrgangsstufe</td><tr><td>10</td><td>10. Jahrgangsstufe</td><tr><td>11</td><td>11. Jahrgangsstufe</td><tr><td>12</td><td>12. Jahrgangsstufe</td></tr><tr><td>13</td><td>13. Jahrgangsstufe</td></tr><table><html>"));
 		
@@ -167,19 +168,18 @@ public class TextEditor extends JView{
 		
 		textArea.addFocusListener((DefaultController)controller);
 		textArea.setName("ProjectCode");
-		textArea.addPropertyChangeListener((DefaultController)controller);
 		description.addFocusListener((DefaultController)controller);
 		
-		projectName.addPropertyChangeListener((DefaultController)controller);
+		projectName.addFocusListener((DefaultController)controller);
 		projectName.setName("ProjectName");
 		
-		description.addPropertyChangeListener((DefaultController)controller);
+		description.addFocusListener((DefaultController)controller);
 		description.setName("ProjectDescription");
 		
 		for(JTextField comp: configFields){
+			comp.setActionCommand(DCCommand.ConnectedComponent.toString());
 			comp.addActionListener(controller);
-			comp.addPropertyChangeListener((DefaultController)controller);
-			comp.setActionCommand(DCCommand.SetTextConfig.toString());
+			comp.addFocusListener((DefaultController)controller);
 		}
 		menu.addActionListener(controller);
 	}

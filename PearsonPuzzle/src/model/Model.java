@@ -43,6 +43,7 @@ public class Model extends Observable {
 	
 	private Vector<String> testExpressionsVector;
 	private Vector<Vector<Integer>> codeLine_GroupMatrix;
+	private String projectName;
 	private String projectDescription;
 	private String projectCode;
 	
@@ -58,7 +59,7 @@ public class Model extends Observable {
 	private AccessGroup accessGroup;
 	private AccessGroup userGroup_toEdit;
 	
-	private String JUnitCode;
+	private String jUnitCode;
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
 	private LinkedList<Boolean> groupFailures;
@@ -74,12 +75,7 @@ public class Model extends Observable {
 		compileFailures = new Vector<HashMap<String,String>>();
 		groupFailures = new LinkedList<Boolean>();
 		personMap = new HashMap<String, String>();
-		
-		// Default Werte werden gesetzt
-		this.tabSize = 0;
-		this.randomMode = true;
-		this.grade = 0;
-		
+				
 		try{
 			dataBase = new dbTransaction(this);			
 		}
@@ -103,41 +99,71 @@ public class Model extends Observable {
 		this.fetchAll();
 	}
 	
+	/**
+	 * <html>Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
+	 * wenn sich auch wirklich etwas geändert hat.</html>
+	 * @param string Zeichenkette
+	 * @param string_to_compare Zu vergleichende Zeichenkette
+	 */
+	private void setChanged(final String string, final String string_to_compare){
+		if(string !=null && string.equals(string_to_compare));
+		else
+			this.setChanged();
+	}
+	
+	/**
+	 * <html>Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
+	 * wenn sich auch wirklich etwas geändert hat.</html>
+	 * @param integer Integer
+	 * @param integer_to_compare Zu vergelichende Integer
+	 */
+	private void setChanged (final Integer integer, final Integer integer_to_compare){
+		if(integer != null && integer.equals(integer_to_compare));
+		else
+			this.setChanged();
+	}
+	
+	/**
+	 * Methode dient dazu, Views über auftretende Exceptions zu informieren.
+	 * @param exception Exception
+	 */
 	public void setException(PPException exception){
 		this.exception = exception;
 		setChanged();
 		notifyObservers(exception);
 	}
-	
 	public PPException getException(){
 		return exception;
 	}
+	
 
 	// ------------------------------------ Getter und Setter ------------------------------
 	// --- Klassenstufe
 	public void setGrade(int grade) {
 		if (grade < 14 && grade > 5) {
+			setChanged(this.grade, grade);
 			this.grade = grade;
 		} else {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
-		clearChanged();
+		notifyObservers();
 	}
+	
 	public int getGrade() {
 		return grade;
 	}
 	
 	// --- Tabbreite
-	public void setTabSize(int tabWidth) {
-		this.tabSize = tabWidth;
-		setChanged();
+	public void setTabSize(int tabSize) {
+		// Tab Size ist auf 10 begrenzt
+		if(tabSize>10)
+			tabSize = 10;
+		setChanged(this.tabSize, tabSize);
+		this.tabSize = tabSize;
 		notifyObservers();
-		clearChanged();
 	}
 	public int getTabSize() {
-		if(projectID!=null)
-			return tabSize;
-		return 0;
+		return tabSize;
 	}
 	public Vector<Integer> getTabVector(){
 		return tabVector;
@@ -190,6 +216,11 @@ public class Model extends Observable {
 		this.fetchProjectSettings();
 		notifyObservers();
 	}
+	
+	public void setProjectName(String projectName) {
+		setChanged(this.projectName, projectName);
+		this.projectName = projectName;
+	}
 		
 	public Integer getProjectListID() {
 		return projectID;
@@ -203,29 +234,28 @@ public class Model extends Observable {
 	}
 			// - Projektbeschreibung
 	public void setProjectDescription(String descriptionString) {
+		setChanged(this.projectDescription, descriptionString);
 		this.projectDescription=descriptionString;
-		setChanged();
 	}
 	public String getProjectDescription() {
-		if(projectID!=null){
+		if(projectID==null)
+			return "";
 		return projectDescription;
-		}
-		return "";
 	}
 			// - Projektcode
 	public String getProjectCode() {
-		// TODO: Abfrage, ob Benutzergrupe Lehrer
-		if(projectID!=null){
-			return projectCode;
-		}
-		else return "";
+		if(projectID==null)
+			return "";
+		return projectCode;
 	}
 	public void setProjectCode(String codeString){
+		setChanged(this.projectCode, codeString);
 		projectCode=codeString;
-		setChanged();
 	}
 				// Projektvektor
 	public Vector<String> getCodeVector() {
+		if(projectID==null)
+			return new Vector<String>();
 		if(accessGroup == AccessGroup.TEACHER)
 			return codeVector_normal;
 		return codeVector_random;
@@ -250,7 +280,6 @@ public class Model extends Observable {
 	}
 	
 	public void saveGroupMatrix(){
-
 		dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
 	}
 	// Testrelevante Daten
@@ -268,9 +297,11 @@ public class Model extends Observable {
 		if(index < codeLine_GroupMatrix.size())
 			codeLine_GroupMatrix.remove(index);	
 		setChanged();
-		notifyObservers();
+		notifyObservers(DCCommand.DeleteOrder);
 	}
 	public Vector<String> getTestExpressionsVector() {
+		if(projectID==null)
+			return null;
 		return testExpressionsVector;
 	}
 	public void setTestExpressionsVector(Vector<String> testVector) {
@@ -365,11 +396,14 @@ public class Model extends Observable {
 	}
 
 	public String getJUnitCode() {
-		return JUnitCode;
+		if(projectID==null)
+			return "";
+		return jUnitCode;
 	}
 
 	public void setJUnitCode(String jUnitCode) {
-		JUnitCode = jUnitCode;
+		setChanged(this.jUnitCode, jUnitCode);
+		this.jUnitCode = jUnitCode;
 	}
 
 	/**
@@ -390,9 +424,18 @@ public class Model extends Observable {
 	 * Ist Abhängig vom unter <b>projectID</b> gespeicherten Listeneintag. 
 	 */
 	public void fetchAll(){
+		//this.randomMode = true;
+		
+		// Default Werte werden gesetzt
+		tabSize = 0;
+		grade = 0;
+		projectName = "";
+		
+		// Datenbank wird ausgelesen
 		this.fetchProjects();
 		this.fetchProjectCode();
 		this.fetchProjectSettings();
+		setChanged();
 		notifyObservers();
 		clearChanged();
 	}	
@@ -426,7 +469,10 @@ public class Model extends Observable {
 		
 		// TODO: Test, ob erfolgreich gespeichert wurde
 		this.fetchProjects();
-		this.selectProject(projectList.indexOf(projectName));
+		
+		selectProject(projectList.indexOf(projectName));
+		saveProjectSettings();
+		
 		this.setChanged();
 		this.notifyObservers();
 		this.clearChanged();
@@ -434,12 +480,17 @@ public class Model extends Observable {
 		return true;
 	}
 	
+	/**
+	 * Kann nur ausgeführt werden, wenn Projekt selektiert wurde.
+	 */
 	public void saveProjectSettings(){
 		if(projectID!=null){
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
-			if(JUnitCode!=null)
-				dataBase.saveJUnitTest(getProjectName(),JUnitCode);
+			if(jUnitCode!=null)
+				dataBase.saveJUnitTest(getProjectName(),jUnitCode);
 		}
+		notifyObservers();
+		clearChanged();
 	}
 	
 
@@ -498,7 +549,7 @@ public class Model extends Observable {
 			catch(SQLException e){
 				this.projectDescription="Noch keine Beschreibung vorhanden";
 				}
-			setJUnitCode(dataBase.getJUnitCode(getProjectName()));
+			jUnitCode = dataBase.getJUnitCode(getProjectName());
 		}
 		else{
 			this.projectDescription = new String();
@@ -510,8 +561,8 @@ public class Model extends Observable {
 	 */
 	private void fetchProjectCode(){
 			if(projectID!=null){
-				this.setJUnitCode(dataBase.getJUnitCode(getProjectName()));
-				this.projectCode = dataBase.getCode(projectList.get(projectID));
+				jUnitCode = dataBase.getJUnitCode(getProjectName());
+				projectCode = dataBase.getCode(projectList.get(projectID));
 				String[] strings = projectCode.split("\n");
 				
 				codeVector_normal = new Vector<String>(strings.length);
@@ -549,7 +600,7 @@ public class Model extends Observable {
 					testExpressionsVector.add(new String());
 					codeMap.put(strings[index], randomInts.get(index));
 				}
-			}
+			}				
 	}
 	// --- Datenbank zurücksetzen
 		public boolean isResetDB() {
@@ -612,7 +663,6 @@ public class Model extends Observable {
 			if(Character.isUpperCase(c))
 				upperCase = true;
 			int asci = (int)c;
-			System.out.println(c);
 			if(asci < 32 || asci >126 )	// auf nicht erlaubte Zeichen prüfen
 				return false;
 			else if(asci<48 || (asci > 57 && asci <65) || (asci >90 && asci < 97) || asci >123) // auf Sonderzeichen prüfen
