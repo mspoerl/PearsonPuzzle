@@ -277,20 +277,20 @@ public class Model extends Observable {
 		this.testExpressionsVector = testVector;
 	}
 
-	// Code zum puzzeln
-	private String[] getRandomCode() {
-		String[] parts = projectCode.split("\n");
-		if (randomMode) {
-			String buffer;
-			for (int i = parts.length - 1; i > 0; i--) {
-				int randomInt = new java.util.Random().nextInt(i);
-				buffer = parts[randomInt];
-				parts[randomInt] = parts[i];
-				parts[i] = buffer;
-			}
-		}
-		return parts;
-	}
+//	// Code zum puzzeln
+//	private String[] getRandomCode() {
+//		String[] parts = projectCode.split("\n");
+//		if (randomMode) {
+//			String buffer;
+//			for (int i = parts.length - 1; i > 0; i--) {
+//				int randomInt = new java.util.Random().nextInt(i);
+//				buffer = parts[randomInt];
+//				parts[randomInt] = parts[i];
+//				parts[i] = buffer;
+//			}
+//		}
+//		return parts;
+//	}
 	
 	// --- Vom Schüler zusammengepuzzelter Code
 	
@@ -513,22 +513,26 @@ public class Model extends Observable {
 				this.setJUnitCode(dataBase.getJUnitCode(getProjectName()));
 				this.projectCode = dataBase.getCode(projectList.get(projectID));
 				String[] strings = projectCode.split("\n");
-				codeVector_normal = new Vector<String>();
-				for(String string:strings){
-					codeVector_normal.add(string);
+				
+				codeVector_normal = new Vector<String>(strings.length);
+				codeVector_random = new Vector<String>(strings.length);
+				for(int i=0;i<strings.length; i++){codeVector_random.add(new String());}
+				
+				
+				Vector<Integer> randomInts = dataBase.getRandomKeys(getProjectName());				
+				if(randomInts.size()!=strings.length){
+					System.out.println("Index out of Bounds!!!");
 				}
-				
-				String[] stringField = this.getRandomCode();
-				
-				this.codeVector_random = new Vector<String>();
-				this.testExpressionsVector = new Vector<String>();
-				this.codeMap = new LinkedHashMap<String, Integer>();
-				this.sortedCode= new LinkedList<Integer>();
-				this.codeLine_GroupMatrix = new Vector<Vector<Integer>>();
-				this.codeLine_GroupMatrix=dataBase.getOrdervektor(getProjectName());
-				sortedCode= new LinkedList<Integer>();
+				testExpressionsVector = new Vector<String>();
+				codeMap = new LinkedHashMap<String, Integer>();
+				sortedCode = new LinkedList<Integer>();
+				codeLine_GroupMatrix = new Vector<Vector<Integer>>();
+				codeLine_GroupMatrix = dataBase.getOrdervektor(getProjectName());
+			
 
-				for(String line: stringField){
+				for(int index=0; index<strings.length; index++){
+					
+					codeVector_normal.add(strings[index]);
 					
 					// Dies ist notwendig, damit im Text sort view die Tabs richtig dargestellt werden.
 					String tab;
@@ -539,10 +543,11 @@ public class Model extends Observable {
 					for(int i=0;i<tabSize;i++){
 						tab=tab+" ";
 					}
-					String bString = line.replaceAll("\t", tab);
-					codeVector_random.add(bString);
+					String bString = strings[index].replaceAll("\t", tab);
+					
+					codeVector_random.set(randomInts.get(index), strings[index]);
 					testExpressionsVector.add(new String());
-					codeMap.put(line.trim(), codeVector_random.size()-1);
+					codeMap.put(strings[index], randomInts.get(index));
 				}
 			}
 	}

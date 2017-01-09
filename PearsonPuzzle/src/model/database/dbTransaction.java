@@ -268,7 +268,7 @@ public class dbTransaction implements Transaction{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		   	}
+	}
 	public void saveJUnitTest(String projectname,String jUnitCode) {
 		if(jUnitCode.length()>1000)
 			try {
@@ -279,9 +279,11 @@ public class dbTransaction implements Transaction{
 			}
 		userDBaccess.saveJUnitTest(projectname, jUnitCode);		
 	}
+	public Vector<Integer> getRandomKeys(String projectname){
+		return userDBaccess.getRandomKeys(projectname);
+	}
 	
-	
-	public ArrayList<Integer> getRandomKeys(int number){
+	private ArrayList<Integer> getRandomKeys(int number){
 		ArrayList<Integer> randomKey = new ArrayList<Integer>();
 		int array[] = new int[number];
 		for(int j=0;j<number;j++){

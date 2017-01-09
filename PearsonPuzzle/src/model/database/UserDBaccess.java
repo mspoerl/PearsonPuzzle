@@ -419,8 +419,8 @@ public class UserDBaccess {
 //		   return codeString.toArray(new String[0]);
 //	   }
 	   
-	   public ArrayList<Integer> getRandomKeys(String projectname){
-		   ArrayList<Integer> randomKeys = new ArrayList<Integer>();
+	   public Vector<Integer> getRandomKeys(String projectname){
+		   Vector<Integer> randomKeys = new Vector<Integer>();
 		   Statement stmt;
 		try {
 			stmt = conn.createStatement();
