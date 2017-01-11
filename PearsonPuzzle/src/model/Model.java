@@ -62,7 +62,8 @@ public class Model extends Observable {
 	private String jUnitCode;
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
-	private LinkedList<Boolean> groupFailures;
+	//private LinkedList<Boolean> groupFailures;
+	private LinkedHashMap<String,Boolean> successMap;
 
 	private PPException exception;
 
@@ -73,7 +74,6 @@ public class Model extends Observable {
 	public Model() {
 		jUnitFailures=new LinkedList<Failure>();
 		compileFailures = new Vector<HashMap<String,String>>();
-		groupFailures = new LinkedList<Boolean>();
 		personMap = new HashMap<String, String>();
 				
 		try{
@@ -135,18 +135,7 @@ public class Model extends Observable {
 	public PPException getException(){
 		return exception;
 	}
-	
 
-	public LinkedList<Boolean> getGroupFailures() {
-		return groupFailures;
-	}
-
-	/**
-	 * @param groupFailures the groupFailures to set
-	 */
-	public void setGroupFailures(LinkedList<Boolean> groupFailures) {
-		this.groupFailures = groupFailures;
-	}
 	
 
 	// ------------------------------------ Getter und Setter ------------------------------
@@ -177,7 +166,7 @@ public class Model extends Observable {
 	public int getTabSize() {
 		return tabSize;
 	}
-	public Vector<Integer> getTabVector(){
+	public Vector<Integer> getTabVector_random(){
 		return tabVector;
 	}
 
@@ -340,32 +329,55 @@ public class Model extends Observable {
 	public LinkedList<Integer> getSollution(){
 		return sortedCode;
 	}
+	public void setSollution(LinkedList<Integer> sollution){
+		sortedCode = sollution;
+	}
 	public Vector<String> getSolutionStrings(){
 		Vector<String> solution = new Vector<String>(codeMap.size());
 		for(Integer index: sortedCode){
-			solution.add(codeVector_random.get(index));
+			solution.add(codeVector_normal.get(index));
 		}
 		return solution;
 	}
 	// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
 	public void insertInSollution(int index, String value){
+		//sortedCode.add(index, codeVector_normal.indexOf(value));
 		sortedCode.add(index, codeMap.get(value.trim()));
 	}
 	public void replaceInSollution(int index, String value){
 		sortedCode.remove(index);
 		sortedCode.add(index, codeMap.get(value.trim()));
+		//sortedCode.add(index, codeVector_normal.indexOf(value));
 	}
 	public void removeInSollution(int index){
 		sortedCode.remove(index);
 	}
-	public boolean testSolution(){
-		Boolean result = OrderFailures.testOrder_simple(this, projectCode);
-		System.out.println(result);
-		result = result & OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+	public LinkedHashMap<String,Boolean> testSolution(){
+		//System.out.println(sortedCode+"vorher");
+		for(int i=0; i<codeVector_normal.size(); i++){
+			if(!sortedCode.contains(i)){
+				int j = sortedCode.lastIndexOf(codeMap.get(codeVector_normal.get(i)));
+				sortedCode.set(j, i);
+			}
+		}
+		//System.out.println(sortedCode+"nachher");
+//		LinkedList<Integer> sortedCode = new LinkedList<Integer>();
+//		Vector<String> codeVector_normal = (Vector<String>) codeVector_normal.clone();
+//		for(
+		successMap = new LinkedHashMap<String,Boolean>();
+		Boolean result;
+		
+		result = OrderFailures.testOrder_simple(this, projectCode);
+		successMap.put("Test auf 1:1 Reihenfolge", result);
+		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		successMap.put("Gruppentest", result);
+		for(int i=0;i<groupFailures.size();i++){
+			successMap.put("Gruppe"+(i+1), groupFailures.get(i));
+		}
 		setChanged();
-		System.out.println(result);
+		
 		notifyObservers(DCCommand.TestCode);
-		return result;
+		return successMap;
 //		
 //		String sollutionString = new String();
 //		for (String string : getSolutionStrings()){
@@ -375,6 +387,20 @@ public class Model extends Observable {
 //		 	return true;
 //		return false;
 	}
+	/**
+	 * @return the successMap
+	 */
+	public LinkedHashMap<String, Boolean> getSuccessMap() {
+		return successMap;
+	}
+
+	/**
+	 * @param successMap the successMap to set
+	 */
+	public void setSuccessMap(LinkedHashMap<String, Boolean> successMap) {
+		this.successMap = successMap;
+	}
+
 	/**
 	 * Gibt Aufschluss, ob die Lösungsmatrix die Codezeile enthält.
 	 * Leerzeichen und Tabs werden nicht berücksichtigt.
@@ -579,7 +605,11 @@ public class Model extends Observable {
 				
 				codeVector_normal = new Vector<String>(strings.length);
 				codeVector_random = new Vector<String>(strings.length);
-				for(int i=0;i<strings.length; i++){codeVector_random.add(new String());}
+				tabVector = new Vector<Integer>(strings.length);
+				for(int i=0;i<strings.length; i++){
+					codeVector_random.add(new String());
+					tabVector.add(new Integer(0));
+				}
 				
 				
 				Vector<Integer> randomInts = dataBase.getRandomKeys(getProjectName());				
@@ -595,22 +625,34 @@ public class Model extends Observable {
 
 				for(int index=0; index<strings.length; index++){
 					
-					codeVector_normal.add(strings[index]);
 					
 					// Dies ist notwendig, damit im Text sort view die Tabs richtig dargestellt werden.
 					String tab;
-					if(tabSize==0)
+					if(this.tabSize==0)
 						tab="";
 					else
 						tab=" ";
-					for(int i=0;i<tabSize;i++){
+					for(int i=0;i<this.tabSize;i++){
 						tab=tab+" ";
 					}
 					String bString = strings[index].replaceAll("\t", tab);
+//					int tabs=0;
+//					while(strings[index].startsWith("\t")){
+//						tabs++;
+//						strings[index]=strings[index].replaceFirst("\t", "");
+//					}
+//					tabVector.set(randomInts.get(index), tabs);
+//					
+//					codeVector_random.set(randomInts.get(index), strings[index]);
+					codeVector_random.set(randomInts.get(index), bString);
+					codeVector_normal.add(strings[index]);
 					
-					codeVector_random.set(randomInts.get(index), strings[index]);
 					testExpressionsVector.add(new String());
-					codeMap.put(strings[index], randomInts.get(index));
+					
+					// 10.1.2016
+					//codeMap.put(strings[index], randomInts.get(index));
+					if(!codeMap.containsKey(strings[index]))
+						codeMap.put(strings[index], index);
 				}
 			}				
 	}

@@ -57,25 +57,33 @@ public class OrderFailures_test {
 			for(int j=0; j<codeLine_GroupMatrix.size(); j++){
 				codeLine_GroupMatrix.get(j).add(ruleGroup[j][i]);
 			}
+			if(!codeMap.containsKey(codeLines[i]))
 			codeMap.put(codeLines[i], i);
 		}	
 	}
 
 	@Test
-	public void test() {		
+	public void test() {
+		System.out.println("0");
 		getTestCase(0);
-		OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		assertFalse(groupFailures.get(0));
 		assertTrue(groupFailures.get(1));
 		
+
+		System.out.println("1");
 		getTestCase(1);
-		OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		assertTrue(groupFailures.get(0));
 		assertTrue(groupFailures.get(1));
 		
+
+		System.out.println("2");
 		getTestCase(10);
-		OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		assertTrue(groupFailures.get(0));
+		assertTrue(groupFailures.get(1));
+		assertTrue(groupFailures.get(2));
 		
 	}
 

@@ -278,10 +278,7 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				if(model.getAccessGroup()==AccessGroup.STUDENT){
 					System.out.println(model.getSollution());
 					//model.testSolution();
-					if(model.testSolution())
-						System.out.println("Herzlichen Glückwunsch, richtige Reihenfolge!");
-					else
-						System.out.println("Reihenfolge nicht 1:1, Test auf Korrektheit folgt");
+					model.testSolution();
 					//result = JUnitRunner.run();
 				}
 				else{

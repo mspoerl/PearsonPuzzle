@@ -42,7 +42,7 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
-	private static final int Puzzlemodus=3;
+	private static final int Puzzlemodus=1;
 	private static final String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
 	
 	private JList<String> dragList;
@@ -213,12 +213,13 @@ public class CodeSortView extends JView {
 			for(Failure failure: model.getjUnitFailures()){
 				failureText=failureText+"\n"+failure;
 			}
-			failureText = failureText + "\nReihenfolgenfehler:";
-			for(boolean success : model.getGroupFailures()){
-				// FIXME: arbeit arbiet arbiet
-				int failure = 0;
-				if(!success) failure = 1;
-				failureText = failureText +"\t"+failure;
+			failureText = failureText + "\n";
+			for(String key : model.getSuccessMap().keySet()){
+				failureText = failureText +"\n"+key+": ";
+				if(model.getSuccessMap().get(key))
+					failureText+="Erfolgreich!";
+				else 
+					failureText+="Failed!";
 			}
 			messageBox.setText(failureText);
 		}
