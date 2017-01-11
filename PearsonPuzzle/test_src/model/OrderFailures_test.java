@@ -34,7 +34,7 @@ public class OrderFailures_test {
 		switch (testCase) {
 		case 0:
 			codeLines= new String[]			{"Line0","Line1","Line2","Line3","Line4","Line5"};
-			sortedLines = new Integer[]		{5,2,3,1,4,0};
+			sortedLines = new Integer[]		{5,2,3,1, 0};
 			ruleGroup = new Integer[][] 	{{0,1,1,2,3,0}, {1,1,1,1,1,1}};
 			break;
 		case 1:
@@ -53,7 +53,8 @@ public class OrderFailures_test {
 		}
 		for(int i=0; i<codeLines.length;i++){
 			codeVector_normal.add(codeLines[i]);
-			sortedCode.add(sortedLines[i]);
+			if(sortedLines.length>i)
+				sortedCode.add(sortedLines[i]);
 			for(int j=0; j<codeLine_GroupMatrix.size(); j++){
 				codeLine_GroupMatrix.get(j).add(ruleGroup[j][i]);
 			}

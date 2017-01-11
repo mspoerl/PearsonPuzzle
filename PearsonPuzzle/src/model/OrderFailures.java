@@ -32,6 +32,9 @@ public class OrderFailures {
 	}
 	public static LinkedList<Boolean> testOrder_groups(LinkedList<Integer> sortedCode,
 			 Vector<Vector<Integer>> codeLine_GroupMatrix, LinkedHashMap<String, Integer> codeMap, Vector<String> codeVector_normal) {
+		
+		
+		
 		LinkedList<Boolean> groupFailures = new LinkedList<Boolean>();
 		TreeMap<Integer, HashMap<String, Integer>>  treeMap;
 		for(Vector<Integer> groupRule : codeLine_GroupMatrix){
@@ -80,8 +83,8 @@ public class OrderFailures {
 					
 					// Lösungsstring wird durchsucht und 
 					for(int lineNr=startIndex; lineNr<codeVector_normal.size();lineNr++){
-					
-						if(codeMap.get(codeVector_normal.get(line))== codeMap.get(codeVector_normal.get(sortedCode.get(lineNr)))){
+							// sortedCode.size()> falls nicht alle Einträge geschaufelt wurden
+						if( sortedCode.size()>lineNr && codeMap.get(codeVector_normal.get(line))== codeMap.get(codeVector_normal.get(sortedCode.get(lineNr)))){
 							if(minIndex.get(keyString)==null || minIndex.get(keyString)<lineNr){
 								treeMap.get(rule).put(keyString, lineNr );
 								minIndex.put(keyString, lineNr);

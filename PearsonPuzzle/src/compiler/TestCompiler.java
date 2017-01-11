@@ -12,45 +12,7 @@ import java.util.Vector;
 import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
 
-public class TestCompiler {
-	
-
-	// -------------------------- http://openbook.rheinwerk-verlag.de/java7/1507_19_002.html ---------------------
-	
-	
-//	public static boolean compile(ArrayList solution) throws IOException{
-//		
-//		String solutionString= String.join(" ", solution);
-//				
-//		
-//	
-//		File javaSrcFile = new File( "B.java" );
-//		Writer p = new FileWriter( javaSrcFile );
-//		p.write( "class B { static { "+solutionString+" } }" );
-//		p.close();
-//		
-//		
-//		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-//		StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null );
-//		Iterable<? extends JavaFileObject> units;
-//		units = fileManager.getJavaFileObjectsFromFiles( Arrays.asList( javaSrcFile ) );
-////		Iterable<String> options = Arrays.asList( "-verbose" );
-//		CompilationTask task = compiler.getTask( null, fileManager, null, null, null, units );
-//		task.call();
-//		fileManager.close();
-//		
-//		
-//		URLClassLoader classLoader = new URLClassLoader(
-//				  new URL[] { javaSrcFile.getAbsoluteFile().getParentFile().toURI().toURL() } );
-//				try {
-//					Class.forName( "B", true, classLoader );
-//				} catch (ClassNotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}    // Java Compiler API
-//
-//				javaSrcFile.delete();
-//		
+public class TestCompiler {		
 	
 	private final static String DEFAULT_CLASS_NAME="testCode";
 	private static Vector<HashMap<String, String>> compileFailures;
@@ -69,7 +31,9 @@ public class TestCompiler {
 		 * @return Kompilieren erfolgreich
 		 */
 		public static boolean compileCode(Vector<String> solutionArray){
+			
 			boolean ret=true;
+//			HashMap<String, String> classes = new LinkedHashMap<String, String>();
 			String className=new String();
 			String solutionString = new String();
 				for(String line: solutionArray){
@@ -80,7 +44,12 @@ public class TestCompiler {
 							solutionString=solutionString+"\n"+line;
 						}
 						else{
+//							if(classes.containsKey(className))
+//								return false;
+//							classes.put(className, solutionString);
+							
 							ret= ret && compileCode(solutionString, className);
+							className = new String();
 							solutionString=new String(line);
 						}
 					}
@@ -88,12 +57,21 @@ public class TestCompiler {
 						solutionString=solutionString+"\n"+line;
 					}
 				}
+//			for(String classN : classes.keySet()){
+//				ret = ret & compileCode(classN, classes.get(classN));
+//			}
+//			return ret;
 			if(className.isEmpty())
 				return compileCode(solutionString);
 			else 
 				return compileCode(solutionString, className);
 		}
 		
+		/**
+		 * Kompiliert einen als String übergebenen Source Code.
+		 * @param src Source Code
+		 * @return Kompilieren erfolgreich
+		 */
 		public static boolean compileCode(String src){
 			
 			 compileFailures = new Vector<HashMap<String, String>>();
@@ -117,27 +95,32 @@ public class TestCompiler {
 			 }
 		}
 			 
-			 // FIXME: Wenn der Code meherere Klassen enthält, kommt es im Moment zum Problem
-			 
+		/**			 
+		 * Methode kompilert.
+		 * @param src Source Code
+		 * @param className Klassenname
+		 * @return Kompilieren erfolgreich
+		 */
 		private static boolean compileCode(String src, String className){
 			
+			// TODO: Imports hinzufügen
+		
 			 StringJavaFileObject javaFile = new StringJavaFileObject( className, src );
 			 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			 DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 			 StandardJavaFileManager fileManager = compiler.getStandardFileManager( diagnostics, null, null );
 			 Iterable<? extends JavaFileObject> units = Arrays.asList( javaFile );
 			 CompilationTask task = compiler.getTask( null, fileManager, diagnostics, null, null, units );
-			 boolean success = task.call();
-		
-			 System.out.println( success ); // Compilieren erfolgreich oder nicht
+			 task.call();		 
 
 			 // Diagnose (bei aufgetretenem Fehler)
 			 for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
 			 {
 				 HashMap <String, String> compileFailure = new HashMap<String, String>(9);
+				 compileFailure.put("Class", ""+className);
 				 compileFailure.put("Kind", ""+diagnostic.getKind());
 				 compileFailure.put("Quelle", ""+diagnostic.getSource());
-				 compileFailure.put("Code", ""+diagnostic.getCode());
+				 compileFailure.put("Code", ""+src);
 				 // TODO: Fehlerbericht anpassen (Nachricht)
 				 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
 				 compileFailure.put("Zeile", ""+diagnostic.getLineNumber() );
@@ -146,7 +129,8 @@ public class TestCompiler {
 				 compileFailure.put("Startpostion", ""+diagnostic.getStartPosition());
 				 compileFailure.put("Endposition", ""+diagnostic.getEndPosition() );
 				 compileFailures.add(compileFailure);
-			 }
+				 
+			 }			 
 		
 			 try {
 				 fileManager.close();
@@ -182,6 +166,44 @@ public class TestCompiler {
 		 }
 }
 
+
+// Alternative:
+// -------------------------- http://openbook.rheinwerk-verlag.de/java7/1507_19_002.html ---------------------
+
+
+//public static boolean compile(ArrayList solution) throws IOException{
+//	
+//	String solutionString= String.join(" ", solution);
+//			
+//	
+//
+//	File javaSrcFile = new File( "B.java" );
+//	Writer p = new FileWriter( javaSrcFile );
+//	p.write( "class B { static { "+solutionString+" } }" );
+//	p.close();
+//	
+//	
+//	JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+//	StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null );
+//	Iterable<? extends JavaFileObject> units;
+//	units = fileManager.getJavaFileObjectsFromFiles( Arrays.asList( javaSrcFile ) );
+////	Iterable<String> options = Arrays.asList( "-verbose" );
+//	CompilationTask task = compiler.getTask( null, fileManager, null, null, null, units );
+//	task.call();
+//	fileManager.close();
+//	
+//	
+//	URLClassLoader classLoader = new URLClassLoader(
+//			  new URL[] { javaSrcFile.getAbsoluteFile().getParentFile().toURI().toURL() } );
+//			try {
+//				Class.forName( "B", true, classLoader );
+//			} catch (ClassNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}    // Java Compiler API
+//
+//			javaSrcFile.delete();
+//
 
 
 

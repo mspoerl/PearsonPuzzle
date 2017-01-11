@@ -353,18 +353,33 @@ public class Model extends Observable {
 		sortedCode.remove(index);
 	}
 	public LinkedHashMap<String,Boolean> testSolution(){
+		successMap = new LinkedHashMap<String,Boolean>();
 		//System.out.println(sortedCode+"vorher");
+		if(sortedCode.isEmpty()){
+			successMap.put("Ausreichend viele Einträge", false);
+			setChanged();
+			notifyObservers(DCCommand.TestCode);
+			return successMap;
+		}
+		
+		// FIXME: unsauber, wenn nicht alle Elemnte gedragt wurden
+		else if(sortedCode.size()<codeVector_normal.size()){
+			successMap.put("Ausreichend viele Einträge", false);
+			setChanged();
+			notifyObservers(DCCommand.TestCode);
+			return successMap;
+		}
 		for(int i=0; i<codeVector_normal.size(); i++){
-			if(!sortedCode.contains(i)){
+			if(!sortedCode.contains(i) && sortedCode.contains(codeMap.get(codeVector_normal.get(i)))){
 				int j = sortedCode.lastIndexOf(codeMap.get(codeVector_normal.get(i)));
 				sortedCode.set(j, i);
 			}
 		}
-		//System.out.println(sortedCode+"nachher");
+		System.out.println(sortedCode+"nachher");
 //		LinkedList<Integer> sortedCode = new LinkedList<Integer>();
 //		Vector<String> codeVector_normal = (Vector<String>) codeVector_normal.clone();
 //		for(
-		successMap = new LinkedHashMap<String,Boolean>();
+		
 		Boolean result;
 		
 		result = OrderFailures.testOrder_simple(this, projectCode);

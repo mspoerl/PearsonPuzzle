@@ -2,6 +2,8 @@ package visitor;
 
 import javax.swing.UIManager;
 
+import JUnitUmgebung.JUnitRunner;
+
 import controller.Controller;
 import controller.DefaultController;
 import controller.ExceptionController;
@@ -23,6 +25,7 @@ public class user {
 //			  UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 //		} catch( Exception e ) { e.printStackTrace(); }
 		setupGUI();
+		//runUnitTest();
 	}
 	public static void setupGUI(){
 		Model model = new Model();
@@ -35,5 +38,12 @@ public class user {
 		JView view = new InitializeAccess(model);
 		controller = new ExceptionController(model, view);
 		view.draw();
+	}
+	public static void runUnitTest(){
+		
+		final String unitText = "import org.junit.Test; \nimport static org.junit.Assert.*; \n\npublic class testcase_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue( true);\n\t}}\n";
+		final String code = "public static boolean runt(){int a=0; int b=3; int c=a+b; return true;}";
+		JUnitRunner jUnitRunner = new JUnitRunner(code, null);
+		jUnitRunner.run(unitText);
 	}
 }

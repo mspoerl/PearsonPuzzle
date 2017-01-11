@@ -1,35 +1,33 @@
-package Compiler;
+package jUnitUmgebung;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.After;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import compiler.TestCompiler;
+import JUnitUmgebung.JUnitRunner;
 
-
-@RunWith(Parameterized.class)
-public class TestCompiler_Test {
+public class jUnitRunner_Test {
 	Boolean expectedResult;
 	String testString;
-	TestCompiler testCompiler;
+	JUnitRunner jUnitRunner;
+	final String unitText = "import org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class testcase_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n";
 	
 	@Before
 	   public void initialize() {
-			testCompiler = new TestCompiler();
+			jUnitRunner = new JUnitRunner(testString, null);
 	   }
 
 	   // Each parameter should be placed as an argument here
 	   // Every time runner triggers, it will pass the arguments
 	   // from parameters we defined in primeNumbers() method
 		
-	   public TestCompiler_Test(Boolean expectedResult,String testString) {
+	   public jUnitRunner_Test(Boolean expectedResult,String testString) {
 	      this.testString = testString;
 	      this.expectedResult = expectedResult;
 	   }
@@ -64,16 +62,9 @@ public class TestCompiler_Test {
 	      });
 	   }
 
-	@Test
-	public void test() {
-		assertEquals(expectedResult, TestCompiler.compileCode(testString));
-	}
-	
-	@After
-	public void print(){
-		if(false != expectedResult != TestCompiler.getFailures().isEmpty()){
-			 System.out.println(TestCompiler.getFailures().get(0).get("Nachricht"));
-			 System.out.println(TestCompiler.getFailures().get(0).get("Class"));
-		 }
-	}
+	   @Test
+	   public void test() {
+		   assertEquals(expectedResult, jUnitRunner.run(unitText));
+	   }
+
 }
