@@ -3,7 +3,6 @@ package view.teacher;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.Observable;
 
 import javax.swing.*;
@@ -15,13 +14,9 @@ import controller.DCCommand;
 import controller.DefaultController;
 import view.JView;
 import model.Model;
-import model.MyTableCellEditor;
 
 public class ConfigEditor extends JView{
-	
-	private JList <String> codeList;
-	private JList <Integer> sequenceList;
-	private ArrayList <JTextField> inputList;
+
 	
 	private JButton save;
 	private JButton newGroup;

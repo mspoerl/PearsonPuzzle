@@ -1,12 +1,14 @@
 package view.teacher;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import org.junit.runner.notification.Failure;
 
@@ -21,6 +23,9 @@ public class UnitEditor extends JView{
 	
 	private JTextArea textArea;
 	private JTextArea messageBox;
+	private JTextArea imports;
+	private JButton addClasses;
+	private JButton addMethods;
 	private JButton save;
 	private JButton test;
 	private JButton compile;
@@ -39,6 +44,9 @@ public class UnitEditor extends JView{
 		textArea.setLineWrap(false);
 		textArea.setTabSize(3);
 		textArea.setText(model.getJUnitCode());
+		Border border = BorderFactory.createEmptyBorder();
+		textArea.setBorder(BorderFactory.createCompoundBorder(border, 
+	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
 		if(textArea.getText().equals(""))
 			textArea.setText("// Automatisch erstellte Vorlage für JUnit Test\n \nimport org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n"+"}");
 		JScrollPane textScrollPane = new JScrollPane(textArea);
@@ -48,17 +56,39 @@ public class UnitEditor extends JView{
 		textScrollPane.setPreferredSize(new Dimension(400,350));
 		textScrollPane.setMinimumSize(new Dimension(400,100));
 		
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		messageBox= new JTextArea("Hier erfolgt die Ergebnisausgabe");
 		messageBox.setEditable(false);
 		messageBox.setLineWrap(false);
 		messageBox.setName("MessageBox");
-		JScrollPane messageScrollPane = new JScrollPane(messageBox);
-		messageScrollPane.setVerticalScrollBarPolicy(
+		messageBox.setBorder(BorderFactory.createCompoundBorder(border, 
+	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+		JScrollPane messageSP = new JScrollPane(messageBox);
+		messageSP.setVerticalScrollBarPolicy(
 		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		messageScrollPane.setPreferredSize(new Dimension(200,150));
-		messageScrollPane.setMinimumSize(new Dimension(200,150));
-		
+		messageSP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		messageSP.setPreferredSize(new Dimension(200,100));
+		messageSP.setMinimumSize(new Dimension(200,100));		
+		imports = new JTextArea("Hier können imports angegeben werden. Zusätzliche nötige Klassen bitte über den Button unterhalb angeben.");
+		imports.setLineWrap(true);
+		imports.setWrapStyleWord(true);
+		imports.setBorder(BorderFactory.createCompoundBorder(border, 
+	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+		JScrollPane importsSP = new JScrollPane(imports);
+		importsSP.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		importsSP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		importsSP.setPreferredSize(new Dimension(200,150));
+		importsSP.setMinimumSize(new Dimension(200,150));
+		addClasses = new JButton("<html><p>Zum Ausführen nötige <b>Klassen hinzufügen</b></p></html>");
+		addClasses.setAlignmentX(Component.CENTER_ALIGNMENT);
+		addMethods = new JButton("<html><p>Zum Ausführen nötige <b>Methoden hinzufügen</b></p></html>");
+		addMethods.setAlignmentX(Component.CENTER_ALIGNMENT);
+		leftPanel.add(importsSP);
+		leftPanel.add(addClasses);
+		leftPanel.add(addMethods);
+		leftPanel.add(messageSP);
 		
 		JPanel buttonPanel = new JPanel();
 		compile = new JButton("Test Kompilieren");
@@ -69,7 +99,7 @@ public class UnitEditor extends JView{
 		buttonPanel.add(save);
 		
 		mainPanel.add(textScrollPane);
-		mainPanel.add(messageScrollPane, BorderLayout.EAST);
+		mainPanel.add(leftPanel, BorderLayout.EAST);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 	}
 
@@ -79,7 +109,13 @@ public class UnitEditor extends JView{
 		
 		textArea.setName("JUnitCode");
 		textArea.addFocusListener((DefaultController)controller);
+		imports.setName("Imports");
+		imports.addFocusListener((DefaultController) controller);
 		
+		addClasses.setActionCommand(DCCommand.AddClasses.toString());
+		addClasses.addActionListener(controller);
+		addMethods.setActionCommand(DCCommand.AddMethods.toString());
+		addMethods.addActionListener(controller);
 		compile.setActionCommand(DCCommand.Compile.toString());
 		compile.addActionListener(controller);
 		save.setActionCommand(DCCommand.Save.toString());

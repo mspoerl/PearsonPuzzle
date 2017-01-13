@@ -46,6 +46,7 @@ public class Model extends Observable {
 	private String projectName;
 	private String projectDescription;
 	private String projectCode;
+	private HashMap<String, String> projectImports;
 	
 	private List<String> projectList;
 	private Vector<String> projectVector;
@@ -69,12 +70,17 @@ public class Model extends Observable {
 
 	private HashMap<String, String> personMap;
 
+	private String studentGroup;
+
 	// private Exception exceptionModel;
 
 	public Model() {
 		jUnitFailures=new LinkedList<Failure>();
 		compileFailures = new Vector<HashMap<String,String>>();
 		personMap = new HashMap<String, String>();
+		projectImports = new HashMap<String, String>();
+		projectImports.put("classes", "");
+		projectImports.put("methods", "");
 				
 		try{
 			dataBase = new dbTransaction(this);			
@@ -323,6 +329,7 @@ public class Model extends Observable {
 			codeLine_GroupMatrix.remove(index);	
 		setChanged();
 		notifyObservers(DCCommand.DeleteOrder);
+		setChanged();
 	}
 	public Vector<String> getTestExpressionsVector() {
 		if(projectID==null)
@@ -805,6 +812,27 @@ public class Model extends Observable {
 		this.userGroup_toEdit = userGroup_toEdit;
 		setChanged();
 		notifyObservers();
+	}
+
+	public void setImports(String type, String text) {
+		setChanged(projectImports.get(type), text);
+		if(type.equals("methods"))
+			projectImports.put("methods", text);
+		else if(type.equals("classes"))
+			projectImports.put("classes", text);
+	}
+	public String getImport(String type){
+		return projectImports.get(type);
+	}
+
+	public void setStudentGroup(String student) {
+		if(getUsers(AccessGroup.STUDENT).contains(student)){
+			this.studentGroup = student;
+			setChanged();
+		}
+	}
+	public String getStudentGroup(){
+		return studentGroup;
 	}
 	
 }

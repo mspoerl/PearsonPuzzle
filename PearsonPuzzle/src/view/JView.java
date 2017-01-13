@@ -8,6 +8,7 @@ import java.util.Observer;
 
 import javax.swing.*;
 
+import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
 
@@ -115,18 +116,19 @@ public abstract class JView implements Observer {
 		public void selectView(int i){};
 		
 		/**
-		 * Nachricht wird als Allert ausgegeben.
-		 * @param message Darzustellende Nachricht
-		 */
-		public void allert(String message) {
-			JOptionPane.showMessageDialog(frame, message);
-		}
-		
-		/**
 		 * Frame wird geschlossen.
 		 */
 		public void exit() {
 		    frame.dispose();
+		}
+		
+		
+		/**
+		 * Nachricht wird als Allert ausgegeben.
+		 * @param message Darzustellende Nachricht
+		 */
+		public void showDialog(String message) {
+			JOptionPane.showMessageDialog(frame, message);
 		}
 		
 		/**
@@ -143,30 +145,47 @@ public abstract class JView implements Observer {
 				return allert.allert(model);
 		}
 		public void showDialog(final PPException exception, boolean modal){
+			view.dialog.JDialog dialog;
 			if(exception.getMessage()==PPException.databaseIsEmpty){
 				// Titel "Ersten Nutzer anlegen" wichtig für Dialog Controller
-				AddUserDialog dialog = new AddUserDialog(frame, model, "Ersten Nutzer anlegen");
-				dialogController = new DialogController(model, dialog);
-				dialog.pack();
-				dialog.show();
-			}			
+				dialog = new AddUserDialog(frame, model, "Ersten Nutzer anlegen");
+			}
+			else 
+				dialog=null;
+			dialogController = new DialogController(model, dialog);
+			dialog.pack();
+			dialog.setVisible(true);
+			dialog.repaint();
 		}
 		public Integer showDialog(final DCCommand command, boolean modal){
-			if(command.equals(DCCommand.AddUser)){
-				// Titel "Nutzer hinzufügen" wichtig für Dialog Controller
-				AddUserDialog dialog = new AddUserDialog(frame, model, "Nutzer hinzufügen");
+			view.dialog.JDialog dialog;
+			// Titel "Nutzer hinzufügen" wichtig für Dialog Controller
+			switch(command){
+				case AddUser:
+					dialog = new AddUserDialog(frame, model, "Nutzer hinzufügen");
+					break;
+				case AddClasses:
+					dialog = new AddImportDialog(frame, model, "Nötige Klassen");
+					break;
+				case AddMethods:
+					dialog = new AddImportDialog(frame, model, "Nötige Methoden");
+					break;
+				case DeleteOrder:
+					dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
+					break;
+				case ShowHelp:
+					JOptionPane.showMessageDialog(frame, "Hilfetext");
+					dialog = null;
+					break;
+				default:
+					dialog = null;
+					break;
+			}			
+			if(dialog!=null){
 				dialogController = new DialogController(model, dialog);
 				dialog.pack();
-				dialog.show();
-			}
-			else if(command.equals(DCCommand.DeleteOrder)){
-				DeleteOrderDialog dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
-				dialogController = new DialogController(model, dialog);
-				dialog.pack();
-				dialog.show();
-			}
-			else if(command.equals(DCCommand.ShowHelp)){
-				JOptionPane.showMessageDialog(frame, "Hilfetext");
+				dialog.setVisible(true);
+				dialog.repaint();
 			}
 			return null;
 		}

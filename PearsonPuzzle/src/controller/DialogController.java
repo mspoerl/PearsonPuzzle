@@ -11,6 +11,7 @@ import javax.swing.event.ListSelectionEvent;
 import model.Model;
 
 import view.JView;
+import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.JDialog;
@@ -103,6 +104,17 @@ public class DialogController implements Controller, PropertyChangeListener {
 	    			else
 	    				dialog.clearAndHide();
 				}
+	            else if(dialog.getClass().equals(AddImportDialog.class)){
+	            	if(value.equals(JOptionPane.OK_OPTION)){
+	            		if(dialog.getTitle().equals("Nötige Klassen"))
+	            			model.setImports("methods", (String)dialog.get("input"));
+	            		else if(dialog.getTitle().equals("Nötige Methoden"))
+	            			model.setImports("classes", (String)dialog.get("input"));
+	            		dialog.clearAndHide();
+	            	}
+	            	else
+	            		dialog.clearAndHide();
+	            }
 			}
 		}
 }
