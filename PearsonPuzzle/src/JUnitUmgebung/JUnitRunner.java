@@ -41,7 +41,6 @@ public class JUnitRunner {
 	public JUnitRunner(String sourceCode_ToBeTested, String imports){
 		srcCodeMap = new HashMap<String, String>();
 		fillSrcCodeMap(sourceCode_ToBeTested);
-		loadClasses();
 	}
 	
 	/**
@@ -118,7 +117,7 @@ public class JUnitRunner {
 	 * Klassen in srcCodeMap werden 
 	 * @return
 	 */
-	private void compileClasses(){
+	public void compileClasses(){
 		for(String className:srcCodeMap.keySet()){
 			String src = srcCodeMap.get(className);
 			// TODO: Imports hinzufügen
@@ -187,7 +186,7 @@ public class JUnitRunner {
 	/**
 	 * Die in srcCodeMap (in textform) enthaltenen Klassen werden kompiliert.
 	 */
-	private void loadClasses(){
+	public void loadClassesToMemory(){
 		for(String className : srcCodeMap.keySet()){
 			String sourceCode = srcCodeMap.get(className);
 			final String[] imports = {"",""};
@@ -235,6 +234,7 @@ public class JUnitRunner {
 	
 	/**
 	 * Unit Test wird kompiliert und gestartet.
+	 * Anschließend werden vorhandene Klassendateien gelöscht.
 	 * @param unitText JUnit Klasse in Textform
 	 * @return Result
 	 */
@@ -273,6 +273,7 @@ public class JUnitRunner {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		deleteTestClasses();
 		
 		try {
 			Result result = JUnitCore.runClasses(unitClassLoader.findClass(className));
