@@ -23,7 +23,6 @@ import view.JView;
 
 import controller.Controller;
 import controller.DCCommand;
-import controller.DefaultController;
 
 import Listener.FromTransferHandler;
 import Listener.ToSaveTransferHandler;
@@ -164,7 +163,7 @@ public class CodeSortView extends JView {
 	 */
 	public void addController(Controller controller){
 		// TODO: In den offiziellen Controller auslagern
-		saveDropList.addMouseListener((DefaultController)controller);
+		//saveDropList.addMouseListener((DefaultController)controller);
 		compileButton.addActionListener(controller);
 		compileButton.setActionCommand(DCCommand.Compile.toString());
 		testButton.setActionCommand(DCCommand.TestCode.toString());

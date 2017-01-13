@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
@@ -39,7 +37,7 @@ import JUnitUmgebung.JUnitRunner;
  * mit dem Controller zu verknüpfen.
  * @author workspace
  */
-public class DefaultController implements Controller, TableModelListener, MouseListener, FocusListener{
+public class DefaultController implements Controller, TableModelListener, FocusListener{
 	
 	private Model model;
 	private JView view;
@@ -65,25 +63,31 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 		if( (view.getClass().equals(TextEditor.class)  
 				|| view.getClass().equals(UnitEditor.class)
 				|| view.getClass().equals(ConfigEditor.class))
-				&& cmd!=DCCommand.Save && cmd!=DCCommand.ConnectedComponent){
-			if(model.hasChanged()){
+				&& cmd!=DCCommand.Save 
+				&& cmd!=DCCommand.ConnectedComponent){
+			if (view.getClass().equals(TextEditor.class)
+					&& ((view.get("projectname")== null || ((String) view.get("projectname")).trim().isEmpty()))
+					&& (cmd==DCCommand.ConfigureProject || cmd == DCCommand.EditJUnit)){
+				view.showDialog(Allert.noContentInput);
+				return;
+			}
+			else if(model.hasChanged()){
 				Integer allert=view.showDialog(Allert.notSaved);
 				if(allert==JOptionPane.YES_OPTION)
+				{
 					this.act(DCCommand.Save, null);
+					if(model.hasChanged())
+						return;
+				}
 				else if(allert==JOptionPane.NO_OPTION){
 					model.fetchAll();
 				}
 				else if(allert==JOptionPane.CANCEL_OPTION)
 					return;
-			}
-			else if(view.get("projectname")==""){
-				view.showDialog(Allert.noContentInput);
-				return;
-			}
-			
+			}		
 		}
 		switch(cmd){
-			case SubmitPassword:
+			case Login:
 				if(view.getClass().equals(LoginView.class))
 					((LoginView)view).submitChangeToController();
 				break;
@@ -267,11 +271,12 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 				model.addTestGroup();
 				break;
 			case Compile:
+				TestCompiler testCompiler = new TestCompiler();
 				if(model.getAccessGroup()==AccessGroup.STUDENT)
-					TestCompiler.compileCode(model.getSolutionStrings());
+					testCompiler.compileCode(model.getSolutionStrings());
 				else if(model.getAccessGroup()==AccessGroup.TEACHER)
-					TestCompiler.compileCode(((UnitEditor)view).getContent());
-				model.setCompilerFailures(TestCompiler.getFailures());
+					testCompiler.compileCode(((UnitEditor)view).getContent());
+				model.setCompilerFailures(testCompiler.getFailures());
 				break;
 			case TestCode:
 				Result result;
@@ -282,7 +287,8 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 					//result = JUnitRunner.run();
 				}
 				else{
-					result = JUnitRunner.run(((UnitEditor) view).getContent());
+					JUnitRunner unitRunner = new JUnitRunner(model.getProjectCode(), null);
+					result = unitRunner.run(((UnitEditor) view).getContent());
 					System.out.println(result.getFailures());
 					System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 					model.setJunitFailures(result);
@@ -420,38 +426,6 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 		}
 	}
 
-	public void mouseClicked(MouseEvent e) {
-		if(e.getButton()==MouseEvent.BUTTON3){
-			if(e.getComponent().getName().equals("dropList")){
-				//ListSelectionModel lsm= ((JList<String>) (e.getComponent())).getSelectionModel();
-				//System.out.println(e.getComponent().getComponentAt(e.getLocationOnScreen()).getName());
-				//System.out.println(e.getComponent().getComponentAt(e.getPoint()));
-			}
-		}
-			
-	}
-		// TODO Auto-generated method stub
-
-
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public void tableChanged(TableModelEvent e) {
 		if(view.getClass().equals(ConfigEditor.class)){
@@ -492,6 +466,18 @@ public class DefaultController implements Controller, TableModelListener, MouseL
 	public JView getView() {
 		return view;
 	}
+	
+	
+//	public void mouseClicked(MouseEvent e) {
+//		if(e.getButton()==MouseEvent.BUTTON3){
+//			if(e.getComponent().getName().equals("dropList")){
+//				//ListSelectionModel lsm= ((JList<String>) (e.getComponent())).getSelectionModel();
+//				//System.out.println(e.getComponent().getComponentAt(e.getLocationOnScreen()).getName());
+//				//System.out.println(e.getComponent().getComponentAt(e.getPoint()));
+//			}
+//		}
+//			
+//	}
 
 //	@Override
 //	public void propertyChange(PropertyChangeEvent evt) {

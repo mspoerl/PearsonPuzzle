@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.tools.*;
@@ -15,13 +16,18 @@ import javax.tools.JavaCompiler.CompilationTask;
 public class TestCompiler {		
 	
 	private final static String DEFAULT_CLASS_NAME="testCode";
-	private static Vector<HashMap<String, String>> compileFailures;
+	private Vector<HashMap<String, String>> compileFailures;
+	private String packageString;
+	private LinkedList<String> importStrings;
+	private HashMap <String, String> classes;
 	
 	public TestCompiler(){
-		// TODO: Test Compiler ObjektKonstruktor verfassen
+		packageString = new String();
+		importStrings = new LinkedList<String>();
+		classes = new HashMap<String, String>();
 		}
 	
-	public static Vector<HashMap<String,String>> getFailures(){
+	public Vector<HashMap<String,String>> getFailures(){
 		return compileFailures;
 	}
 
@@ -30,14 +36,22 @@ public class TestCompiler {
 		 * @param solutionArray Liste von Codezeilen
 		 * @return Kompilieren erfolgreich
 		 */
-		public static boolean compileCode(Vector<String> solutionArray){
+		public boolean compileCode(Vector<String> solutionArray){
 			
 			boolean ret=true;
 //			HashMap<String, String> classes = new LinkedHashMap<String, String>();
 			String className=new String();
 			String solutionString = new String();
 				for(String line: solutionArray){
-					if(line.contains("class")){
+					if(line.trim().startsWith("package ")){
+						packageString = line.substring(line.indexOf("package")+7, line.indexOf(";"));
+						packageString = packageString.trim();
+					}
+					else if (line.trim().startsWith("import ")){
+						String importString = line.substring(line.indexOf("import")+6, line.indexOf(";"));
+						importStrings.add(importString.trim());
+					}
+					if(line.contains(" class ")){
 						if(className.isEmpty()){
 							className=line.substring(line.indexOf("class")+5, line.indexOf("{"));
 							className=className.trim();
@@ -72,7 +86,7 @@ public class TestCompiler {
 		 * @param src Source Code
 		 * @return Kompilieren erfolgreich
 		 */
-		public static boolean compileCode(String src){
+		public boolean compileCode(String src){
 			
 			 compileFailures = new Vector<HashMap<String, String>>();
 			 // Konflikte bezüglich des Klassennamens werden ausgeschlossen
@@ -101,17 +115,18 @@ public class TestCompiler {
 		 * @param className Klassenname
 		 * @return Kompilieren erfolgreich
 		 */
-		private static boolean compileCode(String src, String className){
+		private boolean compileCode(String src, String className){
 			
 			// TODO: Imports hinzufügen
-		
-			 StringJavaFileObject javaFile = new StringJavaFileObject( className, src );
+			//System.out.println("package:"+packageString);
+			 StringJavaFileObject javaFile = new StringJavaFileObject( "gen_src//"+className, src );
 			 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			 DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 			 StandardJavaFileManager fileManager = compiler.getStandardFileManager( diagnostics, null, null );
 			 Iterable<? extends JavaFileObject> units = Arrays.asList( javaFile );
 			 CompilationTask task = compiler.getTask( null, fileManager, diagnostics, null, null, units );
-			 task.call();		 
+			 task.call();
+			 System.out.println(src);
 
 			 // Diagnose (bei aufgetretenem Fehler)
 			 for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
@@ -141,10 +156,13 @@ public class TestCompiler {
 			 URLClassLoader classLoader = null;
 			 try {
 				 classLoader = new URLClassLoader( new URL[] { new File(".").getAbsoluteFile().toURI().toURL() } );
+				 //System.out.println(classLoader.getURLs());
 			 } catch (MalformedURLException e) {
 				 return false;
 			 }
 			 try {
+				 System.out.println(className);
+				 //className = "sourceCode_toTest/"+className;
 				 Class.forName( className, true, classLoader );
 				 deleteTestClass(className);
 				 

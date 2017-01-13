@@ -18,7 +18,7 @@ public class MemClassLoader_JUnit extends ClassLoader
   {
     classFiles.put( memJavaFileObject.getClassName(), memJavaFileObject );
   }
-
+  
   @Override
   protected Class<?> findClass( String name ) throws ClassNotFoundException
   {

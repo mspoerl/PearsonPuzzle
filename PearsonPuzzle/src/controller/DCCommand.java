@@ -7,8 +7,12 @@ package controller;
  *
  */
 public enum DCCommand {
-	SubmitPassword, EditProject, EditUsers, EditJUnit, AddUser, NewProject, OpenProject, ProjectList, Save, Logout, 
-	DeleteProject, Admin, ResetDB, SetConfig, ConfigureProject, ConnectedComponent, AddOrder, DeleteOrder, Compile, TestCode, SaveProjectConfiguration, ShowHelp, ;
+	// Text Component Connection
+		ConnectedComponent,
+	// Button Commands
+		ShowHelp, Save, ResetDB, SetConfig, DeleteProject, AddOrder, Compile, TestCode, SaveProjectConfiguration,
+	// View Changes
+		Login, EditProject, EditUsers, EditJUnit, AddUser, NewProject, OpenProject, ProjectList,  Logout,	Admin, ConfigureProject, DeleteOrder ;
 	
 	@Override
 	public String toString(){
@@ -25,8 +29,8 @@ public enum DCCommand {
 			return "OpenProject";
 		case ProjectList:
 			return "ProjectList";
-		case SubmitPassword:
-			return "SubmitPassword";
+		case Login:
+			return "Login";
 		case Logout:
 			return "Logout";
 		case DeleteProject:

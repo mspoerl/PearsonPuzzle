@@ -2,7 +2,6 @@ package view.teacher;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Vector;

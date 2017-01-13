@@ -38,12 +38,14 @@ public class TestCompiler_Test {
 	   public static Collection<Object[]> primeNumbers() {
 	      return Arrays.asList(new Object[][] {
 	    		// normale Klasse
-	         {true, "public class first{ \npublic static void main(String args[]){\nSystem.out.println(\"alles klar\");}}"},	// 	
+	         {true, "" +
+	         		//"package gen_src.testCode;" +
+	         		"\npublic class first{ \npublic static void main(String args[]){\nSystem.out.println(\"alles klar\");}}"},	// 	
 	         	// Berechtiguns-Test (darf nicht anschlagen, da nur compiliert wird)
 	         {true, "public class first{ public static void main(String args[]){add(2,2);}}\n"+
 	         		"public class second{ private int add(int a, int b){return a+b;}}"}, 
-	         	// ohne main
-	         {false, "public class first{ int a=0; int b=3; int c=a+b;\n System.out.println(\"wer braucht schon ne main\");}"},
+	         	// Anweisung außerhalb einer Methode (im Klassenrumpf)
+	         {false, "public class first{ int a=0; int b=3; int c=a+b;\n System.out.println(\"Wer braucht schon Methoden\");}"},
 	         	// ohne Klasse und main
 	         {true, "int a=0; int b=3; int c=a+b;"},
 	         	// selbst definierte Methode ohne Klasse
@@ -56,24 +58,40 @@ public class TestCompiler_Test {
 	         	// zwei Klassen
 	         {true, "public class first{ \npublic first(){}}\n"+
 	        		 "public class second{ \npublic second(){}}"},
+	        	// import Test
+	         {true, "import java.util.Vector; \n" +
+	        		"public class first{ \n" +
+	        		"public void main(String args[]){\n" +
+	        		"getOrdervektor();}\n" +
+	        		"public void getOrdervektor(){\n" +
+	        		"Vector<Integer> ordervector = new Vector<Integer>();\n" +
+	        		"for(int ordernumber=0;ordernumber<4;ordernumber++){\n" +
+	        		"ordervector.add(ordernumber);		}\n" +
+	        		"System.out.println(ordervector.toString());}" +
+	        		"}"},
 	         	// zwei main Klassen,	
-	         {true, "public class first{ \npublic static void main(String args[]){System.out.println(\"first\");}}\n"+
-	        		 "public class second{ \npublic static void main(String args[])\n{System.out.println(\"second\");}}"},
+	         {true, "public class first{ \n" +
+	         		"public static void main(String args[]){System.out.println(\"first\");}}\n"+
+	        		"public class second{ \n" +
+	        		"public static void main(String args[])\n" +
+	        		"{System.out.println(\"second\");}}"},
 	        	// Nonsense 
-	        {false, "asd"}		
+	        {false, "asd"}, 
+	        {true, " "}
 	      });
 	   }
 
 	@Test
 	public void test() {
-		assertEquals(expectedResult, TestCompiler.compileCode(testString));
+		assertEquals(expectedResult, testCompiler.compileCode(testString));
 	}
 	
 	@After
 	public void print(){
-		if(false != expectedResult != TestCompiler.getFailures().isEmpty()){
-			 System.out.println(TestCompiler.getFailures().get(0).get("Nachricht"));
-			 System.out.println(TestCompiler.getFailures().get(0).get("Class"));
+		if(false != expectedResult != testCompiler.getFailures().isEmpty()){
+			 System.out.println(testCompiler.getFailures().get(0).get("Nachricht"));
+			 System.out.println(testCompiler.getFailures().get(0).get("Class"));
 		 }
+		testCompiler=null;
 	}
 }

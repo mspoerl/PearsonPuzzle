@@ -10,6 +10,8 @@ import model.database.UserDBaccess;
 
 import org.junit.*;
 
+import view.PPException;
+
 public class DBAccess {
 
 	UserDBaccess db;
@@ -37,7 +39,7 @@ public class DBAccess {
 			db = new UserDBaccess();
 		} catch (SQLException e) {
 			fail("Problem beim Erstellen oder Öffnen der Datenbank");
-		}
+		} 
 	}
 	
 	@After
