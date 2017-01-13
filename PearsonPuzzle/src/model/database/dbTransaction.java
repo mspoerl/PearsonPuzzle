@@ -390,6 +390,7 @@ public class dbTransaction implements Transaction{
 		for(int ordernumber=0;!userDBaccess.getOrder(projectname, ordernumber).isEmpty();ordernumber++){
 			ordervector.add(userDBaccess.getOrder(projectname, ordernumber));
 		}
+		System.out.println(ordervector);
 		return ordervector;
 	}
 	public void saveOrder(String projectname, Vector<Vector<Integer>> orderMatrix){

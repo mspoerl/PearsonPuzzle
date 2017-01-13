@@ -105,10 +105,12 @@ public class Model extends Observable {
 	 * @param string Zeichenkette
 	 * @param string_to_compare Zu vergleichende Zeichenkette
 	 */
-	private void setChanged(final String string, final String string_to_compare){
-		if(string !=null && string.equals(string_to_compare));
+	private boolean setChanged(final String string, final String string_to_compare){
+		if(string !=null && string.equals(string_to_compare))
+			return false;
 		else
 			this.setChanged();
+		return true;
 	}
 	
 	/**
@@ -117,10 +119,12 @@ public class Model extends Observable {
 	 * @param integer Integer
 	 * @param integer_to_compare Zu vergelichende Integer
 	 */
-	private void setChanged (final Integer integer, final Integer integer_to_compare){
-		if(integer != null && integer.equals(integer_to_compare));
+	private boolean setChanged (final Integer integer, final Integer integer_to_compare){
+		if(integer != null && integer.equals(integer_to_compare))
+			return false;
 		else
 			this.setChanged();
+		return true;
 	}
 	
 	/**
@@ -147,7 +151,10 @@ public class Model extends Observable {
 		} else {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
+		boolean hasChanged = hasChanged();
 		notifyObservers();
+		if(hasChanged)
+			setChanged();
 	}
 	
 	public int getGrade() {
@@ -161,7 +168,10 @@ public class Model extends Observable {
 			tabSize = 10;
 		setChanged(this.tabSize, tabSize);
 		this.tabSize = tabSize;
+		Boolean hasChanged = hasChanged();
 		notifyObservers();
+		if(hasChanged)
+			setChanged();
 	}
 	public int getTabSize() {
 		return tabSize;
@@ -250,8 +260,19 @@ public class Model extends Observable {
 		return projectCode;
 	}
 	public void setProjectCode(String codeString){
-		setChanged(this.projectCode, codeString);
-		projectCode=codeString;
+		String[] projectCodeArray = codeString.split("\n");
+		StringBuffer codeBuffer = new StringBuffer();
+		for(String line: projectCodeArray){
+			if(!line.trim().isEmpty())
+				codeBuffer.append(line+"\n");
+		}
+		codeBuffer.deleteCharAt(codeBuffer.lastIndexOf("\n"));
+		setChanged(this.projectCode, codeBuffer.toString());
+		projectCode=codeBuffer.toString();
+		boolean hasChanged = hasChanged();
+		notifyObservers();
+		if(hasChanged)
+			setChanged();
 	}
 				// Projektvektor
 	public Vector<String> getCodeVector() {
@@ -278,10 +299,12 @@ public class Model extends Observable {
 			catch(NumberFormatException e){}
 		setChanged();
 		notifyObservers();
+		setChanged();
 	}
 	
 	public void saveGroupMatrix(){
 		dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
+		notifyObservers();
 	}
 	// Testrelevante Daten
 	public void addTestGroup(){
@@ -293,6 +316,7 @@ public class Model extends Observable {
 		codeLine_GroupMatrix.add(codeGroup);
 		setChanged();
 		notifyObservers();
+		setChanged();
 	}
 	public void removeTestGroup(int index){
 		if(index < codeLine_GroupMatrix.size())
@@ -521,15 +545,19 @@ public class Model extends Observable {
 		dataBase.updateDescription(projectName, projectDescription);
 		
 		// TODO: Test, ob erfolgreich gespeichert wurde
-		this.fetchProjects();
+		if(projectID!=null){
+			dataBase.saveProjectSettings(projectName, tabSize, grade);
+			if(jUnitCode!=null)
+				dataBase.saveJUnitTest(projectName,jUnitCode);
+			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
+			System.out.println(codeLine_GroupMatrix);
+		}
 		
+		this.fetchProjects();	
 		selectProject(projectList.indexOf(projectName));
-		saveProjectSettings();
 		
 		this.setChanged();
-		this.notifyObservers();
-		this.clearChanged();
-		
+		this.notifyObservers();		
 		return true;
 	}
 	
@@ -541,6 +569,7 @@ public class Model extends Observable {
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(getProjectName(),jUnitCode);
+			System.out.println(getProjectName());
 		}
 		notifyObservers();
 		clearChanged();

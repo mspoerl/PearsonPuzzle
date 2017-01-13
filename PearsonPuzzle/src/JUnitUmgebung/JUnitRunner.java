@@ -254,10 +254,13 @@ public class JUnitRunner {
 		MemClassLoader_JUnit unitClassLoader = new MemClassLoader_JUnit();
 				
 		JavaFileManager unitFileManager = new MemJavaFileManager_JUnit( compiler, unitClassLoader );
-		for(String clName:srcCodeMap.keySet()){
-			System.out.println("Class: "+clName+"\nSourceCode: "+srcCodeMap.get(clName));
-			// ---------------------------- Zugriff auf die zu Testenden Klassen (erst noch zu kompilieren)		
-		}
+		
+	// ---------------------------- Zugriff auf die zu Testenden Klassen (erst noch zu kompilieren)		
+		
+		
+		
+		
+		
 		JavaFileObject javaFile = new StringJavaFileObject( className, unitText );
 		Collection<JavaFileObject> units = Collections.singleton( javaFile );
 		Set<String> options = new HashSet<String>();		
