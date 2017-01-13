@@ -163,7 +163,7 @@ public class CodeSortView extends JView {
 	 */
 	public void addController(Controller controller){
 		// TODO: In den offiziellen Controller auslagern
-		saveDropList.addMouseListener(controller);
+		//saveDropList.addMouseListener((DefaultController)controller);
 		compileButton.addActionListener(controller);
 		compileButton.setActionCommand(DCCommand.Compile.toString());
 		testButton.setActionCommand(DCCommand.TestCode.toString());
@@ -211,6 +211,14 @@ public class CodeSortView extends JView {
 			String failureText = new String("Ergebnis des Unit-Test:\n"+model.getjUnitFailures().size()+" Fehler");
 			for(Failure failure: model.getjUnitFailures()){
 				failureText=failureText+"\n"+failure;
+			}
+			failureText = failureText + "\n";
+			for(String key : model.getSuccessMap().keySet()){
+				failureText = failureText +"\n"+key+": ";
+				if(model.getSuccessMap().get(key))
+					failureText+="Erfolgreich!";
+				else 
+					failureText+="Failed!";
 			}
 			messageBox.setText(failureText);
 		}

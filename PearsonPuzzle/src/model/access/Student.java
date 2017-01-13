@@ -2,9 +2,9 @@ package model.access;
 
 import javax.swing.text.View;
 
-public class Pupil implements AccessInterface{
+public class Student implements AccessInterface{
 	
-	Pupil(){
+	Student(){
 	}
 
 	public void verarbeite() {

@@ -8,19 +8,15 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import model.access.AccessGroup;
-import model.database.UserDBaccess;
 import model.database.dbTransaction;
 
-import org.apache.derby.catalog.GetProcedureColumns;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import view.Allert;
-import view.pearsonPuzzleException;
+import view.PPException;
 
 import controller.DCCommand;
 
@@ -47,6 +43,7 @@ public class Model extends Observable {
 	
 	private Vector<String> testExpressionsVector;
 	private Vector<Vector<Integer>> codeLine_GroupMatrix;
+	private String projectName;
 	private String projectDescription;
 	private String projectCode;
 	
@@ -60,33 +57,39 @@ public class Model extends Observable {
 	private int grade;
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
+	private AccessGroup userGroup_toEdit;
 	
-	private String JUnitCode;
+	private String jUnitCode;
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
-	private LinkedList<Boolean> groupFailures;
+	//private LinkedList<Boolean> groupFailures;
+	private LinkedHashMap<String,Boolean> successMap;
+
+	private PPException exception;
+
+	private HashMap<String, String> personMap;
+
 	// private Exception exceptionModel;
 
 	public Model() {
 		jUnitFailures=new LinkedList<Failure>();
 		compileFailures = new Vector<HashMap<String,String>>();
-		groupFailures = new LinkedList<Boolean>();
-		
-		// Default Werte werden gesetzt
-		this.tabSize = 0;
-		this.randomMode = true;
-		this.grade = 0;
-		
-		try{
-			dataBase = new dbTransaction();			
-		}
-		catch(pearsonPuzzleException e){
-			if(e.getMessage().equals(pearsonPuzzleException.anotherInstanceIsRunnign)){
-				System.exit(0);				
-			}
-			if(e.getMessage().equals(pearsonPuzzleException.noDatabaseExists)){
+		personMap = new HashMap<String, String>();
 				
+		try{
+			dataBase = new dbTransaction(this);			
+		}
+		catch(PPException e){
+			if(e.getMessage().equals(PPException.anotherInstanceIsRunnign)){
+				e.handleException(this);
+				System.exit(0);			
 			}
+			else if(e.getMessage().equals(PPException.noDatabaseExists)){
+				e.handleException(this);
+			}
+			else 
+				e.printStackTrace();
+			
 		}
 		// Datenbankverbindung wird aufgebaut
 		
@@ -95,34 +98,85 @@ public class Model extends Observable {
 		// Holt Daten aus der Datenbank
 		this.fetchAll();
 	}
+	
+	/**
+	 * <html>Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
+	 * wenn sich auch wirklich etwas geändert hat.</html>
+	 * @param string Zeichenkette
+	 * @param string_to_compare Zu vergleichende Zeichenkette
+	 */
+	private boolean setChanged(final String string, final String string_to_compare){
+		if(string !=null && string.equals(string_to_compare))
+			return false;
+		else
+			this.setChanged();
+		return true;
+	}
+	
+	/**
+	 * <html>Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
+	 * wenn sich auch wirklich etwas geändert hat.</html>
+	 * @param integer Integer
+	 * @param integer_to_compare Zu vergelichende Integer
+	 */
+	private boolean setChanged (final Integer integer, final Integer integer_to_compare){
+		if(integer != null && integer.equals(integer_to_compare))
+			return false;
+		else
+			this.setChanged();
+		return true;
+	}
+	
+	/**
+	 * Methode dient dazu, Views über auftretende Exceptions zu informieren.
+	 * @param exception Exception
+	 */
+	public void setException(PPException exception){
+		this.exception = exception;
+		setChanged();
+		notifyObservers(exception);
+	}
+	public PPException getException(){
+		return exception;
+	}
+
+	
 
 	// ------------------------------------ Getter und Setter ------------------------------
 	// --- Klassenstufe
 	public void setGrade(int grade) {
 		if (grade < 14 && grade > 5) {
+			setChanged(this.grade, grade);
 			this.grade = grade;
 		} else {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
-		clearChanged();
+		boolean hasChanged = hasChanged();
+		notifyObservers();
+		if(hasChanged)
+			setChanged();
 	}
+	
 	public int getGrade() {
 		return grade;
 	}
 	
 	// --- Tabbreite
-	public void setTabSize(int tabWidth) {
-		this.tabSize = tabWidth;
-		setChanged();
+	public void setTabSize(int tabSize) {
+		// Tab Size ist auf 10 begrenzt
+		if(tabSize>10)
+			tabSize = 10;
+		setChanged(this.tabSize, tabSize);
+		this.tabSize = tabSize;
+		Boolean hasChanged = hasChanged();
 		notifyObservers();
-		clearChanged();
+		if(hasChanged)
+			setChanged();
 	}
 	public int getTabSize() {
-		if(projectID!=null)
-			return tabSize;
-		return 0;
+		return tabSize;
 	}
-	public Vector<Integer> getTabVector(){
+	public Vector<Integer> getTabVector_random(){
 		return tabVector;
 	}
 
@@ -136,12 +190,12 @@ public class Model extends Observable {
 
 	// --- Zugriffsgruppe
 	// TODO: in accessGroup auslagern
-	public void setAccessGroup(AccessGroup accessGroup) {
-		this.accessGroup=accessGroup;		
+	public void login(String username, char[] password){
+		this.accessGroup = getAccessGroup(username, password);
 	}
 	public AccessGroup getAccessGroup(String username, char[] password) {
 		if (dataBase.lookUpstudent(username, password)) {
-			return AccessGroup.PUPIL;
+			return AccessGroup.STUDENT;
 		} else if (dataBase.lookUpteacher(username, password)) {
 			return AccessGroup.TEACHER;
 		} else
@@ -173,6 +227,11 @@ public class Model extends Observable {
 		this.fetchProjectSettings();
 		notifyObservers();
 	}
+	
+	public void setProjectName(String projectName) {
+		setChanged(this.projectName, projectName);
+		this.projectName = projectName;
+	}
 		
 	public Integer getProjectListID() {
 		return projectID;
@@ -182,33 +241,43 @@ public class Model extends Observable {
 		if(projectID!=null){
 			return projectList.get(projectID);
 		}
-		return new String();
+		return "";
 	}
 			// - Projektbeschreibung
 	public void setProjectDescription(String descriptionString) {
+		setChanged(this.projectDescription, descriptionString);
 		this.projectDescription=descriptionString;
-		setChanged();
 	}
 	public String getProjectDescription() {
-		if(projectID!=null){
+		if(projectID==null)
+			return "";
 		return projectDescription;
-		}
-		else return null;
 	}
 			// - Projektcode
 	public String getProjectCode() {
-		// TODO: Abfrage, ob Benutzergrupe Lehrer
-		if(projectID!=null){
-			return projectCode;
-		}
-		else return null;
+		if(projectID==null)
+			return "";
+		return projectCode;
 	}
 	public void setProjectCode(String codeString){
-		projectCode=codeString;
-		setChanged();
+		String[] projectCodeArray = codeString.split("\n");
+		StringBuffer codeBuffer = new StringBuffer();
+		for(String line: projectCodeArray){
+			if(!line.trim().isEmpty())
+				codeBuffer.append(line+"\n");
+		}
+		codeBuffer.deleteCharAt(codeBuffer.lastIndexOf("\n"));
+		setChanged(this.projectCode, codeBuffer.toString());
+		projectCode=codeBuffer.toString();
+		boolean hasChanged = hasChanged();
+		notifyObservers();
+		if(hasChanged)
+			setChanged();
 	}
 				// Projektvektor
 	public Vector<String> getCodeVector() {
+		if(projectID==null)
+			return new Vector<String>();
 		if(accessGroup == AccessGroup.TEACHER)
 			return codeVector_normal;
 		return codeVector_random;
@@ -230,11 +299,12 @@ public class Model extends Observable {
 			catch(NumberFormatException e){}
 		setChanged();
 		notifyObservers();
+		setChanged();
 	}
 	
 	public void saveGroupMatrix(){
-
 		dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
+		notifyObservers();
 	}
 	// Testrelevante Daten
 	public void addTestGroup(){
@@ -246,66 +316,107 @@ public class Model extends Observable {
 		codeLine_GroupMatrix.add(codeGroup);
 		setChanged();
 		notifyObservers();
+		setChanged();
 	}
 	public void removeTestGroup(int index){
 		if(index < codeLine_GroupMatrix.size())
 			codeLine_GroupMatrix.remove(index);	
 		setChanged();
-		notifyObservers();
+		notifyObservers(DCCommand.DeleteOrder);
 	}
 	public Vector<String> getTestExpressionsVector() {
+		if(projectID==null)
+			return null;
 		return testExpressionsVector;
 	}
 	public void setTestExpressionsVector(Vector<String> testVector) {
 		this.testExpressionsVector = testVector;
 	}
 
-	// Code zum puzzeln
-	private String[] getRandomCode() {
-		String[] parts = projectCode.split("\n");
-		if (randomMode) {
-			String buffer;
-			for (int i = parts.length - 1; i > 0; i--) {
-				int randomInt = new java.util.Random().nextInt(i);
-				buffer = parts[randomInt];
-				parts[randomInt] = parts[i];
-				parts[i] = buffer;
-			}
-		}
-		return parts;
-	}
+//	// Code zum puzzeln
+//	private String[] getRandomCode() {
+//		String[] parts = projectCode.split("\n");
+//		if (randomMode) {
+//			String buffer;
+//			for (int i = parts.length - 1; i > 0; i--) {
+//				int randomInt = new java.util.Random().nextInt(i);
+//				buffer = parts[randomInt];
+//				parts[randomInt] = parts[i];
+//				parts[i] = buffer;
+//			}
+//		}
+//		return parts;
+//	}
 	
 	// --- Vom Schüler zusammengepuzzelter Code
 	
 	public LinkedList<Integer> getSollution(){
 		return sortedCode;
 	}
+	public void setSollution(LinkedList<Integer> sollution){
+		sortedCode = sollution;
+	}
 	public Vector<String> getSolutionStrings(){
 		Vector<String> solution = new Vector<String>(codeMap.size());
 		for(Integer index: sortedCode){
-			solution.add(codeVector_random.get(index));
+			solution.add(codeVector_normal.get(index));
 		}
 		return solution;
 	}
 	// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
 	public void insertInSollution(int index, String value){
+		//sortedCode.add(index, codeVector_normal.indexOf(value));
 		sortedCode.add(index, codeMap.get(value.trim()));
 	}
 	public void replaceInSollution(int index, String value){
 		sortedCode.remove(index);
 		sortedCode.add(index, codeMap.get(value.trim()));
+		//sortedCode.add(index, codeVector_normal.indexOf(value));
 	}
 	public void removeInSollution(int index){
 		sortedCode.remove(index);
 	}
-	public boolean testSolution(){
-		Boolean result = OrderFailures.testOrder_simple(this, projectCode);
-		System.out.println(result);
-		result = result & OrderFailures.testOrder_groups(sortedCode, groupFailures, codeLine_GroupMatrix, codeMap, codeVector_normal);
+	public LinkedHashMap<String,Boolean> testSolution(){
+		successMap = new LinkedHashMap<String,Boolean>();
+		//System.out.println(sortedCode+"vorher");
+		if(sortedCode.isEmpty()){
+			successMap.put("Ausreichend viele Einträge", false);
+			setChanged();
+			notifyObservers(DCCommand.TestCode);
+			return successMap;
+		}
+		
+		// FIXME: unsauber, wenn nicht alle Elemnte gedragt wurden
+		else if(sortedCode.size()<codeVector_normal.size()){
+			successMap.put("Ausreichend viele Einträge", false);
+			setChanged();
+			notifyObservers(DCCommand.TestCode);
+			return successMap;
+		}
+		for(int i=0; i<codeVector_normal.size(); i++){
+			if(!sortedCode.contains(i) && sortedCode.contains(codeMap.get(codeVector_normal.get(i)))){
+				int j = sortedCode.lastIndexOf(codeMap.get(codeVector_normal.get(i)));
+				sortedCode.set(j, i);
+			}
+		}
+		System.out.println(sortedCode+"nachher");
+//		LinkedList<Integer> sortedCode = new LinkedList<Integer>();
+//		Vector<String> codeVector_normal = (Vector<String>) codeVector_normal.clone();
+//		for(
+		
+		Boolean result;
+		
+		result = OrderFailures.testOrder_simple(this, projectCode);
+		successMap.put("Test auf 1:1 Reihenfolge", result);
+		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		successMap.put("Gruppentest", result);
+		for(int i=0;i<groupFailures.size();i++){
+			successMap.put("Gruppe"+(i+1), groupFailures.get(i));
+		}
 		setChanged();
-		System.out.println(result);
+		
 		notifyObservers(DCCommand.TestCode);
-		return result;
+		return successMap;
 //		
 //		String sollutionString = new String();
 //		for (String string : getSolutionStrings()){
@@ -315,6 +426,20 @@ public class Model extends Observable {
 //		 	return true;
 //		return false;
 	}
+	/**
+	 * @return the successMap
+	 */
+	public LinkedHashMap<String, Boolean> getSuccessMap() {
+		return successMap;
+	}
+
+	/**
+	 * @param successMap the successMap to set
+	 */
+	public void setSuccessMap(LinkedHashMap<String, Boolean> successMap) {
+		this.successMap = successMap;
+	}
+
 	/**
 	 * Gibt Aufschluss, ob die Lösungsmatrix die Codezeile enthält.
 	 * Leerzeichen und Tabs werden nicht berücksichtigt.
@@ -348,11 +473,14 @@ public class Model extends Observable {
 	}
 
 	public String getJUnitCode() {
-		return JUnitCode;
+		if(projectID==null)
+			return "";
+		return jUnitCode;
 	}
 
 	public void setJUnitCode(String jUnitCode) {
-		JUnitCode = jUnitCode;
+		setChanged(this.jUnitCode, jUnitCode);
+		this.jUnitCode = jUnitCode;
 	}
 
 	/**
@@ -373,9 +501,18 @@ public class Model extends Observable {
 	 * Ist Abhängig vom unter <b>projectID</b> gespeicherten Listeneintag. 
 	 */
 	public void fetchAll(){
+		//this.randomMode = true;
+		
+		// Default Werte werden gesetzt
+		tabSize = 0;
+		grade = 0;
+		projectName = "";
+		
+		// Datenbank wird ausgelesen
 		this.fetchProjects();
 		this.fetchProjectCode();
 		this.fetchProjectSettings();
+		setChanged();
 		notifyObservers();
 		clearChanged();
 	}	
@@ -408,20 +545,34 @@ public class Model extends Observable {
 		dataBase.updateDescription(projectName, projectDescription);
 		
 		// TODO: Test, ob erfolgreich gespeichert wurde
-		this.fetchProjects();
-		this.selectProject(projectList.indexOf(projectName));
-		this.setChanged();
-		this.notifyObservers();
-		this.clearChanged();
+		if(projectID!=null){
+			dataBase.saveProjectSettings(projectName, tabSize, grade);
+			if(jUnitCode!=null)
+				dataBase.saveJUnitTest(projectName,jUnitCode);
+			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
+			System.out.println(codeLine_GroupMatrix);
+		}
 		
+		this.fetchProjects();	
+		selectProject(projectList.indexOf(projectName));
+		
+		this.setChanged();
+		this.notifyObservers();		
 		return true;
 	}
 	
+	/**
+	 * Kann nur ausgeführt werden, wenn Projekt selektiert wurde.
+	 */
 	public void saveProjectSettings(){
 		if(projectID!=null){
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
-			dataBase.saveJUnitTest(getProjectName(),JUnitCode);
+			if(jUnitCode!=null)
+				dataBase.saveJUnitTest(getProjectName(),jUnitCode);
+			System.out.println(getProjectName());
 		}
+		notifyObservers();
+		clearChanged();
 	}
 	
 
@@ -480,7 +631,7 @@ public class Model extends Observable {
 			catch(SQLException e){
 				this.projectDescription="Noch keine Beschreibung vorhanden";
 				}
-			setJUnitCode(dataBase.getJUnitCode(getProjectName()));
+			jUnitCode = dataBase.getJUnitCode(getProjectName());
 		}
 		else{
 			this.projectDescription = new String();
@@ -492,41 +643,62 @@ public class Model extends Observable {
 	 */
 	private void fetchProjectCode(){
 			if(projectID!=null){
-				this.setJUnitCode(dataBase.getJUnitCode(getProjectName()));
-				this.projectCode = dataBase.getCode(projectList.get(projectID));
+				jUnitCode = dataBase.getJUnitCode(getProjectName());
+				projectCode = dataBase.getCode(projectList.get(projectID));
 				String[] strings = projectCode.split("\n");
-				codeVector_normal = new Vector<String>();
-				for(String string:strings){
-					codeVector_normal.add(string);
+				
+				codeVector_normal = new Vector<String>(strings.length);
+				codeVector_random = new Vector<String>(strings.length);
+				tabVector = new Vector<Integer>(strings.length);
+				for(int i=0;i<strings.length; i++){
+					codeVector_random.add(new String());
+					tabVector.add(new Integer(0));
 				}
 				
-				String[] stringField = this.getRandomCode();
 				
-				this.codeVector_random = new Vector<String>();
-				this.testExpressionsVector = new Vector<String>();
-				this.codeMap = new LinkedHashMap<String, Integer>();
-				this.sortedCode= new LinkedList<Integer>();
-				this.codeLine_GroupMatrix = new Vector<Vector<Integer>>();
-				this.codeLine_GroupMatrix=dataBase.getOrdervektor(getProjectName());
-				sortedCode= new LinkedList<Integer>();
+				Vector<Integer> randomInts = dataBase.getRandomKeys(getProjectName());				
+				if(randomInts.size()!=strings.length){
+					System.out.println("Index out of Bounds!!!");
+				}
+				testExpressionsVector = new Vector<String>();
+				codeMap = new LinkedHashMap<String, Integer>();
+				sortedCode = new LinkedList<Integer>();
+				codeLine_GroupMatrix = new Vector<Vector<Integer>>();
+				codeLine_GroupMatrix = dataBase.getOrdervektor(getProjectName());
+			
 
-				for(String line: stringField){
+				for(int index=0; index<strings.length; index++){
+					
 					
 					// Dies ist notwendig, damit im Text sort view die Tabs richtig dargestellt werden.
 					String tab;
-					if(tabSize==0)
+					if(this.tabSize==0)
 						tab="";
 					else
 						tab=" ";
-					for(int i=0;i<tabSize;i++){
+					for(int i=0;i<this.tabSize;i++){
 						tab=tab+" ";
 					}
-					String bString = line.replaceAll("\t", tab);
-					codeVector_random.add(bString);
+					String bString = strings[index].replaceAll("\t", tab);
+//					int tabs=0;
+//					while(strings[index].startsWith("\t")){
+//						tabs++;
+//						strings[index]=strings[index].replaceFirst("\t", "");
+//					}
+//					tabVector.set(randomInts.get(index), tabs);
+//					
+//					codeVector_random.set(randomInts.get(index), strings[index]);
+					codeVector_random.set(randomInts.get(index), bString);
+					codeVector_normal.add(strings[index]);
+					
 					testExpressionsVector.add(new String());
-					codeMap.put(line.trim(), codeVector_random.size()-1);
+					
+					// 10.1.2016
+					//codeMap.put(strings[index], randomInts.get(index));
+					if(!codeMap.containsKey(strings[index]))
+						codeMap.put(strings[index], index);
 				}
-			}
+			}				
 	}
 	// --- Datenbank zurücksetzen
 		public boolean isResetDB() {
@@ -537,9 +709,105 @@ public class Model extends Observable {
 			setChanged();
 			notifyObservers();
 		}
-		
-}
 
+		public void setPersons(HashMap <String, String> person_password) {
+			this.personMap = person_password;
+		}
+
+		public boolean saveUser(Object username, Object password, Object accessgroup) {
+			
+			String userName = (String)username;
+			char[] passWord = (char[]) password;
+			AccessGroup accessGroup = (AccessGroup) accessgroup;
+			this.setChanged();
+			
+			if(accessGroup==null)
+				notifyObservers("accessgroup_unset");
+			
+			else if(userName == null 
+					|| userName.equals(""))
+				notifyObservers("username_unset");
+			else if(userName.length()<3)
+				notifyObservers("username_toShort");
+			
+			else if(password == null
+					|| passWord.length<1)
+				notifyObservers("password_unset");
+			else if(passWord.length<8)
+				notifyObservers("password_toShort");
+			else if(!proovePassword(passWord))
+				notifyObservers("password_unsave");
+			else{
+				if(dataBase.addUser(accessGroup.toString(), userName, new String (passWord))){
+					notifyObservers(DCCommand.Save);
+					return true;
+				}
+			}
+			return false;
+			
+		}	
+
+	private boolean proovePassword(char[] password){
+		boolean number = false;
+		boolean specialChar = false;
+		boolean upperCase = false;
+		boolean lowerCase = false;
+		
+		for(char c : password){
+			if(Character.isDigit(c))
+				number = true;
+			if(Character.isLowerCase(c))
+				lowerCase = true;
+			if(Character.isUpperCase(c))
+				upperCase = true;
+			int asci = (int)c;
+			if(asci < 32 || asci >126 )	// auf nicht erlaubte Zeichen prüfen
+				return false;
+			else if(asci<48 || (asci > 57 && asci <65) || (asci >90 && asci < 97) || asci >123) // auf Sonderzeichen prüfen
+				specialChar = true;
+		}
+		return (number && specialChar && upperCase && lowerCase);
+	}
+	
+	/**
+	 * Beschränkt auswahl auf übergebene Nutzergruppe. 
+	 * Wenn null übergeben wird, werden alle Nutzer zurückgegeben.
+	 * @param accessgroup
+	 * @return
+	 */
+	public Vector<String> getUsers(AccessGroup accessgroup) {
+		if(accessgroup==null){
+			Vector<String> namevector = new Vector<String>();
+			for(AccessGroup ac: AccessGroup.values())
+				namevector.addAll(dataBase.getNames(ac.toString()));
+			return namevector;
+		}
+		else 
+			return dataBase.getNames(accessgroup.toString());
+	}
+
+	public void deleteUsers(Vector<String> users) {
+		for(String user: users){
+			for(AccessGroup ac : AccessGroup.values())
+				dataBase.deleteUser(user, ac.toString());
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public AccessGroup getUserGroup_toEdit() {
+		if(userGroup_toEdit==null)
+			return AccessGroup.TEACHER;
+		return userGroup_toEdit;
+	}
+
+	public void setUserGroup_toEdit(AccessGroup userGroup_toEdit) {
+		this.userGroup_toEdit = userGroup_toEdit;
+		setChanged();
+		notifyObservers();
+	}
+	
+}
 
 /*
 public class Model extends Observable {

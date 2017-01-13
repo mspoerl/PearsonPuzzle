@@ -8,6 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import view.PPException;
+
+import model.access.AccessGroup;
+
 public class UserDBaccess {
 
 	 Connection conn;
@@ -17,7 +21,6 @@ public class UserDBaccess {
 		String dbUrl = "jdbc:derby:database;create=true";
 		conn = DriverManager.getConnection(dbUrl);
 		//derby.ui.codeset
-		//this.normalDbUsage();
 		}
 	 
 	 public void connectionToDerby() {
@@ -41,33 +44,26 @@ public class UserDBaccess {
 		 Statement stmt;
 		try {
 			stmt = conn.createStatement();
-		   stmt.executeUpdate("INSERT INTO "+tablename+" values ('"+username+"','"+password+"')");
+			stmt.executeUpdate("INSERT INTO "+tablename+" (username, password) values ('"+username+"','"+password+"')");
+			System.out.println("success");
 		   return true;}
 		   catch(SQLException e){	//username bereits vorhanden => false (falls handling erforderlich)
-			   if(e.getSQLState().equals("23505")){
-				   
+			   if(e.getSQLState().equals("23505")){ // The statement was aborted because it would have caused a 
+				   // duplicate key value in a unique or primary key constraint or unique index identified by '<value>' defined on '<value>'.	   
 				   return false;
 			   }
+			   e.printStackTrace();
 			   return false;
 		   }
 		 
 	 }
 	 
 //	 Sagt ob eine Person mit Namen username in einer der Tabellen students oder teacher existiert
-	 public boolean doesUserExists(String username){
-		 try{	  
-			   Statement stmt = conn.createStatement();
-			   ResultSet rs = stmt.executeQuery("SELECT * FROM students WHERE username= '" + username+"'");	
-			   ResultSet te = stmt.executeQuery("SELECT * FROM teachers WHERE username= '" + username+"'");	
-			   
-				   //stmt.close();
-				   return rs.next()||te.next();
-			   
-		   }
-		   catch(Exception e){
-			   return false;
-		   }
-		   
+	 public boolean doesUserExists(String username) throws SQLException {
+		Statement stmt;
+		stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM student, teacher WHERE student.username= '" + username+"' OR teacher.username='"+username+"'");
+		return rs.next();
 	   }
 	 
 	 //gibt alle Namen der Tabelle table zurück
@@ -88,17 +84,9 @@ public class UserDBaccess {
 		 return namevector;
 	 }
 	 
-	 public boolean deleteUser(String username, String table){
-		 try{	  
-			   Statement stmt = conn.createStatement();
-			  
+	 public void deleteUser(String username, String table) throws SQLException{
+		 Statement stmt = conn.createStatement();	  
 		 stmt.executeUpdate("DELETE FROM "+table+" WHERE username = '"+username+"'");
-		 return true;
-		 }
-		 catch(Exception e){
-			 return false;
-			
-		 }
 	 }
 	 
 
@@ -112,83 +100,81 @@ public class UserDBaccess {
 	  
 	   
 	   // -----  Nutzername und Passwort Vergleich Schüler
-	   public boolean lookUpstudent(String name, String passwordstring){
-		   try{	  
+	   public boolean lookUpstudent(String name, String passwordstring) throws SQLException{
 			   Statement stmt = conn.createStatement();
-			   ResultSet rs = stmt.executeQuery("SELECT * FROM students WHERE username= '" + name + "' AND password = '"+passwordstring+"'");	
-			 //stmt.close();
-			   return rs.next();		     
-			   
-		   }
-		   catch(Exception e){
-			   return false;
-		   }
-		   
+			   ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE username= '" + name + "' AND password = '"+passwordstring+"'");
+			   return rs.next();		     		   
 	   }
 	   
 	   // ----- Nutzername und Passwort Vergleich Lehrer
-	   public boolean lookUpteacher(String name, String passwordstring) {
-		   try{
-			   
-			   Statement stmt = conn.createStatement();
-			   ResultSet te = stmt.executeQuery("SELECT * FROM teachers WHERE username = '" + name + "' AND password = '"+passwordstring+"'");	
+	   public boolean lookUpteacher(String name, String passwordstring) throws SQLException{
+		  Statement stmt = conn.createStatement();
+		  ResultSet te = stmt.executeQuery("SELECT * FROM teacher WHERE username = '" + name + "' AND password = '"+passwordstring+"'");	
 			 //stmt.close();
-			   return te.next();
-		   } catch(Exception e){
-			   		return false;}
+		 return te.next();
 	   }
 
-
-	   private void normalDbUsage() throws SQLException {
-		   Statement stmt = conn.createStatement();
-
-		   /*Student*/
+	   
+	   @SuppressWarnings("unused")
+	private void testDbUsage() throws PPException, SQLException {
+		   
+		   // Standardabfrage 
 		   ResultSet rsS;
 		   try{
-			   // query
-			   rsS = stmt.executeQuery("SELECT * FROM students");
+			   Statement stmt = conn.createStatement();
+			   rsS = stmt.executeQuery("SELECT * FROM student");
+			   rsS = stmt.executeQuery("SELECT * FROM teacher");
+			   rsS = stmt.executeQuery("SELECT * FROM projects");
+			   
 		   }
 		   catch(SQLException e){
-			   // Hier wird abgehandelt, wenn was schief läuft
-			   // bzw. wenn die Tabelle (noch) nicht existiert 
-			   try {
-				   stmt.executeUpdate("Drop Table students");
-			   } 
-			   catch (SQLException ex) { // schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
+			   if(e.getSQLState().equals("42X05")){
+				   throw new PPException(PPException.databaseIsEmpty);
 			   }
-			   // create table 
-			   this.createTable_Students();
-			   rsS = stmt.executeQuery("SELECT * FROM students");
+			   else 
+				   throw e;
 		   }
-		   // print out query result
-		   while (rsS.next()) { 
-			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));
-		   }
-	       
-		   /*Teacher*/
-		   ResultSet rsT;
-		   try{
-			   rsT = stmt.executeQuery("SELECT * FROM teachers");
-		   }
-		   catch(SQLException e){
-			   // Hier wird abgehandelt, wenn was schief läuft
-			   // bzw. wenn die Tabelle (noch) nicht existiert 
-			   try {
-				   stmt.executeUpdate("Drop Table teachers");
-			   } 
-			   catch (SQLException ex){ // Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
-			   }   
-			   this.createTable_Teachers();
-			   // query
-			   rsT = stmt.executeQuery("SELECT * FROM teachers");
-		   }
-		   // print out query result
-		   while (rsT.next()) { 
-			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));			   
-		   }
-		   //stmt.close();
 	   }
-	   
+//			   // Hier wird abgehandelt, wenn was schief läuft
+//			   // bzw. wenn die Tabelle (noch) nicht existiert 
+//			   try {
+//				   stmt.executeUpdate("Drop Table students");
+//			   } 
+//			   catch (SQLException ex) { // schmeißt keine Exception, da nur der Fall, dass bereits eine Tabelle existiert, abgefangen werden soll
+//			   }
+//			   // create table 
+//			   this.createTable_Students();
+//			   rsS = stmt.executeQuery("SELECT * FROM students");
+//		   }
+//		   // print out query result
+//		   while (rsS.next()) { 
+//			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));
+//		   }
+//	       
+//		   /*Teacher*/
+//		   ResultSet rsT;
+//		   try{
+//			   rsT = stmt.executeQuery("SELECT * FROM teachers");
+//		   }
+//		   catch(SQLException e){
+//			   // Hier wird abgehandelt, wenn was schief läuft
+//			   // bzw. wenn die Tabelle (noch) nicht existiert 
+//			   try {
+//				   stmt.executeUpdate("Drop Table teachers");
+//			   } 
+//			   catch (SQLException ex){ // Schmeißt keine Exception, da nur der Fall, dass keine Tabelle existiert, abgefangen werden soll.
+//			   }   
+//			   this.createTable_Teachers();
+//			   // query
+//			   rsT = stmt.executeQuery("SELECT * FROM teachers");
+//		   }
+//		   // print out query result
+//		   while (rsT.next()) { 
+//			   //System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("username"), rs.getString("password"));			   
+//		   }
+//		   //stmt.close();
+//	   }
+   
 	   
 
 		//-----------------------------------------------------------------------------
@@ -227,7 +213,7 @@ public class UserDBaccess {
 		   
 			  
 		   //Projekt in Projects Tabelle abspeichern
-		   try{stmt.execute("INSERT INTO Projects VALUES ("
+		   try{stmt.execute("INSERT INTO Projects (pName, imports, description, tabSize) VALUES ("
 		   		+ "'"+projectname+"',"
 		   		+ "'"+imports+"',"
 		   		+ "'"+description+"',"
@@ -248,6 +234,7 @@ public class UserDBaccess {
 				   
 				   createProject(projectname, codeString, randomKeys, linelength);
 		   }
+			   //e.printStackTrace();
 		   }
 		   
 		   
@@ -286,7 +273,7 @@ public class UserDBaccess {
 
 			   
 			   for(int i = 0; i < codeString.length;i++){
-				   stmt.executeUpdate("INSERT INTO "+projectname+" VALUES ("
+				   stmt.executeUpdate("INSERT INTO "+projectname+" (lineKey, codeLine, randomKey) VALUES ("
 				   		+ ""+i+","
 				   		+ "'"+codeString[i]+"',"
 				   		+ ""+randomKeys.get(i).intValue()+")");
@@ -381,11 +368,14 @@ public class UserDBaccess {
 		   try {
 			   stmt = conn.createStatement();
 			   stmt.executeUpdate("UPDATE Projects SET jUnitCode='"+jUnitCode+"' WHERE pName='"+projectname+"'");
+		   		
 		   		} catch (SQLException e) {
 		   			if(e.getSQLState().equals("42X14")){ // 42X14: 'JUNITCODE' is not a column in table or VTI 'APP.PROJECTS'
 		   				try {
 							stmt = conn.createStatement();
 							stmt.executeUpdate("ALTER TABLE Projects ADD jUnitCode varchar(1000)");
+							stmt.executeUpdate("UPDATE Projects SET jUnitCode='"+jUnitCode+"' WHERE pName='"+projectname+"'");
+							return;
 						} catch (SQLException e1) {
 						}
 		   			}
@@ -430,8 +420,8 @@ public class UserDBaccess {
 //		   return codeString.toArray(new String[0]);
 //	   }
 	   
-	   public ArrayList<Integer> getRandomKeys(String projectname){
-		   ArrayList<Integer> randomKeys = new ArrayList<Integer>();
+	   public Vector<Integer> getRandomKeys(String projectname){
+		   Vector<Integer> randomKeys = new Vector<Integer>();
 		   Statement stmt;
 		try {
 			stmt = conn.createStatement();
@@ -546,27 +536,14 @@ public class UserDBaccess {
 		   //System.out.println("getprojects");
 		   Statement stmt;
 		   ResultSet te;
-		   try {
-			   stmt = conn.createStatement();
-			   te = stmt.executeQuery("SELECT pName FROM Projects");
-			   ArrayList<String> projectList = new ArrayList<String>();
-			   while (te.next()) { 
-				   projectList.add(te.getString("pName"));
+		   stmt = conn.createStatement();
+		   te = stmt.executeQuery("SELECT pName FROM Projects");
+		   ArrayList<String> projectList = new ArrayList<String>();
+		   while (te.next()) { 
+			   projectList.add(te.getString("pName"));
 				     }
 			   //stmt.close();
-			   return projectList;
-			   
-		   } catch (SQLException e1) {
-			   try{
-				   this.createTable_Projects();
-				   return this.getProjects(grade);
-			   } catch(SQLException e2){
-				   throw(e2);
-			   }
-		   // String[] codeString;
-		   // codeString= codeliste.toArray(new String[0]);
-		   // return codeString;
-		   }
+		   return projectList;
 	   	}
 	   
 	   /**
@@ -602,7 +579,7 @@ public class UserDBaccess {
 		   return 0;
 		   
 		}
-	   protected void createTable_Projects() throws SQLException{
+	   protected void recreateTable_Projects() throws SQLException{
 		   Statement stmt = conn.createStatement();
 		   // TODO: Allert soll erfolgen, der abfrägt, ob dies das erst Projekt ist, das man erstellt. Erst bei ja soll DROP TABLE erfolgen (sonst werden eventuell vorhandenen DAten verworfen)
 		   try{stmt.executeUpdate("DROP TABLE Projects");
@@ -618,24 +595,41 @@ public class UserDBaccess {
 		   //stmt.close();
 	   }
 	   
+	   protected void createTable(AccessGroup accessGroup) throws SQLException{
+		   Statement stmt = conn.createStatement();
+		   stmt.executeUpdate("Create table "+accessGroup.toString()+" (" +
+			   		"username varchar(30) UNIQUE, " +
+			   		"password varchar(8) NOT NULL default 'student')");
+	   }
+	   
+	   protected void dropTable(AccessGroup accessGroup){
+		   try{
+			   Statement stmt = conn.createStatement();
+			   stmt.executeUpdate("DROP TABLE student");
+		   //stmt.close();
+		   }
+		   catch(SQLException e){
+			   e.printStackTrace();
+		   }
+	   }
 	   
 	   /**
 	    * Schülertabelle wird verworfen, falls vorhanden und neu kreiert.<br>
 	    * <b>!!!ACHTUNG!!!</b> Löscht eventuell vorhanenden Daten!
 	    * @throws SQLException
 	    */
-	   protected void createTable_Students() throws SQLException{
+	   protected void recreateTable_Student() throws SQLException{
 		   Statement stmt = conn.createStatement();
-		   try{stmt.executeUpdate("DROP TABLE students");
+		   try{stmt.executeUpdate("DROP TABLE student");
 		   //stmt.close();
 		   }
 		   catch(SQLException e){}
-		   stmt.executeUpdate("Create table students (" +
+		   stmt.executeUpdate("Create table student (" +
 		   		"username varchar(30) UNIQUE, " +
 		   		"password varchar(8) NOT NULL default 'student')");  
 		   // insert 2 rows
-		   stmt.executeUpdate("insert into students values ('tom','tom')");
-		   stmt.executeUpdate("insert into students values ('peter','peter')");
+		   //stmt.executeUpdate("insert into students values ('tom','tom')");
+		   //stmt.executeUpdate("insert into students values ('peter','peter')");
 		   //stmt.close();
 	   }
 	   
@@ -644,18 +638,18 @@ public class UserDBaccess {
 	    * <b>!!!ACHTUNG!!!</b> Löscht eventuell vorhanenden Daten!
 	    * @throws SQLException
 	    */
-	   protected void createTable_Teachers() throws SQLException{
+	   protected void recreateTable_Teacher() throws SQLException{
 		   Statement stmt = conn.createStatement();
-		   try{stmt.executeUpdate("DROP TABLE teachers");
+		   try{stmt.executeUpdate("DROP TABLE teacher");
 		   //stmt.close();
 		   }
 		   catch(SQLException e){}
-		   stmt.executeUpdate("CREATE TABLE teachers (" +
+		   stmt.executeUpdate("CREATE TABLE teacher (" +
 		   		"username varchar(30) UNIQUE, " +
 		   		"password varchar(8)  NOT NULL default 'teacher')");
-		   stmt.executeUpdate("insert into teachers values ('Herr','Herr')");
-		   stmt.executeUpdate("insert into teachers values ('Frau','Frau')");
-		   stmt.executeUpdate("insert into teachers values ('TUM','TUM')");
+		   //stmt.executeUpdate("insert into teachers values ('Herr','Herr')");
+		   //stmt.executeUpdate("insert into teachers values ('Frau','Frau')");
+		   //stmt.executeUpdate("insert into teachers values ('TUM','TUM')");
 		   //stmt.close();
 	   }
 	   
@@ -664,9 +658,9 @@ public class UserDBaccess {
 	    * @throws SQLException
 	    */
 	   public void resetAll() throws SQLException{
-		   createTable_Projects();
-		   createTable_Students();
-		   createTable_Teachers();
+		   recreateTable_Projects();
+		   recreateTable_Student();
+		   recreateTable_Teacher();
 	   }
 
 	   /**
@@ -689,7 +683,10 @@ public class UserDBaccess {
 					   stmt.executeUpdate("DELETE FROM Projects WHERE pName = '"+projectname+"'");
 					   return true;
 				   }
-				   finally{ return false; }
+				   catch(SQLException e1){
+					   e1.printStackTrace();
+					   return false;
+				   }
 			   }
 			   else{
 				   e.printStackTrace();
