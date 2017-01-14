@@ -199,6 +199,7 @@ public class Model extends Observable {
 	// TODO: in accessGroup auslagern
 	public void login(String username, char[] password){
 		this.accessGroup = getAccessGroup(username, password);
+		this.username = username;
 	}
 	public AccessGroup getAccessGroup(String username, char[] password) {
 		if (dataBase.lookUpstudent(username, password)) {
