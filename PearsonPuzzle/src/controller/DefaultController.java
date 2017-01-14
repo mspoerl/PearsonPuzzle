@@ -27,6 +27,7 @@ import view.pupil.CodeSortView;
 import view.pupil.PupilView;
 import view.teacher.OptionConfiguration;
 import view.teacher.ConfigEditor;
+import view.teacher.PreViewEditor;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
@@ -127,6 +128,11 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					view.addController(this);
 				}
 				break;
+			case EditPreview:
+				view.quitView();
+				view = new PreViewEditor(model);
+				view.addController(this);
+				break;
 			case NewProject:
 				model.selectProject(null);
 				model.fetchAll();
@@ -176,6 +182,12 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				this.view=startView;
 				view.update();
 				break;
+			case Randomize:
+				if(view.getClass().equals(PreViewEditor.class)){
+					model.saveProject();
+					view.update(null, DCCommand.Randomize);
+				}
+				break;
 			case ShowHelp:
 				view.showDialog(DCCommand.ShowHelp, false);
 				break;
@@ -212,6 +224,9 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					model.deleteUsers(((UserEditor)view).getUsers());
 					//view.addController(this);
 					act(DCCommand.EditUsers, null);
+				}
+				else if(view.getClass().equals(PreViewEditor.class)){
+					model.savePuzzlemodus(((PreViewEditor) view).getPuzzleModus());
 				}
 				break;
 			case DeleteProject:

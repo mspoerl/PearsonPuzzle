@@ -41,7 +41,7 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
-	private static final int Puzzlemodus=1;
+	private static final int Puzzlemodus=0;
 	private static final String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
 	
 	private JList<String> dragList;
@@ -182,7 +182,7 @@ public class CodeSortView extends JView {
 		
 		// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
 		// Steht hier, weil es ein Problem von Swing ist, kein allgemeines Problem
-		Vector<String> codeVector = model.getCodeVector();
+		Vector<String> codeVector = model.getCodeVector(null);
 		for(String string : codeVector){
 			
 			listModel.add(listModel.size(),  string);

@@ -110,7 +110,7 @@ public class ConfigEditor extends JView{
 			}	
 			
 		}
-		tableModel.addColumn("Codezeile", model.getCodeVector());
+		tableModel.addColumn("Codezeile", model.getCodeVector(null));
 		tableModel.addColumn("Testausdruck", model.getTestExpressionsVector());
 	}
 

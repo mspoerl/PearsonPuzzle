@@ -56,6 +56,7 @@ public class Model extends Observable {
 	private boolean randomMode;
 	private boolean resetDB;
 	private int grade;
+	private int puzzleModus;
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
 	private AccessGroup userGroup_toEdit;
@@ -281,10 +282,18 @@ public class Model extends Observable {
 			setChanged();
 	}
 				// Projektvektor
-	public Vector<String> getCodeVector() {
+	
+	/**
+	 * Liefert einen Code Vektor. <br>
+	 * Für STUDENT kann nur der ranomisierte Vektor abgefragt werden.
+	 * @param random
+	 * @return
+	 */
+	public Vector<String> getCodeVector(Boolean random) {
 		if(projectID==null)
 			return new Vector<String>();
-		if(accessGroup == AccessGroup.TEACHER)
+		if(accessGroup == AccessGroup.TEACHER
+				&& (random==null || random == false))
 			return codeVector_normal;
 		return codeVector_random;
 	}
@@ -524,6 +533,9 @@ public class Model extends Observable {
 		clearChanged();
 	}	
 	
+	public void saveProject(){
+		saveProject(getProjectCode(), getProjectName(), getProjectDescription(), null);
+	}
 	/**
 	 * Speichert das Projekt. Für den Fall, dass das Projekt umbenannt wurde, <br>
 	 * wird projectName und der gewählte Eintrag ind projectList auf Ungleichheit geprüft.
@@ -531,7 +543,7 @@ public class Model extends Observable {
 	 * @param projectName Neuer Projektname 
 	 * @param linelength
 	 */
-	public boolean saveProject(String codeString, String projectName, String projectDescription,int linelength) {
+	public boolean saveProject(String codeString, String projectName, String projectDescription,Integer linelength) {
 		projectCode = new String(codeString);
 		
 		// ---- Prüfen, ob bereits ein gleichnamiges Projekt existiert 
@@ -833,6 +845,14 @@ public class Model extends Observable {
 	}
 	public String getStudentGroup(){
 		return studentGroup;
+	}
+
+	public int getPuzzlemodus() {
+		return puzzleModus;
+	}
+
+	public void savePuzzlemodus(int puzzlemodus) {
+		puzzleModus = puzzlemodus;
 	}
 	
 }
