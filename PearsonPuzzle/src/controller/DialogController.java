@@ -114,9 +114,11 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 	            else if(dialog.getClass().equals(AddImportDialog.class)){
 	            	if(value.equals(JOptionPane.OK_OPTION)){
 	            		if(dialog.getTitle().equals("Nötige Klassen"))
-	            			model.setImports("methods", (String)dialog.get("input"));
-	            		else if(dialog.getTitle().equals("Nötige Methoden"))
 	            			model.setImports("classes", (String)dialog.get("input"));
+	            		else if(dialog.getTitle().equals("Nötige Methoden"))
+	            			model.setImports("methods", (String)dialog.get("input"));
+	            		else if(dialog.getTitle().equals("Nötige Imports"))
+	            			model.setImports("online", (String)dialog.get("input"));
 	            		dialog.clearAndHide();
 	            	}
 	            	else

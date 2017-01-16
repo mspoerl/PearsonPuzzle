@@ -53,6 +53,10 @@ public class AddImportDialog extends JDialog{
 			instruction = new JLabel("<html>Geben Sie hier <B>Methoden</B> ein, die für das Ausführen des Programms benötigt werden.</html>");
 			input.setText(model.getImport("methods"));
 		}
+		else if(getTitle().equals("Nötige Imports")){
+			instruction = new JLabel("<html>Geben Sie hier <B>Imports</B> ein, die für das Ausführen des Programms benötigt werden.</html>");
+			input.setText(model.getImport("online"));
+		}
 		instruction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		input.setLineWrap(true);
 		JScrollPane inputSP = new JScrollPane(input);

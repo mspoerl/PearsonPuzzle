@@ -390,28 +390,36 @@ public class UserDBaccess {
 						} catch (SQLException e1) {
 						}
 		   			}
-		   			// XXX: Auto-generated catch block
-		   			e.printStackTrace();
+		   			else{
+		   				// XXX: Auto-generated catch block
+		   				e.printStackTrace();
+		   			}
 		   		}			
 		}
 	   public void saveImports(String projectname, String onlineImports, String localImports, String methods){
 		   Statement stmt;
 		   try {
+			   System.out.println(onlineImports+" "+localImports+" "+methods);
 			   stmt = conn.createStatement();
-			   stmt.executeUpdate("UPDATE Projects SET onlineImports '"+onlineImports+"', localImports '"+localImports+"', methods '"+methods+"' WHERE pName='"+projectname+"'");
+			   stmt.executeUpdate("UPDATE Projects SET onlineImports='"+onlineImports+"', localImports='"+localImports+"', methods='"+methods+"' WHERE pName='"+projectname+"'");
 		   		
 		   		} catch (SQLException e) {
 		   			if(e.getSQLState().equals("42X14")){ // 42X14: 'ONLINEIMPORTS' is not a column in table or VTI 'APP.PROJECTS'
 		   				try {
 							stmt = conn.createStatement();
-							stmt.executeUpdate("ALTER TABLE Projects ADD onlineImports varchar(100) ,localImports varchar(1500), methods(1500)");
-							stmt.executeUpdate("UPDATE Projects SET onlineImports '"+onlineImports+"', localImports '"+localImports+"', methods '"+methods+"' WHERE pName='"+projectname+"'");
+							stmt.executeUpdate("ALTER TABLE Projects ADD onlineImports varchar(100)");
+							stmt.executeUpdate("ALTER TABLE Projects ADD localImports varchar(1500)");
+							stmt.executeUpdate("ALTER TABLE Projects ADD methods varchar(1000)");
+							stmt.executeUpdate("UPDATE Projects SET onlineImports='"+onlineImports+"', localImports='"+localImports+"', methods='"+methods+"' WHERE pName='"+projectname+"'");
 							return;
 						} catch (SQLException e1) {
+							e1.printStackTrace();
 						}
 		   			}
-		   			// XXX: Auto-generated catch block
-		   			e.printStackTrace();
+		   			else{
+		   				// XXX: Auto-generated catch block
+			   			e.printStackTrace();
+			   		}
 		   		}	
 	   }
 	   public HashMap<String, String> getImports(String projectname) throws SQLException{
@@ -423,7 +431,7 @@ public class UserDBaccess {
 		   while(te.next()){
 			   importMap.put("online", te.getString("onlineImports"));
 			   importMap.put("classes", te.getString("localImports"));
-			   importMap.put("methods", te.getString("values"));
+			   importMap.put("methods", te.getString("methods"));
 		   }
 		   return importMap;
 	   }

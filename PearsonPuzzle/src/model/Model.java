@@ -548,6 +548,7 @@ public class Model extends Observable {
 	public boolean saveProject(String codeString, String projectName, String projectDescription,Integer linelength) {
 		projectCode = new String(codeString);
 		System.out.println("ID"+projectID);
+		if(projectID!=null)
 		System.out.println(projectList.get(projectID));
 		System.out.println(projectName);
 		System.out.println("this: "+this.projectName);
@@ -575,6 +576,7 @@ public class Model extends Observable {
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(projectName,jUnitCode);
 			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
+			dataBase.saveImports(projectName, projectImports);
 			System.out.println(codeLine_GroupMatrix);
 		}
 		
@@ -593,8 +595,8 @@ public class Model extends Observable {
 		if(projectID!=null){
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
 			if(jUnitCode!=null)
-				dataBase.saveJUnitTest(getProjectName(),jUnitCode);
-			System.out.println(getProjectName());
+				dataBase.saveJUnitTest(getProjectName(),jUnitCode);		
+			dataBase.saveImports(projectList.get(projectID), projectImports);
 		}
 		notifyObservers();
 		clearChanged();
@@ -837,6 +839,7 @@ public class Model extends Observable {
 
 	public void setImports(String type, String text) {
 		setChanged(projectImports.get(type), text);
+		System.out.println(projectImports);
 		if(type.equals("methods"))
 			projectImports.put("methods", text);
 		else if(type.equals("classes"))
@@ -845,7 +848,10 @@ public class Model extends Observable {
 			projectImports.put("online", text);
 	}
 	public String getImport(String type){
-		return projectImports.get(type);
+		if(projectImports!=null
+				&& projectImports.get(type)!=null)
+			return projectImports.get(type);
+		return "";
 	}
 
 	public void setStudentGroup(String student) {

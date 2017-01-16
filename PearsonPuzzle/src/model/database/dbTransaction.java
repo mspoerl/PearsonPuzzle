@@ -333,21 +333,24 @@ public class dbTransaction implements Transaction{
 		try {
 			return userDBaccess.getImports(projectname);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			HashMap<String, String> projectImports = new HashMap<String, String>();
-			projectImports.put("classes", "");
-			projectImports.put("methods", "");
-			projectImports.put("online", "");
-			return projectImports;
+			if(e.getSQLState().equals("42X04")){ // Kein Eintrag gefunden
+
+				// TODO Auto-generated catch block
+				HashMap<String, String> projectImports = new HashMap<String, String>();
+				projectImports.put("classes", "");
+				projectImports.put("methods", "");
+				projectImports.put("online", "");
+				return projectImports;
+			}
+			else 
+				e.printStackTrace();
+			return null;			
 		}
 	}
 	
 	public Vector<Integer> getRandomKeys(String projectname){
 		projectname = getRandomName(projectname); //13.1.2017 
 		return userDBaccess.getRandomKeys(projectname);
-	}
-	public void saveImports(String projectname, String onlineImports, String localImports, String methods){
-		userDBaccess.saveImports(projectname, onlineImports, localImports, methods);
 	}
 	
 	private ArrayList<Integer> getRandomKeys(int number){

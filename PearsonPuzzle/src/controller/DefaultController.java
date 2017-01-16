@@ -135,7 +135,10 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				view.addController(this);
 				break;
 			case EditOrderGroup:
-				view.showDialog(cmd, true);
+				if(model.getGroupMatrix().size()!=0)
+					view.showDialog(cmd, true);
+				else 
+					view.showDialog("Es sind keine Gruppen vorhanden, die man bearbeiten könnte.");
 				break;
 			case NewProject:
 				model.selectProject(null);
@@ -218,6 +221,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				}
 				else if(view.getClass().equals(UnitEditor.class)){
 					model.setJUnitCode(((UnitEditor) view).getContent());
+					model.setImports("online", ((UnitEditor) view).getImport());
 					model.saveProjectSettings();
 				}
 				else if(view.getClass().equals(ConfigEditor.class)){
@@ -434,7 +438,8 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			}
 		}
 		else if(view.getClass().equals(UnitEditor.class)){
-			if(e.getComponent().getName().equals("Imports"))
+			if(e.getComponent().getName().equals("Imports")
+					&& model.getImport("online").equals(""))
 				((JTextComponent) e.getComponent()).setText("");
 		}
 		else if(view.getClass().equals(ConfigEditor.class)){

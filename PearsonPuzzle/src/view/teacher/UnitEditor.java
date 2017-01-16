@@ -69,8 +69,13 @@ public class UnitEditor extends JView{
 		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		messageSP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		messageSP.setPreferredSize(new Dimension(200,100));
-		messageSP.setMinimumSize(new Dimension(200,100));		
-		imports = new JTextArea("Hier können imports angegeben werden. Zusätzliche nötige Klassen bitte über den Button unterhalb angeben.");
+		messageSP.setMinimumSize(new Dimension(200,100));
+	
+		String importText = model.getImport("online");
+		if(importText== null|| importText.isEmpty())
+			imports = new JTextArea("Hier können imports angegeben werden. Zusätzliche nötige Klassen bitte über den Button unterhalb angeben.");
+		else 
+			imports = new JTextArea(importText);
 		imports.setLineWrap(true);
 		imports.setWrapStyleWord(true);
 		imports.setBorder(BorderFactory.createCompoundBorder(border, 
@@ -158,6 +163,9 @@ public class UnitEditor extends JView{
 
 	public String getContent() {
 		return textArea.getText();
+	}
+	public String getImport(){
+		return imports.getText();
 	}
 
 }
