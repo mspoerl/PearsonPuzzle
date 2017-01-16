@@ -76,7 +76,8 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			else if(e.getSource().getClass().equals(JButton.class) 
 					&& cmd != DCCommand.EditConfig
 					&& cmd != DCCommand.EditJUnit
-					&& cmd != DCCommand.EditProject)
+					&& cmd != DCCommand.EditProject
+					&& cmd != DCCommand.EditPreview)
 			{}
 			else if(model.hasChanged()){
 				Integer allert=view.showDialog(Allert.notSaved);

@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 import view.PPException;
@@ -192,19 +194,17 @@ public class UserDBaccess {
 	    * @param projectID
 	    * @throws SQLException
 	    */
-	   public void saveProject(String projectname, String[] codeString, String imports, String description, 
-			   					ArrayList<Integer> randomKeys, int tabsize, int linelength) throws SQLException{
+	   public void saveProject(String projectname, String randomname, String[] codeString, String description, 
+					ArrayList<Integer> randomKeys, int tabsize, int linelength) throws SQLException{
 		   
 		   Statement stmt = conn.createStatement();
 		   
 		   //XXX doppelte Tabellennamen besser handeln
 		   //FIXME imports länge = 100 ändern
-		   
-		   // ----- Speichert Projektnamen Tabelle
 		   try{
 			   stmt.executeUpdate("CREATE TABLE Projects ( " +
-				   		"pName varchar("+length_projectName+") UNIQUE, " +   		
-				   		"imports varchar(100) , " +  
+				   		"pName varchar("+length_projectName+") UNIQUE, " + 
+					    "randomName varchar(15) UNIQUE"+
 				   		"description varchar("+length_projectDescription+"), " +
 				   		"tabSize INT)");
 		   }
@@ -213,26 +213,28 @@ public class UserDBaccess {
 		   
 			  
 		   //Projekt in Projects Tabelle abspeichern
-		   try{stmt.execute("INSERT INTO Projects (pName, imports, description, tabSize) VALUES ("
-		   		+ "'"+projectname+"',"
-		   		+ "'"+imports+"',"
+		   try{stmt.execute("INSERT INTO Projects (pName, randomName, description, tabSize) VALUES ("
+				+ "'"+projectname+"',"
+			   	+ "'"+randomname+"',"
 		   		+ "'"+description+"',"
 		   		+ ""+tabsize+")");
-		   
 		   // Project wird in neuer Tabelle abgespeichert
-		   createProject(projectname, codeString, randomKeys, linelength);
+		   createProject(randomname, codeString, randomKeys, linelength);
 		   }
 		   catch(SQLException e){	
 			   //Projektname bereits vorhanden => Projekt wird aktualisiert
 			   if(e.getSQLState().equals("23505")){
 				   
 				   stmt.executeUpdate("UPDATE Projects SET "
-					   		+ "imports='"+imports+"',"
 					   		+ "description='"+description+"',"
-					   		+ "tabsize="+tabsize+" "
-					   		+ "WHERE pName='"+projectname+"'");
-				   
-				   createProject(projectname, codeString, randomKeys, linelength);
+					   		+ "tabsize="+tabsize+","
+					   		
+					   //		+ "pName = '"+projectname+"'"
+					   //		+ "WHERE randomname='"+randomname+"'"
+					   		+ "randomName = '"+randomname+"'"
+					   		+ "WHERE pName = '"+projectname+"'"
+					   		);
+				   createProject(randomname, codeString, randomKeys, linelength);
 		   }
 			   //e.printStackTrace();
 		   }
@@ -249,31 +251,31 @@ public class UserDBaccess {
 	 * Speichert das übergebene Projekt in der Datenbank.<br>
 	 * <b>Leere Zeilen werden beim Apspeichern gelöscht.</b>
 	 * 
-	 * @param projectname
+	 * @param randomName
 	 * @param codeString
 	 * @param linelength
 	 * @param randomKey
 	 */
 	   
-	   public void createProject(String projectname, String[] codeString, ArrayList<Integer> randomKeys, int linelength) {
+	   public void createProject(String randomName, String[] codeString, ArrayList<Integer> randomKeys, int linelength) {
 
 		   //System.out.println("createProject");
 		   try{
 			   Statement stmt = conn.createStatement();
 			   try{
-				   stmt.executeUpdate("DROP TABLE "+projectname); 
+				   stmt.executeUpdate("DROP TABLE "+randomName); 
 			   }
 				   catch(Exception e){
 					   }
 				   
-			   stmt.execute("CREATE TABLE "+projectname+" ( " +
+			   stmt.execute("CREATE TABLE "+randomName+" ( " +
 				   		"lineKey int PRIMARY KEY, " +	
 				   		"codeLine varchar("+linelength+"), " +	
 				   		"randomKey int)");
 
 			   
 			   for(int i = 0; i < codeString.length;i++){
-				   stmt.executeUpdate("INSERT INTO "+projectname+" (lineKey, codeLine, randomKey) VALUES ("
+				   stmt.executeUpdate("INSERT INTO "+randomName+" (lineKey, codeLine, randomKey) VALUES ("
 				   		+ ""+i+","
 				   		+ "'"+codeString[i]+"',"
 				   		+ ""+randomKeys.get(i).intValue()+")");
@@ -341,11 +343,20 @@ public class UserDBaccess {
 		   try {
 			   stmt = conn.createStatement();
 			   stmt.execute("UPDATE Projects SET pName='"+newName+"' WHERE pName='"+oldName+"'");
-			   stmt.execute("RENAME TABLE "+oldName+"TO"+newName);
 		   } catch (SQLException e) {
 			   // TODO Auto-generated catch block
 			   e.printStackTrace();
-		   }		   
+		   }	
+//		   //System.out.println("renameProject");
+//		   Statement stmt;
+//		   try {
+//			   stmt = conn.createStatement();
+//			   stmt.execute("UPDATE Projects SET pName='"+newName+"' WHERE pName='"+oldName+"'");
+//			   stmt.execute("RENAME TABLE "+oldName+"TO"+newName);
+//		   } catch (SQLException e) {
+//			   // TODO Auto-generated catch block
+//			   e.printStackTrace();
+//		   }		   
 	   }
 	
 	   
@@ -383,7 +394,39 @@ public class UserDBaccess {
 		   			e.printStackTrace();
 		   		}			
 		}
-	   
+	   public void saveImports(String projectname, String onlineImports, String localImports, String methods){
+		   Statement stmt;
+		   try {
+			   stmt = conn.createStatement();
+			   stmt.executeUpdate("UPDATE Projects SET onlineImports '"+onlineImports+"', localImports '"+localImports+"', methods '"+methods+"' WHERE pName='"+projectname+"'");
+		   		
+		   		} catch (SQLException e) {
+		   			if(e.getSQLState().equals("42X14")){ // 42X14: 'ONLINEIMPORTS' is not a column in table or VTI 'APP.PROJECTS'
+		   				try {
+							stmt = conn.createStatement();
+							stmt.executeUpdate("ALTER TABLE Projects ADD onlineImports varchar(100) ,localImports varchar(1500), methods(1500)");
+							stmt.executeUpdate("UPDATE Projects SET onlineImports '"+onlineImports+"', localImports '"+localImports+"', methods '"+methods+"' WHERE pName='"+projectname+"'");
+							return;
+						} catch (SQLException e1) {
+						}
+		   			}
+		   			// XXX: Auto-generated catch block
+		   			e.printStackTrace();
+		   		}	
+	   }
+	   public HashMap<String, String> getImports(String projectname) throws SQLException{
+		   Statement stmt;
+		   ResultSet te = null;
+		   HashMap <String, String> importMap = new HashMap<String, String>();
+		   stmt = conn.createStatement();
+		   te = stmt.executeQuery("SELECT onlineImports, localImports, methods FROM Projects WHERE pName = '"+projectname+"'");
+		   while(te.next()){
+			   importMap.put("online", te.getString("onlineImports"));
+			   importMap.put("classes", te.getString("localImports"));
+			   importMap.put("methods", te.getString("values"));
+		   }
+		   return importMap;
+	   }
 	   
 	   //-------------------------- Code aus Datenbank auslesen -------------------------------	   
 	   
@@ -419,7 +462,7 @@ public class UserDBaccess {
 //		   //System.out.println(te.getString("Code"));
 //		   return codeString.toArray(new String[0]);
 //	   }
-	   
+	   	   
 	   public Vector<Integer> getRandomKeys(String projectname){
 		   Vector<Integer> randomKeys = new Vector<Integer>();
 		   Statement stmt;
@@ -440,11 +483,11 @@ public class UserDBaccess {
 		}
 	   }
 	   
-	   public ArrayList <String> getCodeList(String projectname) throws SQLException{
+	   public ArrayList <String> getCodeList(String randomName) throws SQLException{
 		   //System.out.println("getcodelist");
 		   Statement stmt = conn.createStatement();
 		   
-		   ResultSet te = stmt.executeQuery("SELECT codeLine FROM "+projectname);
+		   ResultSet te = stmt.executeQuery("SELECT codeLine FROM "+randomName);
 		   
 		   ArrayList<String> codeliste = new ArrayList<String>();
 		   
@@ -460,7 +503,7 @@ public class UserDBaccess {
 	   
 	   
 //	   fügt eine einzelne neue Reihenfolge hinzu
-	   public boolean addOrder(String projectname, Vector<Integer> neworder){
+	   public boolean addOrder(String randomName, Vector<Integer> neworder){
 		   boolean success = false;
 		   try {
 			Statement stmt = conn.createStatement();
@@ -469,14 +512,14 @@ public class UserDBaccess {
 			int ordernumber=0;
 			for(int i = 0;!success;i++){
 			   try{
-				   stmt.executeUpdate("ALTER TABLE "+projectname+" ADD COLUMN order_"+i+" int");
+				   stmt.executeUpdate("ALTER TABLE "+randomName+" ADD COLUMN order_"+i+" int");
 				   success = true;
 				   ordernumber=i;
 			   }catch(Exception e){}
 			}
 			
 			for(int j = 0; j < neworder.size();j++){
-				   stmt.executeUpdate("UPDATE "+projectname+" SET "
+				   stmt.executeUpdate("UPDATE "+randomName+" SET "
 				   		+ "order_"+ordernumber+"="+neworder.get(j).intValue()+""
 				   		+ "WHERE lineKey="+j);
 				   
@@ -492,13 +535,13 @@ public class UserDBaccess {
 	   
 	   
 //	   gibt eine reinfolge mit der nummer ordernumber zurück
-	   public Vector<Integer> getOrder(String projectname, int ordernumber){
+	   public Vector<Integer> getOrder(String randomName, int ordernumber){
 		   Statement stmt;
 		   Vector<Integer> order = new Vector<Integer>();
 		   try {
 			stmt = conn.createStatement();
 		
-		   ResultSet rs = stmt.executeQuery("SELECT order_"+ordernumber+" FROM "+ projectname);	
+		   ResultSet rs = stmt.executeQuery("SELECT order_"+ordernumber+" FROM "+ randomName);	
 		   while(rs.next()){
 			   order.add(rs.getInt("order_"+ordernumber));
 		   }
@@ -510,12 +553,12 @@ public class UserDBaccess {
 	   
 	   
 //	   löscht eine Reihenfolge an der stelle ordernumber
-	   public boolean deleteOrder(String projectname, int ordernumber){
+	   public boolean deleteOrder(String randomName, int ordernumber){
 		   Statement stmt;
 		  try {
 			stmt = conn.createStatement();
 		
-		   stmt.executeUpdate("ALTER TABLE "+projectname+" DROP COLUMN order_"+ordernumber);	
+		   stmt.executeUpdate("ALTER TABLE "+randomName+" DROP COLUMN order_"+ordernumber);	
 		   return true;
 		   
 		} catch (Exception e) {
@@ -587,10 +630,14 @@ public class UserDBaccess {
 		   }
 		   catch(SQLException e){}
 		   stmt.executeUpdate("CREATE TABLE Projects ( " +
-		   		"pName varchar("+length_projectName+") UNIQUE, " +   		
-		   		"imports varchar(100) , " +  
-		   		"description varchar("+length_projectDescription+"), " +
-		   		"tabSize INT)");
+				   "pName varchar("+length_projectName+") UNIQUE, " +
+			   		"randomName varchar(15) UNIQUE, " +				     
+			   		"description varchar("+length_projectDescription+"), " +
+			   		"tabSize INT)");
+//		   		"pName varchar("+length_projectName+") UNIQUE, " +   		
+//		   		"imports varchar(100) , " +  
+//		   		"description varchar("+length_projectDescription+"), " +
+//		   		"tabSize INT)");
 		   
 		   //stmt.close();
 	   }
@@ -717,6 +764,57 @@ public class UserDBaccess {
 					e.printStackTrace();
 			}
 			return true;
+	   }
+
+	   public boolean doesRandomnameExist(String Randomname){
+		   boolean doesExist = false;
+		   try{
+				Statement stmt = conn.createStatement();
+				stmt.executeQuery("SELECT * FROM "+Randomname+"");
+				stmt.executeQuery("SELECT * FROM Projects WHERE randomName='"+Randomname+"'");
+				
+			}
+			catch(SQLException e){
+				if(e.getSQLState().equals("42X05")){ // Table/View '<objectName>' does not exist.
+					doesExist = false;
+				}
+				else
+					doesExist = true;
+			}
+		   try{
+				Statement stmt = conn.createStatement();
+				ResultSet rs=stmt.executeQuery("SELECT * FROM Projects WHERE randomName='"+Randomname+"'");
+				rs.next();
+				if(rs.getString("pName").equals("")){
+					//stmt.close();
+					//doesExist = false;
+				}
+				else 
+					doesExist = true;
+			}
+			catch(SQLException e){
+				if(e.getSQLState().equals("24000")); // Invalid cursor state - no current row
+				else
+					doesExist = true;
+			}
+		   return doesExist;
+	   }
+	   
+	   public String getRandomName(String projectname) throws SQLException {
+		    Statement stmt = conn.createStatement();
+			ResultSet rs=stmt.executeQuery("SELECT randomName FROM Projects WHERE pName='"+projectname+"'");
+			rs.next();
+			return rs.getString("randomName");
+	   }
+	   
+	   public Vector<String> getRandomNames() throws SQLException {
+		    Statement stmt = conn.createStatement();
+			ResultSet rs=stmt.executeQuery("SELECT randomName FROM Projects");
+			Vector<String> randomNames = new Vector<String>();
+			while(rs.next()){
+				randomNames.add(rs.getString("randomName"));
+			}
+			return randomNames;
 	   }
 
 	public String getJUnitCode(String projectName) throws SQLException {

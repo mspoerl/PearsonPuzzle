@@ -80,9 +80,6 @@ public class Model extends Observable {
 		jUnitFailures=new LinkedList<Failure>();
 		compileFailures = new Vector<HashMap<String,String>>();
 		personMap = new HashMap<String, String>();
-		projectImports = new HashMap<String, String>();
-		projectImports.put("classes", "");
-		projectImports.put("methods", "");
 		
 		try{
 			dataBase = new dbTransaction(this);			
@@ -159,7 +156,7 @@ public class Model extends Observable {
 		} else {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
-		boolean hasChanged = hasChanged();
+		boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
@@ -176,7 +173,7 @@ public class Model extends Observable {
 			tabSize = 10;
 		setChanged(this.tabSize, tabSize);
 		this.tabSize = tabSize;
-		Boolean hasChanged = hasChanged();
+		Boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
@@ -278,7 +275,7 @@ public class Model extends Observable {
 		codeBuffer.deleteCharAt(codeBuffer.lastIndexOf("\n"));
 		setChanged(this.projectCode, codeBuffer.toString());
 		projectCode=codeBuffer.toString();
-		boolean hasChanged = hasChanged();
+		boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
@@ -550,7 +547,10 @@ public class Model extends Observable {
 	 */
 	public boolean saveProject(String codeString, String projectName, String projectDescription,Integer linelength) {
 		projectCode = new String(codeString);
-		
+		System.out.println("ID"+projectID);
+		System.out.println(projectList.get(projectID));
+		System.out.println(projectName);
+		System.out.println("this: "+this.projectName);
 		// ---- Prüfen, ob bereits ein gleichnamiges Projekt existiert 
 		if(projectID==null 
 				|| !projectName.equals(projectList.get(projectID))){
@@ -558,14 +558,15 @@ public class Model extends Observable {
 				return false;
 			}
 		}
-		
 		// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
 		else if(!projectName.equals(projectList.get(projectID))){
+			// FIXME: hier kommt nie jemand an
+			System.out.println("rename");
 			dataBase.renameProject(projectList.get(projectID), projectName);
 		}
 		
 		// ----- Projekt speichern
-		dataBase.saveProject(projectName, codeString,"", projectDescription ,tabSize);
+		dataBase.saveProject(projectName, codeString,"", "", projectDescription ,tabSize);
 		dataBase.updateDescription(projectName, projectDescription);
 		
 		// TODO: Test, ob erfolgreich gespeichert wurde
@@ -656,6 +657,7 @@ public class Model extends Observable {
 				this.projectDescription="Noch keine Beschreibung vorhanden";
 				}
 			jUnitCode = dataBase.getJUnitCode(getProjectName());
+			projectImports = dataBase.getImports(getProjectName());
 		}
 		else{
 			this.projectDescription = new String();
@@ -839,6 +841,8 @@ public class Model extends Observable {
 			projectImports.put("methods", text);
 		else if(type.equals("classes"))
 			projectImports.put("classes", text);
+		else if(type.equals("online"))
+			projectImports.put("online", text);
 	}
 	public String getImport(String type){
 		return projectImports.get(type);
