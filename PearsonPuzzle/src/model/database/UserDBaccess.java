@@ -388,6 +388,7 @@ public class UserDBaccess {
 							stmt.executeUpdate("UPDATE Projects SET jUnitCode='"+jUnitCode+"' WHERE pName='"+projectname+"'");
 							return;
 						} catch (SQLException e1) {
+							e1.printStackTrace();
 						}
 		   			}
 		   			else{
@@ -830,5 +831,36 @@ public class UserDBaccess {
 		ResultSet rs=stmt.executeQuery("SELECT junitcode FROM Projects WHERE pName='"+projectName+"'");
 		rs.next();
 		return rs.getString("junitcode");
+	}
+
+	public String getPuzzleMode(String projectName) throws SQLException {
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT puzzlemode FROM Projects WHERE pName = '"+projectName+"'");
+		rs.next();
+		return rs.getString("puzzlemode");
+	}
+
+	public void savePuzzlemode(String projectname, int puzzlemode) {
+		Statement stmt;
+		try {
+		   stmt = conn.createStatement();
+		   stmt.executeUpdate("UPDATE Projects SET puzzlemode="+puzzlemode+" WHERE pName='"+projectname+"'");
+	   		
+	   		} catch (SQLException e) {
+	   			if(e.getSQLState().equals("42X14")){ // 42X14: 'puzzlemode' is not a column in table or VTI 'APP.PROJECTS'
+	   				try {
+						stmt = conn.createStatement();
+						stmt.executeUpdate("ALTER TABLE Projects ADD puzzlemode INT");
+						stmt.executeUpdate("UPDATE Projects SET puzzlemode="+puzzlemode+" WHERE pName='"+projectname+"'");
+						return;
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+	   			}
+	   			else{
+	   				// XXX: Auto-generated catch block
+	   				e.printStackTrace();
+	   			}
+	   		}			
 	}
 }

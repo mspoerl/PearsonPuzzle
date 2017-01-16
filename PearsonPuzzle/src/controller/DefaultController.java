@@ -69,7 +69,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				&& cmd!=DCCommand.ConnectedComponent){
 			if (view.getClass().equals(TextEditor.class)
 					&& ((view.get("projectname")== null || ((String) view.get("projectname")).trim().isEmpty()))
-					&& (cmd==DCCommand.EditConfig || cmd == DCCommand.EditJUnit)){
+					&& (cmd==DCCommand.EditConfig || cmd == DCCommand.EditJUnit || cmd==DCCommand.EditPreview)){
 				view.showDialog(Allert.noContentInput);
 				return;
 			}
@@ -88,7 +88,10 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						return;
 				}
 				else if(allert==JOptionPane.NO_OPTION){
-					model.fetchAll();
+					if(model.getProjectListID()==null)
+						return;
+					else 
+						model.fetchAll();
 				}
 				else if(allert==JOptionPane.CANCEL_OPTION)
 					return;
@@ -143,6 +146,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			case NewProject:
 				model.selectProject(null);
 				model.fetchAll();
+				model.clearProjectData();
 				view.quitView();
 				this.view=new TextEditor(model);
 				view.addController(this);
@@ -234,7 +238,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					act(DCCommand.EditUsers, null);
 				}
 				else if(view.getClass().equals(PreViewEditor.class)){
-					model.savePuzzlemodus(((PreViewEditor) view).getPuzzleModus());
+					model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
 				}
 				break;
 			case DeleteProject:
@@ -320,7 +324,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				if(model.getAccessGroup()==AccessGroup.STUDENT){
 					System.out.println(model.getSollution());
 					//model.testSolution();
-					model.testSolution();
+					model.testOrderOfSollution();
 					//result = JUnitRunner.run();
 				}
 				else{
@@ -450,8 +454,9 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 	public void focusLost(FocusEvent e) {
 		if(view.getClass().equals(TextEditor.class)
 				|| view.getClass().equals(UnitEditor.class)){
-			String compName = ((Component) e.getSource()).getName();
-			if(e.getSource().getClass().equals(JTextComponent.class)){
+			String compName = e.getComponent().getName();
+			if(e.getSource().getClass().equals(JTextArea.class) 
+					|| e.getSource().getClass().equals(JTextField.class)){
 				String compValue = ((JTextComponent) e.getSource()).getText();
 				if(compName.equals("ProjectCode"))
 					model.setProjectCode(compValue);
@@ -465,6 +470,10 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					model.setGrade(Integer.parseInt(compValue));
 				else if(compName.equals("JUnitCode"))
 					model.setJUnitCode(compValue);
+				else if(compName.equals("Imports"))
+					if(!model.setImports("online", compValue)){
+						view.showDialog("<html><body>Imports müssen von folgender Form sein: \n\n\timport beispiel.bspy;\nimport beipiel2.bspx </body></html>");
+					}
 			}
 			else if(e.getSource().getClass().equals(JComboBox.class))
 			{

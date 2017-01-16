@@ -4,6 +4,7 @@ package model.database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import view.PPException;
@@ -34,24 +35,17 @@ public class dbTransaction implements Transaction{
 		} catch (SQLException e) {
 			if(((SQLException) e).getSQLState().equals("XJ040")){ // Failed to start database '<databaseName>', see the next exception for details.
 				PPException exception = new PPException(PPException.anotherInstanceIsRunnign);
-
-				System.out.println("1");
 				throw exception;
 			}
 			else if(e.getSQLState().equals("XJ004")){ // Database '<databaseName>' not found.
 				PPException exception = new PPException(PPException.noDatabaseExists);
-
-				System.out.println("2");
 				throw exception;
 			}
 			else if(e.getSQLState().equals("42X05")){ // Table/View '<objectName>' does not exist.
 				PPException exception = new PPException(PPException.noDatabaseExists);
-
-				System.out.println("3");
 				throw exception;
 			}
 			else{
-				//System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -120,17 +114,6 @@ public class dbTransaction implements Transaction{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		 if(userDBaccess.doesUserExists(username)){
-//		 boolean success = userDBaccess.deleteUser(username, table);
-//		 if(!success){
-//			 System.out.println("person does exist in other table, not deleted");}
-//		 return success;
-//		 }
-//		 else{
-//			 //die Person existiert nicht
-//			 System.out.println("person does not exist");
-//			 return false;
-//		 }
 	 }
 	
 	
@@ -463,7 +446,6 @@ public class dbTransaction implements Transaction{
 		for(int ordernumber=0;!userDBaccess.getOrder(projectname, ordernumber).isEmpty();ordernumber++){
 			ordervector.add(userDBaccess.getOrder(projectname, ordernumber));
 		}
-		System.out.println(ordervector);
 		return ordervector;
 	}
 	public void saveOrder(String projectname, Vector<Vector<Integer>> orderMatrix){
@@ -555,4 +537,28 @@ public class dbTransaction implements Transaction{
 	 public boolean projectExists(String projectName) {
 		 return userDBaccess.projectExists(projectName);
 	 }
+	 
+	public Integer getPuzzleMode(String projectName) {
+		try {
+			if(userDBaccess.getPuzzleMode(projectName)== null)
+				return null;
+			return Integer.parseInt(userDBaccess.getPuzzleMode(projectName));
+		} catch (SQLException e) {
+			if(e.getSQLState().equals("42X04"))
+				return null;
+			else
+				e.printStackTrace();
+		}
+		return null;
+	}
+	public void savePuzzlemode(String projectname, int puzzlemode) {
+		userDBaccess.savePuzzlemode(projectname, puzzlemode);
+	}
+
+
+
+	public void saveOrderFailure(String string,
+			LinkedList<String> orderFailureText) {
+		// FIXME: Implementierung
+	}
 }

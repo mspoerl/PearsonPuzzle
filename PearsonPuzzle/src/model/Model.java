@@ -56,7 +56,6 @@ public class Model extends Observable {
 	private boolean randomMode;
 	private boolean resetDB;
 	private int grade;
-	private int puzzleModus;
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
 	private AccessGroup userGroup_toEdit;
@@ -105,8 +104,8 @@ public class Model extends Observable {
 	}
 	
 	/**
-	 * <html>Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
-	 * wenn sich auch wirklich etwas geändert hat.</html>
+	 * Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
+	 * wenn sich auch wirklich etwas geändert hat.
 	 * @param string Zeichenkette
 	 * @param string_to_compare Zu vergleichende Zeichenkette
 	 */
@@ -119,8 +118,8 @@ public class Model extends Observable {
 	}
 	
 	/**
-	 * <html>Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
-	 * wenn sich auch wirklich etwas geändert hat.</html>
+	 * Bei Methodenaufruf wird das Model nur auf setChanged() gestetzt, <br>
+	 * wenn sich auch wirklich etwas geändert hat.
 	 * @param integer Integer
 	 * @param integer_to_compare Zu vergelichende Integer
 	 */
@@ -168,9 +167,7 @@ public class Model extends Observable {
 	
 	// --- Tabbreite
 	public void setTabSize(int tabSize) {
-		// Tab Size ist auf 10 begrenzt
-		if(tabSize>10)
-			tabSize = 10;
+		tabSize = ValueValidation.validateTabSize(tabSize);
 		setChanged(this.tabSize, tabSize);
 		this.tabSize = tabSize;
 		Boolean hasChanged = new Boolean(hasChanged());
@@ -220,9 +217,19 @@ public class Model extends Observable {
 	}
 	
 	// -------- Code
-	
 
 	// --- Projekte
+	public void clearProjectData(){
+		projectID = null;
+		projectName = new String("");
+		projectCode = new String("");
+		projectDescription = new String("");
+		tabSize = 0;
+		grade = 0;
+		testExpressionsVector = new Vector<String>();
+		codeLine_GroupMatrix = new Vector<Vector<Integer>>();
+		
+	}
 	public Vector<String> getProjectVector(){
 		return projectVector;
 	}
@@ -242,49 +249,46 @@ public class Model extends Observable {
 	public Integer getProjectListID() {
 		return projectID;
 	}
-			// - Projektname
 	public String getProjectName(){
-		if(projectID!=null){
+		if(projectID!=null)
 			return projectList.get(projectID);
-		}
-		return "";
+		else 
+			return projectName;
 	}
-			// - Projektbeschreibung
 	public void setProjectDescription(String descriptionString) {
 		setChanged(this.projectDescription, descriptionString);
 		this.projectDescription=descriptionString;
 	}
 	public String getProjectDescription() {
-		if(projectID==null)
-			return "";
 		return projectDescription;
 	}
-			// - Projektcode
-	public String getProjectCode() {
-		if(projectID==null)
-			return "";
-		return projectCode;
-	}
+
+	/**
+	 * Setzt den Projectcode. 
+	 * Leere Zeilen werden dabei entfernt.
+	 * @param codeString
+	 */
 	public void setProjectCode(String codeString){
-		String[] projectCodeArray = codeString.split("\n");
-		StringBuffer codeBuffer = new StringBuffer();
-		for(String line: projectCodeArray){
-			if(!line.trim().isEmpty())
-				codeBuffer.append(line+"\n");
-		}
-		codeBuffer.deleteCharAt(codeBuffer.lastIndexOf("\n"));
-		setChanged(this.projectCode, codeBuffer.toString());
-		projectCode=codeBuffer.toString();
+		codeString = ValueValidation.removeEmptyLines(codeString);
+		System.out.println("Model:"+codeString);
+		setChanged(this.projectCode, codeString);
+		projectCode=codeString;
 		boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
 	}
+	public String getProjectCode() {
+		return projectCode;
+	}
+	
 				// Projektvektor
 	
 	/**
 	 * Liefert einen Code Vektor. <br>
-	 * Für STUDENT kann nur der ranomisierte Vektor abgefragt werden.
+	 * Nur TEACHER kann sowohl einen randomisierten, als auch einen normal sortierten Vektor anfordern. 
+	 * Standardmäßig bekommt TEACHER einen nicht randomisierten Vektor. 
+	 * Von STUDENT kann nur der ranomisierte Vektor abgefragt werden.
 	 * @param random
 	 * @return
 	 */
@@ -300,27 +304,48 @@ public class Model extends Observable {
 		this.codeVector_random = codeVector;
 	}
 	
-	// Projekt Sequenz Vektor
-	public Vector<Vector<Integer>> getGroupMatrix() {
-		return codeLine_GroupMatrix;
-	}
-	public void setGroupMatrixEntry(int yPosition, int xPosition, Object value){
-		String string = (String)value;
-		string=string.trim();
-		try{
-		codeLine_GroupMatrix.get(xPosition).set(yPosition, Integer.parseInt(string));
-			}
-			catch(NumberFormatException e){}
-		setChanged();
-		notifyObservers();
-		setChanged();
-	}
-	
-	public void saveGroupMatrix(){
-		dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
-		notifyObservers();
-	}
-	// Testrelevante Daten
+		
+	// ------------------ Reihenfolgen und Tests
+		/**
+		 * Gibt eine zewidimensionale Matrix zurück, die aus Vektoren besteht, die ihrerseits eine aufsteigene Zahlenfolge beinhaltet.
+		 * Jeder Vektor der Matrix reprästiert eine Gruppe von Bedingungen für den Lösungsverktor. 
+		 * @return
+		 */
+		public Vector<Vector<Integer>> getGroupMatrix() {
+			return codeLine_GroupMatrix;
+		}
+		/**
+		 * Belegt den Eintrag an der Stelle x/y der Reihenfolgenmatrix mit dem Wert value.
+		 * @param yPosition
+		 * @param xPosition
+		 * @param value
+		 */
+		public void setGroupMatrixEntry(int yPosition, int xPosition, Object value){
+			String string = (String)value;
+			string=string.trim();
+			try{
+			codeLine_GroupMatrix.get(xPosition).set(yPosition, Integer.parseInt(string));
+				}
+				catch(NumberFormatException e){}
+			setChanged();
+			notifyObservers();
+			setChanged();
+		}
+		/**
+		 * Matrix mit Reihenfolgenregeln wird in der Datenbank gespeichert.
+		 */
+		public void saveGroupMatrix(){
+			dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
+			notifyObservers();
+		}
+		
+	// ---------------- Asserts können in der Zeile ergänzt werden (nicht vollständig implementier)
+		public Vector<String> getTestExpressionsVector() {
+			return testExpressionsVector;
+		}
+		public void setTestExpressionsVector(Vector<String> testVector) {
+			this.testExpressionsVector = testVector;
+		}	
 	public void addTestGroup(){
 		Vector<Integer> codeGroup=new Vector<Integer>();
 		for (Iterator<String> iterator = codeVector_random.iterator(); iterator.hasNext();) {
@@ -341,38 +366,33 @@ public class Model extends Observable {
 		setChanged();
 		notifyObservers(DCCommand.DeleteOrder);
 		setChanged();
-	}
-	public Vector<String> getTestExpressionsVector() {
-		if(projectID==null)
-			return null;
-		return testExpressionsVector;
-	}
-	public void setTestExpressionsVector(Vector<String> testVector) {
-		this.testExpressionsVector = testVector;
-	}
-
-//	// Code zum puzzeln
-//	private String[] getRandomCode() {
-//		String[] parts = projectCode.split("\n");
-//		if (randomMode) {
-//			String buffer;
-//			for (int i = parts.length - 1; i > 0; i--) {
-//				int randomInt = new java.util.Random().nextInt(i);
-//				buffer = parts[randomInt];
-//				parts[randomInt] = parts[i];
-//				parts[i] = buffer;
-//			}
-//		}
-//		return parts;
-//	}
+	}	
 	
-	// --- Vom Schüler zusammengepuzzelter Code
-	
-	public LinkedList<Integer> getSollution(){
-		return sortedCode;
+	// --------------- Editieren des Lösungsvektors -----------------------
+	public void insertInSollution(int index, String value){
+		// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
+		//sortedCode.add(index, codeVector_normal.indexOf(value));
+		
+		//sortedCode.add(index, codeMap.get(value.trim()));
+		sortedCode.add(index, codeMap.get(value));
+	}
+	public void replaceInSollution(int index, String value){
+		sortedCode.remove(index);
+		//sortedCode.add(index, codeMap.get(value.trim()));
+		sortedCode.add(index, codeMap.get(value));
+		
+		
+		
+		//sortedCode.add(index, codeVector_normal.indexOf(value));
+	}
+	public void removeInSollution(int index){
+		sortedCode.remove(index);
 	}
 	public void setSollution(LinkedList<Integer> sollution){
 		sortedCode = sollution;
+	}
+	public LinkedList<Integer> getSollution(){
+		return sortedCode;
 	}
 	public Vector<String> getSolutionStrings(){
 		Vector<String> solution = new Vector<String>(codeMap.size());
@@ -381,20 +401,14 @@ public class Model extends Observable {
 		}
 		return solution;
 	}
-	// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
-	public void insertInSollution(int index, String value){
-		//sortedCode.add(index, codeVector_normal.indexOf(value));
-		sortedCode.add(index, codeMap.get(value.trim()));
-	}
-	public void replaceInSollution(int index, String value){
-		sortedCode.remove(index);
-		sortedCode.add(index, codeMap.get(value.trim()));
-		//sortedCode.add(index, codeVector_normal.indexOf(value));
-	}
-	public void removeInSollution(int index){
-		sortedCode.remove(index);
-	}
-	public LinkedHashMap<String,Boolean> testSolution(){
+	
+	/**
+	 * Gibt eine Fehlerbeschreibung in Form einer HashMap zurück.
+	 * TODO: Sind für eine "OrderGroup" spezielle Ergebnisstrings in der Datenbank hinterlegt, werden diese bei der zugehörigen Gruppe angehängt.
+	 *
+	 * @return
+	 */
+	public LinkedHashMap<String,Boolean> testOrderOfSollution(){
 		successMap = new LinkedHashMap<String,Boolean>();
 		//System.out.println(sortedCode+"vorher");
 		if(sortedCode.isEmpty()){
@@ -417,17 +431,18 @@ public class Model extends Observable {
 				sortedCode.set(j, i);
 			}
 		}
-		System.out.println(sortedCode+"nachher");
+		// System.out.println(sortedCode+"nachher");
 //		LinkedList<Integer> sortedCode = new LinkedList<Integer>();
 //		Vector<String> codeVector_normal = (Vector<String>) codeVector_normal.clone();
 //		for(
 		
 		Boolean result;
 		
-		result = OrderFailures.testOrder_simple(this, projectCode);
+		//result = OrderFailures.testOrder_simple(this, projectCode);
+		result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
 		successMap.put("Test auf 1:1 Reihenfolge", result);
 		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
-		successMap.put("Gruppentest", result);
+		successMap.put("Gruppentest", !groupFailures.contains(false));
 		for(int i=0;i<groupFailures.size();i++){
 			successMap.put("Gruppe"+(i+1), groupFailures.get(i));
 		}
@@ -445,17 +460,11 @@ public class Model extends Observable {
 //		return false;
 	}
 	/**
+	 * Gibt das ergebnis des Reihenfolgentest zurück.
 	 * @return the successMap
 	 */
 	public LinkedHashMap<String, Boolean> getSuccessMap() {
 		return successMap;
-	}
-
-	/**
-	 * @param successMap the successMap to set
-	 */
-	public void setSuccessMap(LinkedHashMap<String, Boolean> successMap) {
-		this.successMap = successMap;
 	}
 
 	/**
@@ -472,6 +481,7 @@ public class Model extends Observable {
 	
 
 	/**
+	 * Fehler, die beim Unit Testlauf aufgetreten sind, werden zurückgegeben.
 	 * @return the jUnitFailures
 	 */
 	public LinkedList<Failure> getjUnitFailures() {
@@ -479,6 +489,7 @@ public class Model extends Observable {
 	}
 
 	/**
+	 * Dient dazu, Fehler zu hinterlegen, die beim Unit Testlauf aufgetreten sind.
 	 * @param jUnitFailures the jUnitFailures to set
 	 */
 	public void setJunitFailures(Result result) {
@@ -489,13 +500,22 @@ public class Model extends Observable {
 		setChanged();
 		notifyObservers(DCCommand.TestCode);
 	}
-
+	
+	/**
+	 * Gibt einen leeren String (nicht null) zurück, wenn kein Unit Code hinterlegt ist.
+	 * Gibt Unit Sourcecode in Textform zurück, falls ein solcher hinterlegt ist.
+	 * @return
+	 */
 	public String getJUnitCode() {
-		if(projectID==null)
-			return "";
 		return jUnitCode;
 	}
-
+	
+	/**
+	 * JUnit Code wird ans Model übergeben. 
+	 * Dalls sich der übergebene Wert vom im Model hinterlegten Wert unterscheidet, 
+	 * wird der Status des Models auf "changed" gesetzt.
+	 * @param jUnitCode JUnit Sourcecode in Textform
+	 */
 	public void setJUnitCode(String jUnitCode) {
 		setChanged(this.jUnitCode, jUnitCode);
 		this.jUnitCode = jUnitCode;
@@ -533,11 +553,16 @@ public class Model extends Observable {
 		setChanged();
 		notifyObservers();
 		clearChanged();
-	}	
+	}
 	
+	/**
+	 * Speichert die im Model hinterlegten groben Eckdaten zum Projekt ab. 
+	 * Die "groben Eckdaten" sind: Projektname, Projektcode, Beschreibung/Arbeitsanweisung.
+	 */
 	public void saveProject(){
 		saveProject(getProjectCode(), getProjectName(), getProjectDescription(), null);
 	}
+	
 	/**
 	 * Speichert das Projekt. Für den Fall, dass das Projekt umbenannt wurde, <br>
 	 * wird projectName und der gewählte Eintrag ind projectList auf Ungleichheit geprüft.
@@ -545,25 +570,19 @@ public class Model extends Observable {
 	 * @param projectName Neuer Projektname 
 	 * @param linelength
 	 */
-	public boolean saveProject(String codeString, String projectName, String projectDescription,Integer linelength) {
+	public boolean saveProject(String codeString, String projectName, String projectDescription, Integer linelength) {
 		projectCode = new String(codeString);
-		System.out.println("ID"+projectID);
-		if(projectID!=null)
-		System.out.println(projectList.get(projectID));
-		System.out.println(projectName);
-		System.out.println("this: "+this.projectName);
-		// ---- Prüfen, ob bereits ein gleichnamiges Projekt existiert 
+		
 		if(projectID==null 
 				|| !projectName.equals(projectList.get(projectID))){
+			// ---- Prüfen, ob bereits ein gleichnamiges Projekt existiert 
 			if( dataBase.projectExists(projectName)){
 				return false;
 			}
-		}
-		// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
-		else if(!projectName.equals(projectList.get(projectID))){
-			// FIXME: hier kommt nie jemand an
-			System.out.println("rename");
-			dataBase.renameProject(projectList.get(projectID), projectName);
+			// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
+			else if(projectID != null && !projectName.equals(projectList.get(projectID))){
+				dataBase.renameProject(projectList.get(projectID), projectName);
+			}
 		}
 		
 		// ----- Projekt speichern
@@ -602,7 +621,6 @@ public class Model extends Observable {
 		clearChanged();
 	}
 	
-
 	/**
 	 * Löscht das mit <b>projectID</b> selektierte Projekt <br>und löscht es aus der Datenbank <br>
 	 * Löschen_erfolgreich@return
@@ -719,15 +737,19 @@ public class Model extends Observable {
 //					
 //					codeVector_random.set(randomInts.get(index), strings[index]);
 					codeVector_random.set(randomInts.get(index), bString);
-					codeVector_normal.add(strings[index]);
+					//codeVector_normal.add(strings[index]); 			16.1.2016
+					codeVector_normal.add(bString);
 					
 					testExpressionsVector.add(new String());
 					
 					// 10.1.2016
 					//codeMap.put(strings[index], randomInts.get(index));
-					if(!codeMap.containsKey(strings[index]))
-						codeMap.put(strings[index], index);
+//					if(!codeMap.containsKey(strings[index]))			16.1.2017
+//						codeMap.put(strings[index], index);				16.1.2017
+					if(!codeMap.containsKey(bString))
+						codeMap.put(bString, index);
 				}
+				System.out.println("codeMap"+codeMap);
 			}				
 	}
 	// --- Datenbank zurücksetzen
@@ -740,6 +762,15 @@ public class Model extends Observable {
 			notifyObservers();
 		}
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		public void setPersons(HashMap <String, String> person_password) {
 			this.personMap = person_password;
 		}
@@ -765,7 +796,7 @@ public class Model extends Observable {
 				notifyObservers("password_unset");
 			else if(passWord.length<8)
 				notifyObservers("password_toShort");
-			else if(!proovePassword(passWord))
+			else if(!ValueValidation.proovePassword(passWord))
 				notifyObservers("password_unsave");
 			else{
 				if(dataBase.addUser(accessGroup.toString(), userName, new String (passWord))){
@@ -776,34 +807,12 @@ public class Model extends Observable {
 			return false;
 			
 		}	
-
-	private boolean proovePassword(char[] password){
-		boolean number = false;
-		boolean specialChar = false;
-		boolean upperCase = false;
-		boolean lowerCase = false;
-		
-		for(char c : password){
-			if(Character.isDigit(c))
-				number = true;
-			if(Character.isLowerCase(c))
-				lowerCase = true;
-			if(Character.isUpperCase(c))
-				upperCase = true;
-			int asci = (int)c;
-			if(asci < 32 || asci >126 )	// auf nicht erlaubte Zeichen prüfen
-				return false;
-			else if(asci<48 || (asci > 57 && asci <65) || (asci >90 && asci < 97) || asci >123) // auf Sonderzeichen prüfen
-				specialChar = true;
-		}
-		return (number && specialChar && upperCase && lowerCase);
-	}
 	
 	/**
-	 * Beschränkt auswahl auf übergebene Nutzergruppe. 
+	 * Gibt eine Liste aller Nutzer der übergebenen Nutzergruppe zurück.
 	 * Wenn null übergeben wird, werden alle Nutzer zurückgegeben.
-	 * @param accessgroup
-	 * @return
+	 * @param accessgroup Nutzergruppe
+	 * @return Liste mit Nutzernamen
 	 */
 	public Vector<String> getUsers(AccessGroup accessgroup) {
 		if(accessgroup==null){
@@ -816,8 +825,12 @@ public class Model extends Observable {
 			return dataBase.getNames(accessgroup.toString());
 	}
 
-	public void deleteUsers(Vector<String> users) {
-		for(String user: users){
+	/**
+	 * Löscht die in der Liste übergebenen Nutzer aus der Datenbank.
+	 * @param userNames Liste mit Nutzernamen
+	 */
+	public void deleteUsers(Vector<String> userNames) {
+		for(String user: userNames){
 			for(AccessGroup ac : AccessGroup.values())
 				dataBase.deleteUser(user, ac.toString());
 		}
@@ -825,28 +838,61 @@ public class Model extends Observable {
 		notifyObservers();
 	}
 
+	/**
+	 * Wenn eine Nutzergruppe editiert wird, kann diese Funktion genutzt werden, <br>
+	 * um die gwählte Nutzergruppe abzurufen.
+	 * @param userGroup_toEdit
+	 */
 	public AccessGroup getUserGroup_toEdit() {
 		if(userGroup_toEdit==null)
 			return AccessGroup.TEACHER;
 		return userGroup_toEdit;
 	}
-
+	/**
+	 * Wenn eine Nutzergruppe editiert wird, kann diese Funktion genutzt werden, <br>
+	 * um eine Nutzergruppe zu wählen.
+	 * @param userGroup_toEdit
+	 */
 	public void setUserGroup_toEdit(AccessGroup userGroup_toEdit) {
 		this.userGroup_toEdit = userGroup_toEdit;
 		setChanged();
 		notifyObservers();
 	}
 
-	public void setImports(String type, String text) {
+	/**
+	 * Setzt imports. Offiziell mögliche Typen sind: 
+	 * {methods, classes, online}<br>
+	 * Im Fall "online" müssen die imports in der klassischen Form: *import paket.paket;* übergeben werden. <br>
+	 * Im Fall "methods" und "classes" müssen die Imports in Textform (als Sourcecode) übergeben werden.
+	 * @param type {"methods", "classes", "online"}
+	 * @param text
+	 * @return
+	 */
+	public boolean setImports(String type, String text) {
 		setChanged(projectImports.get(type), text);
-		System.out.println(projectImports);
 		if(type.equals("methods"))
 			projectImports.put("methods", text);
 		else if(type.equals("classes"))
 			projectImports.put("classes", text);
-		else if(type.equals("online"))
-			projectImports.put("online", text);
+		else if(type.equals("online")){
+			if(ValueValidation.isValid_OnlineImport(text))
+				projectImports.put("online", text);
+			else 
+				projectImports.put("online", text);
+		}
+		notifyObservers();
+		System.out.println("imports: "+projectImports);
+		setChanged();
+		return true;
 	}
+	
+	/**
+	 * Gibt den hinterlegten Import zurück. <br>
+	 * Im Fall "online" sind die imports in der klassischen Form: *import paket.paket;* hinterlegt. <br>
+	 * Im Fall "methods" und "classes" sind die Imports in Textform (als Sourcecode) hinterlegt.
+	 * @param type {"online", "methods", "classes"}
+	 * @return Import
+	 */
 	public String getImport(String type){
 		if(projectImports!=null
 				&& projectImports.get(type)!=null)
@@ -854,24 +900,45 @@ public class Model extends Observable {
 		return "";
 	}
 
+	/**
+	 * Holte den Puzzlemodus (aus der Datenbank).
+	 * @return Puzzlemodus
+	 */
+	public Integer getPuzzlemode() {
+		// Puzzlemodus wird direkt aus der Datenbank gehot, 
+		// da er im Prinip nur die Darstellung bestimmt und nicht im eigentlichen Sinn zum Model gehört
+		if(projectID!=null)
+			return dataBase.getPuzzleMode(projectList.get(projectID));
+		return null;
+	}
+	/**
+	 * Speichert den Puzzlemodus
+	 * @param puzzlemode Puzzlemodus
+	 */
+	public void savePuzzlemode(Integer puzzlemode) {
+		if(puzzlemode!=null)
+			dataBase.savePuzzlemode(projectList.get(projectID), puzzlemode);
+	}
+
+	/**
+	 * Dient dazu, den Zugriff auf ein bestimmtes Prokjekt nur für einen Bestimmten Studentennamen zu ermöglichen.
+	 * @param student
+	 */
 	public void setStudentGroup(String student) {
 		if(getUsers(AccessGroup.STUDENT).contains(student)){
 			this.studentGroup = student;
 			setChanged();
 		}
 	}
+	
+	/**
+	 * Gibt einen Studentennamen zurück, falls dieses Projekt als nur für einen Studenten sichtbar markiert ist. 
+	 * Gibt null zurück, falls das Projekt für alle sichtbar ist. 
+	 * @return
+	 */
 	public String getStudentGroup(){
 		return studentGroup;
 	}
-
-	public int getPuzzlemodus() {
-		return puzzleModus;
-	}
-
-	public void savePuzzlemodus(int puzzlemodus) {
-		puzzleModus = puzzlemodus;
-	}
-
 	public void setOrderFailures(Integer index, String failureText) {
 		setChanged(failureText, orderFailureText.get(index));
 		this.orderFailureText.set(index, failureText);
@@ -884,205 +951,8 @@ public class Model extends Observable {
 	}
 
 	public void saveOrderFailures() {
+		dataBase.saveOrderFailure(projectList.get(projectID), orderFailureText);
 		// FIXME: Datenbankanbindung
-	}	
-}
-
-/*
-public class Model extends Observable {
-	private String username;
-	private ArrayList<String> codeList;
-	private ArrayList<String> saveList;
-	private List<String> projectList;
-	private Integer projectListID;
-	// private String projectDescription;
-	private String projectCode;
-	private int tabSize;
-	private boolean randomMode;
-	private int grade;
-	private UserDBaccess userDBaccess;
-	private AccessGroup accessGroup;
-
-	public Model() {
-		try {
-			userDBaccess = new UserDBaccess();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		setup();		
-		// Default Werte werden gesetzt
-		this.tabSize = 3;
-		this.randomMode = false;
-		this.grade = 0;
-			}
-	private void setup(){
-		this.codeList= fetchProject();
-		this.saveList= new ArrayList<String>();
-		for (Iterator<String> iterator = codeList.iterator(); iterator.hasNext();) {
-			saveList.add(new String());
-		}
-		this.projectList = fetchProjects();
-		
-		this.projectCode = new String(
-				" Zeile 1: Dies ist ein erstes Testprojekt \n \t \t Zeile 2: um zu sehen,\n \t Zeile 3: wie Java dies und die Zeilenumbrüche \n \t Zeile 4: darstellt");
-
-	}
-
-	public int getGrade() {
-		return grade;
-	}
-
-	public void setGrade(int grade) {
-		if (grade < 14 && grade > 5) {
-			this.grade = grade;
-		} else {
-			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
-		}
-	}
-
-	public void setTabSize(int tabWidth) {
-		this.tabSize = tabWidth;
-	}
-
-	public int getTabSize() {
-		return tabSize;
-	}
-
-	public void setRandomMode(boolean random) {
-		this.randomMode = random;
-	}
-
-	public boolean getRandomMode() {
-		return randomMode;
-	}
-
-	public void setSaveList(ArrayList<String> listModelToSave) {
-		saveList = listModelToSave;
-	}
-
-	private ArrayList<String> fetchProjects() {
-		String[] projects = { "Project1", "Project2", "Project3" };
-		ArrayList<String> projectList = new ArrayList<String>();
-		for (String line : projects) {
-			projectList.add(projectList.size(), line);
-		}
-		return projectList;
-	}
-	
-	private ArrayList<String> fetchProject(){
-		//try {
-		//	return userDBaccess.getProject("DefaultProjekt");
-		//} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			ArrayList<String> failure= new ArrayList<String>();
-			failure.add("Probleme beim Laden des Projekts.");
-			failure.add("Bitte nehmen Sie kontakt zum Systemadministrator auf.");
-			return failure;
-		//}
-	}
-
-	public void setPassword(char[] password) {
-		// if (isPasswordCorrect(password)) {
-		// }
-		// else{}
-		// //Zero out the possible password, for security.
-		// Arrays.fill(password, '0');
-	}
-
-	// TODO: in accessGroup auslagern
-	public AccessGroup getAccessGroup(String username, char[] password) {
-
-		if (userDBaccess.lookUpstudent(username, password)) {
-			return AccessGroup.PUPIL;
-		} else if (userDBaccess.lookUpteacher(username, password)) {
-			return AccessGroup.TEACHER;
-		} else
-			return AccessGroup.UNKNOWN;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public ArrayList<String> getCodeModel() {
-		return codeList;
-	}
-
-	public ArrayList<String> getSaveModel() {
-		return saveList;
-	}
-
-	public List<String> getProjects() {
-		return projectList;
-	}
-
-	public Integer getProjectListID() {
-		return projectListID;
-	}
-	public String getProjectName(){
-		if(projectListID!=null){
-			return projectList.get(projectListID);
-		}
-		return "";
-	}
-
-	public void setProject(Integer projectID) {
-		this.projectListID = projectID;
-	}
-
-	public String getProjectDescription() {
-		// TODO: Projektbeschreibung ergänzen
-		if(projectListID!=null)
-		{
-			return projectList.get(projectListID);
-		}
-		return "Leider keine Projektbeschreibung voranden";
-	}
-
-	public String getProjectCode() {
-		if(projectListID!=null){
-			return new String(projectCode);
-		}
-		return "";
-	}
-
-	public String[] getProjectCodeArray() {
-		String[] parts = projectCode.split("\n");
-		if (randomMode) {
-			String buffer;
-			for (int i = parts.length - 1; i > 0; i--) {
-				int randomInt = new java.util.Random().nextInt(i);
-				buffer = parts[randomInt];
-				parts[randomInt] = parts[i];
-				parts[i] = buffer;
-			}
-		}
-		return parts;
-	}
-
-	// Speicherung eines Projekts
-	public void setProjectCode(String codeString, String projectname,
-			int linelength) {
-		// TODO linelength maximum an puzzlestücke anpassen
-		projectCode = new String(codeString);
-		String[] projectArray = projectCode.split("\n");
-		try {
-			userDBaccess.saveProject(projectArray, projectname, linelength, 0);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	public void setAccessGroup(AccessGroup accessGroup) {
-		this.accessGroup=accessGroup;		
-	}
-	public AccessGroup getAccessGroup(){
-		return accessGroup;
 	}
 
 }
-*/

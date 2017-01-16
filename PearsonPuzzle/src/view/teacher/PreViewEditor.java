@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -37,7 +38,7 @@ public class PreViewEditor extends JView{
 		// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 		// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
 		// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
-		private int Puzzlemodus=1;
+		private Integer Puzzlemode;
 		private JButton randomize;
 		private JButton save;
 		
@@ -46,32 +47,41 @@ public class PreViewEditor extends JView{
 		private JList<String> dragList;
 		private JList<String> saveDropList;
 		private ButtonGroup dropMode;
+		private LinkedList<JRadioButton> puzzleModeButtons;
 		private JPanel studentPanel;
 		
 	public PreViewEditor(Model model) {
 		super(model);
 		menu = new MenuTeacher(3);
 		addMenuToFrame(menu);
+		if(model.getPuzzlemode()!=null)
+			Puzzlemode = model.getPuzzlemode();
+		else
+			Puzzlemode =0;
+				
+		System.out.println(Puzzlemode);
 		setupPreviewPanel();
 		setupEditPanel();
 		setupButtons();
 		draw();
 	}
 	
-	private void setupPreviewPanel(){	
+	private void setupPreviewPanel(){
+		if(Puzzlemode==null)
+			Puzzlemode = 0;
 		saveDropModel=new DefaultListModel<String>();
 		saveDropList=new JList<String>(saveDropModel);
 		dragModel=makeDefaultListModel();
 		dragList=new JList<String>(dragModel);
 		FromTransferHandler dragTransferH = new FromTransferHandler(dragModel, dragList, model);
-		ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
+		ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model);
 		
-		switch(Puzzlemodus){
+		switch(Puzzlemode){
 			case 0:
 				// Einzelne Drag and Drop List (nicht zwei)
 				saveDropModel=makeDefaultListModel();
 				saveDropList=new JList<String>(saveDropModel);
-				dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
+				dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model);
 				dragModel= new DefaultListModel<String>();
 				dragList = new JList<String>();
 				saveDropList.setDropMode(DropMode.INSERT);				
@@ -130,7 +140,7 @@ public class PreViewEditor extends JView{
 //		topPanel.add(testButton);
 		studentPanel = new JPanel();
 		studentPanel.add(scrollPanel_sDL);
-		if(Puzzlemodus!=0)
+		if(Puzzlemode!=0)
 			studentPanel.add(scrollPanel_dDL);
 		studentPanel.setPreferredSize(new Dimension(450,310));
 //		mainPanel.add(topPanel,BorderLayout.PAGE_START);
@@ -140,6 +150,7 @@ public class PreViewEditor extends JView{
 	private void setupEditPanel(){
 		JPanel selectDragAndDrop = new JPanel();
 		selectDragAndDrop.setLayout(new BoxLayout(selectDragAndDrop, BoxLayout.Y_AXIS));
+		puzzleModeButtons = new LinkedList<JRadioButton>();
 		dropMode = new ButtonGroup();
 		ImageIcon[] dragIcons= {new ImageIcon("rsc/dragDrop_0.png"), new ImageIcon("rsc/dragDrop_2.png"), new ImageIcon("rsc/dragDrop_2.png"), new ImageIcon("rsc/dragDrop_2.png")};
 		ImageIcon[] dragIcons_pressed = {new ImageIcon("rsc/dragDrop_0_pressed.png"), new ImageIcon("rsc/dragDrop_2_pressed.png"), new ImageIcon("rsc/dragDrop_2_pressed.png"), new ImageIcon("rsc/dragDrop_2_pressed.png")};
@@ -148,14 +159,17 @@ public class PreViewEditor extends JView{
 			radioButton.setIcon(dragIcons[i]);
 			radioButton.setSelectedIcon(dragIcons_pressed[i]);
 			final Integer n  = new Integer(i);
+			if(i==Puzzlemode)
+				radioButton.setSelected(true);
 			radioButton.addActionListener(new ActionListener() {	
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					Puzzlemodus = n;
+					Puzzlemode = n;
 					update();
 				}
 			});
 			dropMode.add(radioButton);
+			puzzleModeButtons.add(radioButton);
 			selectDragAndDrop.add(radioButton);
 		}
 		selectDragAndDrop.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -176,7 +190,6 @@ public class PreViewEditor extends JView{
 	private void setupButtons(){
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-		
 		randomize = new JButton("<html><body><p align=\"center\">Liste neu<br>randomisieren</p></body></html>.");
 		save = new JButton("Speichern");
 		randomize.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -210,8 +223,8 @@ public class PreViewEditor extends JView{
 		menu.addActionListener(controller);
 	}
 	
-	public int getPuzzleModus(){
-		return Puzzlemodus;
+	public Integer getPuzzleModus(){
+		return Puzzlemode;
 	}
 	@Override
 	public void update() {
