@@ -442,9 +442,9 @@ public class Model extends Observable {
 		result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
 		successMap.put("Test auf 1:1 Reihenfolge", result);
 		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
-		successMap.put("Gruppentest", !groupFailures.contains(false));
+		successMap.put("Gruppentests", !groupFailures.contains(false));
 		for(int i=0;i<groupFailures.size();i++){
-			successMap.put("Gruppe"+(i+1), groupFailures.get(i));
+			successMap.put("Test "+(i+1), groupFailures.get(i));
 		}
 		setChanged();
 		
@@ -948,6 +948,13 @@ public class Model extends Observable {
 		if(orderFailureText!=null)
 			return orderFailureText.get(index);
 		return null;
+	}
+	public String getOrderFailures(String gruppe) {
+		gruppe = gruppe.replace("Test", "").trim();
+		try{
+			Integer index = Integer.parseInt(gruppe);
+			return getOrderFailures(index-1);
+		} catch(Exception e){ return null;}
 	}
 
 	public void saveOrderFailures() {
