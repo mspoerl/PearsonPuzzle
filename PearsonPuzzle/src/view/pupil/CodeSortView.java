@@ -41,7 +41,7 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 1: Elemente werden von rechts nach links "geschaufelt", mit zurückschaufeln
 	// Puzzlemodus 2: Elemente werden von rechts nach links geschaufelt, ohne zurückschaufeln
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
-	private static final int Puzzlemodus=0;
+	private final int Puzzlemode;
 	private static final String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
 	
 	private JList<String> dragList;
@@ -56,7 +56,13 @@ public class CodeSortView extends JView {
 		super(model);
 		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
 		menu=new MenuPupil();
+		
+		if(model.getPuzzlemode()==null)
+			Puzzlemode = 0;
+		else 
+			Puzzlemode = model.getPuzzlemode();
 		this.addMenuToFrame(menu);
+		
 		setupCodeLists();
 		setupButtons();
 		draw();
@@ -69,14 +75,14 @@ public class CodeSortView extends JView {
 		dragModel=makeDefaultListModel();
 		dragList=new JList<String>(dragModel);
 		FromTransferHandler dragTransferH = new FromTransferHandler(dragModel, dragList, model);
-		ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
+		ToSaveTransferHandler dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model);
 		
-		switch(Puzzlemodus){
+		switch(Puzzlemode){
 			case 0:
 				// Einzelne Drag and Drop List (nicht zwei)
 				saveDropModel=makeDefaultListModel();
 				saveDropList=new JList<String>(saveDropModel);
-				dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model);
+				dragDropTransferH = new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model);
 				dragModel= new DefaultListModel<String>();
 				dragList = new JList<String>();
 				saveDropList.setDropMode(DropMode.INSERT);				
@@ -128,7 +134,7 @@ public class CodeSortView extends JView {
 		scrollPanel_dDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_dDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_dDL.setPreferredSize(new Dimension(360,300));
-		if(Puzzlemodus!=0)
+		if(Puzzlemode!=0)
 			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
 		
 		// Arbeitsanweisung und Ergebnisse
@@ -232,7 +238,7 @@ public class CodeSortView extends JView {
 		dragList=new JList<String>(dragModel);
 		saveDropList=new JList<String>(saveDropModel);
 		dragList.setTransferHandler(new FromTransferHandler(dragModel, dragList, model));
-		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemodus, model));	
+		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model));	
 	}
 
 }

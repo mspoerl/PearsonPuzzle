@@ -555,4 +555,20 @@ public class dbTransaction implements Transaction{
 	 public boolean projectExists(String projectName) {
 		 return userDBaccess.projectExists(projectName);
 	 }
+	 
+	public Integer getPuzzleMode(String projectName) {
+		try {
+			return Integer.parseInt(userDBaccess.getPuzzleMode(projectName));
+		} catch (SQLException e) {
+			if(e.getSQLState().equals("42X04"))
+				return null;
+			else
+				e.printStackTrace();
+		}
+		return null;
+	}
+	public void savePuzzlemode(String projectname, int puzzlemode) {
+		userDBaccess.savePuzzlemode(projectname, puzzlemode);
+		// TODO Auto-generated method stub
+	}
 }

@@ -234,7 +234,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					act(DCCommand.EditUsers, null);
 				}
 				else if(view.getClass().equals(PreViewEditor.class)){
-					model.savePuzzlemodus(((PreViewEditor) view).getPuzzleModus());
+					model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
 				}
 				break;
 			case DeleteProject:

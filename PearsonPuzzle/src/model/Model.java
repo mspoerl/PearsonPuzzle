@@ -56,7 +56,7 @@ public class Model extends Observable {
 	private boolean randomMode;
 	private boolean resetDB;
 	private int grade;
-	private int puzzleModus;
+	private int puzzleMode;
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
 	private AccessGroup userGroup_toEdit;
@@ -545,7 +545,7 @@ public class Model extends Observable {
 	 * @param projectName Neuer Projektname 
 	 * @param linelength
 	 */
-	public boolean saveProject(String codeString, String projectName, String projectDescription,Integer linelength) {
+	public boolean saveProject(String codeString, String projectName, String projectDescription, Integer linelength) {
 		projectCode = new String(codeString);
 		System.out.println("ID"+projectID);
 		if(projectID!=null)
@@ -864,12 +864,13 @@ public class Model extends Observable {
 		return studentGroup;
 	}
 
-	public int getPuzzlemodus() {
-		return puzzleModus;
+	public Integer getPuzzlemode() {
+		return dataBase.getPuzzleMode(projectList.get(projectID));
 	}
 
-	public void savePuzzlemodus(int puzzlemodus) {
-		puzzleModus = puzzlemodus;
+	public void savePuzzlemode(Integer puzzlemode) {
+		if(puzzlemode!=null)
+			dataBase.savePuzzlemode(projectList.get(projectID), puzzlemode);
 	}
 
 	public void setOrderFailures(Integer index, String failureText) {
@@ -885,7 +886,8 @@ public class Model extends Observable {
 
 	public void saveOrderFailures() {
 		// FIXME: Datenbankanbindung
-	}	
+	}
+
 }
 
 /*
