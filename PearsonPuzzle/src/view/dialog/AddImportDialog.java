@@ -46,11 +46,11 @@ public class AddImportDialog extends JDialog{
 		
 		JLabel instruction = null;
 		if(getTitle().equals("Nötige Klassen")){
-			instruction = new JLabel("<html>Geben Sie hier alle <B>Klassen</B> ein, die für das Ausführen des Programms benötigt werden.</html>");
+			instruction = new JLabel("<html>Geben Sie hier alle <B>Klassen</B> in Textform ein, die für das Ausführen des Programms benötigt werden.</html>");
 			input.setText(model.getImport("classes"));
 		}
 		else if(getTitle().equals("Nötige Methoden")){
-			instruction = new JLabel("<html>Geben Sie hier <B>Methoden</B> ein, die für das Ausführen des Programms benötigt werden.</html>");
+			instruction = new JLabel("<html>Geben Sie hier <B>Methoden</B> in Textform ein, die für das Ausführen des Programms benötigt werden.</html>");
 			input.setText(model.getImport("methods"));
 		}
 		else if(getTitle().equals("Nötige Imports")){

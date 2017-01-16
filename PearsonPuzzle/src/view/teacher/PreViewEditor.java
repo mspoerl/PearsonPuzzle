@@ -54,7 +54,11 @@ public class PreViewEditor extends JView{
 		super(model);
 		menu = new MenuTeacher(3);
 		addMenuToFrame(menu);
-		Puzzlemode = model.getPuzzlemode();
+		if(model.getPuzzlemode()!=null)
+			Puzzlemode = model.getPuzzlemode();
+		else
+			Puzzlemode =0;
+				
 		System.out.println(Puzzlemode);
 		setupPreviewPanel();
 		setupEditPanel();

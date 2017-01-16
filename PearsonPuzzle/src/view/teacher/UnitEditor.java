@@ -73,7 +73,7 @@ public class UnitEditor extends JView{
 	
 		String importText = model.getImport("online");
 		if(importText== null|| importText.isEmpty())
-			imports = new JTextArea("Hier können imports angegeben werden. Zusätzliche nötige Klassen bitte über den Button unterhalb angeben.");
+			imports = new JTextArea("Hier können imports in der Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.");
 		else 
 			imports = new JTextArea(importText);
 		imports.setLineWrap(true);
@@ -86,9 +86,9 @@ public class UnitEditor extends JView{
 		importsSP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		importsSP.setPreferredSize(new Dimension(200,150));
 		importsSP.setMinimumSize(new Dimension(200,150));
-		addClasses = new JButton("<html><p>Zum Ausführen nötige <b>Klassen hinzufügen</b></p></html>");
+		addClasses = new JButton("<html><body>Zum Ausführen nötige <b>Klassen hinzufügen</b></body></html>");
 		addClasses.setAlignmentX(Component.CENTER_ALIGNMENT);
-		addMethods = new JButton("<html><p>Zum Ausführen nötige <b>Methoden hinzufügen</b></p></html>");
+		addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden hinzufügen</b></body></html>");
 		addMethods.setAlignmentX(Component.CENTER_ALIGNMENT);
 		leftPanel.add(importsSP);
 		leftPanel.add(addClasses);
