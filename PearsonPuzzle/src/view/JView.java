@@ -81,7 +81,7 @@ public abstract class JView implements Observer {
 		 */
 		public void draw(){
 		    frame.pack();
-			frame.setSize(800,500);
+			frame.setSize(800,520);
 			if(frame.isVisible()==false){
 				frame.setVisible(true);
 			}

@@ -216,19 +216,36 @@ public class CodeSortView extends JView {
 			saveDropList.setEnabled(false);
 		}
 		if(arg1==DCCommand.TestCode){
-			String failureText = new String("<html><body><u>Ergebnis des Unit-Test:</u>"+model.getjUnitFailures().size()+" Fehler<br>");
+			String cssClass;
+			if(model.getjUnitFailures().size()==0)
+				 cssClass = " class=\"success\" ";
+			else
+				cssClass = " class=\"failure\" ";
+			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>" +
+					"<span class=\"heading\">Ergebnis des Unit-Test:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>");
+			System.out.println(failureText);
 			for(Failure failure: model.getjUnitFailures()){
-				failureText=failureText+"<br>"+failure;
+				System.out.println(failure);
+				failureText=failureText+"<div class=\"failure\">"+failure+"</div>";
 			}
-			failureText = failureText + "<br>";
+			//failureText = failureText + "<br>";
 			for(String key : model.getSuccessMap().keySet()){
-				failureText = failureText +"<br>"+key+": ";
+				if(key.equals("Gruppentests") || key.contains("Reihenfolge"))
+					failureText+="<div><span class=\"heading\">"+key+": </span>";
+				else
+					failureText+="<div class=\"increment\"><span class=\"heading\">"+key+": </span>";		
+				
 				if(model.getSuccessMap().get(key))
-					failureText+="Erfolgreich!";
+					failureText+="<span class=\"success\">Erfolgreich!";
 				else 
-					failureText+="Failed!";
+					failureText+="<span class=\"failure\">Failed!";
+				if(model.getOrderFailures(key)!=null
+						&& !model.getOrderFailures(key).trim().isEmpty())
+					failureText+="</span><span class=\"comment\"> ( "+model.getOrderFailures(key)+")</span>";
+				failureText += "</span></div>";
 			}
 			messageBox.setText(failureText+"</body></html>");
+			System.out.println(failureText);
 		}
 		update();
 	}
