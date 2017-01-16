@@ -62,6 +62,7 @@ public class Model extends Observable {
 	private AccessGroup userGroup_toEdit;
 	
 	private String jUnitCode;
+	private LinkedList<String> orderFailureText;
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
 	//private LinkedList<Boolean> groupFailures;
@@ -82,7 +83,7 @@ public class Model extends Observable {
 		projectImports = new HashMap<String, String>();
 		projectImports.put("classes", "");
 		projectImports.put("methods", "");
-				
+		
 		try{
 			dataBase = new dbTransaction(this);			
 		}
@@ -330,13 +331,16 @@ public class Model extends Observable {
 			codeGroup.add(new Integer(0));
 		}
 		codeLine_GroupMatrix.add(codeGroup);
+		orderFailureText.add(new String());
 		setChanged();
 		notifyObservers();
 		setChanged();
 	}
 	public void removeTestGroup(int index){
-		if(index < codeLine_GroupMatrix.size())
-			codeLine_GroupMatrix.remove(index);	
+		if(index < codeLine_GroupMatrix.size()){
+			codeLine_GroupMatrix.remove(index);
+			orderFailureText.remove(index);
+		}
 		setChanged();
 		notifyObservers(DCCommand.DeleteOrder);
 		setChanged();
@@ -685,8 +689,10 @@ public class Model extends Observable {
 				sortedCode = new LinkedList<Integer>();
 				codeLine_GroupMatrix = new Vector<Vector<Integer>>();
 				codeLine_GroupMatrix = dataBase.getOrdervektor(getProjectName());
-			
-
+				orderFailureText = new LinkedList<String>();
+				for(Vector<Integer> clGroup: codeLine_GroupMatrix){
+					orderFailureText.add(new String());
+				}
 				for(int index=0; index<strings.length; index++){
 					
 					
@@ -855,7 +861,21 @@ public class Model extends Observable {
 	public void savePuzzlemodus(int puzzlemodus) {
 		puzzleModus = puzzlemodus;
 	}
-	
+
+	public void setOrderFailures(Integer index, String failureText) {
+		setChanged(failureText, orderFailureText.get(index));
+		this.orderFailureText.set(index, failureText);
+	}
+
+	public String getOrderFailures(int index) {
+		if(orderFailureText!=null)
+			return orderFailureText.get(index);
+		return null;
+	}
+
+	public void saveOrderFailures() {
+		// FIXME: Datenbankanbindung
+	}	
 }
 
 /*

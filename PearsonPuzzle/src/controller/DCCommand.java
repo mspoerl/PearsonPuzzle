@@ -14,7 +14,7 @@ public enum DCCommand {
 	// View Changes
 		EditConfig,EditProject, EditUsers, EditJUnit, EditPreview, NewProject, OpenProject, ProjectList, Login, Logout, Admin, DeleteOrder,
 	// Dialogs
-		AddUser, AddClasses, AddMethods;
+		AddUser, AddClasses, AddMethods, EditOrderGroup;
 	
 	@Override
 	public String toString(){
@@ -31,6 +31,8 @@ public enum DCCommand {
 			return "EditProject";
 		case EditPreview: 
 			return "EditPreview";
+		case EditOrderGroup:
+			return "EditOrderGroup";
 		case NewProject:
 			return "NewProject";
 		case OpenProject:

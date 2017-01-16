@@ -21,6 +21,7 @@ public class ConfigEditor extends JView{
 	private JButton save;
 	private JButton newGroup;
 	private JButton deleteGroup;
+	private JButton editGroup;
 	private JButton showHelp;
 	
 	private JTable projectTable;
@@ -52,7 +53,7 @@ public class ConfigEditor extends JView{
 		
 		newGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>hinzufügen</body></html>");
 		deleteGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>löschen</body></html>");
-
+		editGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>explizieren</body></html>");
 
 //		saveGroup= new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>speichern</body></html>");
 //		saveGroup.setActionCommand(DCCommand.Save.toString());
@@ -63,6 +64,7 @@ public class ConfigEditor extends JView{
 		editGroup_Buttons.add(new JLabel(" "));
 		//editGroup_Buttons.add(saveGroup);
 		editGroup_Buttons.add(deleteGroup);
+		editGroup_Buttons.add(editGroup);
 		
 		JPanel testPhrase_Buttons = new JPanel();
 		testPhrase_Buttons.setLayout(new BoxLayout(testPhrase_Buttons, BoxLayout.Y_AXIS));
@@ -124,6 +126,8 @@ public class ConfigEditor extends JView{
 		newGroup.setActionCommand(DCCommand.AddOrder.toString());
 		deleteGroup.addActionListener(controller);
 		deleteGroup.setActionCommand(DCCommand.DeleteOrder.toString());
+		editGroup.addActionListener(controller);
+		editGroup.setActionCommand(DCCommand.EditOrderGroup.toString());
 		showHelp.addActionListener(controller);
 		showHelp.setActionCommand(DCCommand.ShowHelp.toString());
 		

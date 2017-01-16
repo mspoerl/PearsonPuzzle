@@ -1,12 +1,18 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.LinkedList;
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.text.JTextComponent;
 
 import model.Model;
 
@@ -14,9 +20,10 @@ import view.JView;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
+import view.dialog.EditOrderDialog;
 import view.dialog.JDialog;
 
-public class DialogController implements Controller, PropertyChangeListener {
+public class DialogController implements Controller, PropertyChangeListener, FocusListener {
 	
 	private JDialog dialog;
 	private Model model;
@@ -115,6 +122,42 @@ public class DialogController implements Controller, PropertyChangeListener {
 	            	else
 	            		dialog.clearAndHide();
 	            }
+	            else if(dialog.getClass().equals(EditOrderDialog.class)){
+	            	System.out.println(value);
+	            	if(value.equals(JOptionPane.OK_OPTION)){
+	            		model.saveOrderFailures();
+	            		dialog.clearAndHide();
+	            	}
+	            	else if(value.equals(JOptionPane.CANCEL_OPTION)){
+	            		dialog.clearAndHide();
+//	            		if(model.hasChanged()){
+//	            			int n = JOptionPane.showConfirmDialog(dialog, "Sicher, dass Sie ungespeicherte Veränderungen verwerfen wollen?", prop, JOptionPane.OK_CANCEL_OPTION);
+//	            			if(n==JOptionPane.OK_OPTION)
+//	            				dialog.clearAndHide();
+//	            		}
+//	            		else 
+//	            			dialog.clearAndHide();
+	            	}
+	            }
 			}
 		}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		if(dialog.getClass().equals(EditOrderDialog.class)){
+			if(e.getSource().getClass().equals(JTextArea.class)
+					&& ((JTextArea) e.getSource()).getText().equals(((EditOrderDialog)dialog).DEFAULT_CONTENT)){
+				((JTextArea) e.getSource()).setText("");
+			}
+		}
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if(e.getSource().getClass().equals(JTextArea.class)){
+			model.setOrderFailures((Integer)dialog.get("groupID"), (String)dialog.get("text"));
+		}
+	}
 }

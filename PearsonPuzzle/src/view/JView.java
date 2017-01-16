@@ -11,6 +11,7 @@ import javax.swing.*;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
+import view.dialog.EditOrderDialog;
 
 import model.Model;
 import controller.Controller;
@@ -176,6 +177,9 @@ public abstract class JView implements Observer {
 				case ShowHelp:
 					JOptionPane.showMessageDialog(frame, "Hilfetext");
 					dialog = null;
+					break;
+				case EditOrderGroup:
+					dialog = new EditOrderDialog(frame, model, "Gruppe expliziter beschreiben");
 					break;
 				default:
 					dialog = null;

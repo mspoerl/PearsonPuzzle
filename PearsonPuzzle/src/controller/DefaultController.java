@@ -133,6 +133,9 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				view = new PreViewEditor(model);
 				view.addController(this);
 				break;
+			case EditOrderGroup:
+				view.showDialog(cmd, true);
+				break;
 			case NewProject:
 				model.selectProject(null);
 				model.fetchAll();
