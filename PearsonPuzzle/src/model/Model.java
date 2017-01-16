@@ -372,11 +372,17 @@ public class Model extends Observable {
 	public void insertInSollution(int index, String value){
 		// Wird so gelöst, damit codeMap nicht öffentlich wird (diskutabel)
 		//sortedCode.add(index, codeVector_normal.indexOf(value));
-		sortedCode.add(index, codeMap.get(value.trim()));
+		
+		//sortedCode.add(index, codeMap.get(value.trim()));
+		sortedCode.add(index, codeMap.get(value));
 	}
 	public void replaceInSollution(int index, String value){
 		sortedCode.remove(index);
-		sortedCode.add(index, codeMap.get(value.trim()));
+		//sortedCode.add(index, codeMap.get(value.trim()));
+		sortedCode.add(index, codeMap.get(value));
+		
+		
+		
 		//sortedCode.add(index, codeVector_normal.indexOf(value));
 	}
 	public void removeInSollution(int index){
@@ -432,10 +438,11 @@ public class Model extends Observable {
 		
 		Boolean result;
 		
-		result = OrderFailures.testOrder_simple(this, projectCode);
+		//result = OrderFailures.testOrder_simple(this, projectCode);
+		result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
 		successMap.put("Test auf 1:1 Reihenfolge", result);
 		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
-		successMap.put("Gruppentest", result);
+		successMap.put("Gruppentest", !groupFailures.contains(false));
 		for(int i=0;i<groupFailures.size();i++){
 			successMap.put("Gruppe"+(i+1), groupFailures.get(i));
 		}
@@ -730,15 +737,19 @@ public class Model extends Observable {
 //					
 //					codeVector_random.set(randomInts.get(index), strings[index]);
 					codeVector_random.set(randomInts.get(index), bString);
-					codeVector_normal.add(strings[index]);
+					//codeVector_normal.add(strings[index]); 			16.1.2016
+					codeVector_normal.add(bString);
 					
 					testExpressionsVector.add(new String());
 					
 					// 10.1.2016
 					//codeMap.put(strings[index], randomInts.get(index));
-					if(!codeMap.containsKey(strings[index]))
-						codeMap.put(strings[index], index);
+//					if(!codeMap.containsKey(strings[index]))			16.1.2017
+//						codeMap.put(strings[index], index);				16.1.2017
+					if(!codeMap.containsKey(bString))
+						codeMap.put(bString, index);
 				}
+				System.out.println("codeMap"+codeMap);
 			}				
 	}
 	// --- Datenbank zurücksetzen

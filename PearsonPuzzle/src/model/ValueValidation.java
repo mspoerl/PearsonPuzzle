@@ -64,9 +64,11 @@ public class ValueValidation {
 		StringBuffer codeBuffer = new StringBuffer();
 		for(String line: projectCodeArray){
 			if(!line.trim().isEmpty())
-				codeBuffer.append(line+"\n");
+				if(codeBuffer.length()==0)
+					codeBuffer.append(line);
+				else
+					codeBuffer.append("\n"+line);
 		}
-		codeBuffer.deleteCharAt(codeBuffer.lastIndexOf("\n"));
 		System.out.println("code Buffer: "+ codeBuffer.toString());
 		return codeBuffer.toString();
 	}

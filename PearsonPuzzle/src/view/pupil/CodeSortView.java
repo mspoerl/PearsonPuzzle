@@ -10,6 +10,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -50,7 +51,7 @@ public class CodeSortView extends JView {
 	private DefaultListModel <String> saveDropModel;
 	private JButton compileButton;
 	private JButton testButton;
-	private JTextArea messageBox;
+	private JLabel messageBox;
 	
 	public CodeSortView(Model model) {
 		super(model);
@@ -138,16 +139,17 @@ public class CodeSortView extends JView {
 			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
 		
 		// Arbeitsanweisung und Ergebnisse
-		messageBox=new JTextArea(defaultDescription);
+		messageBox = new JLabel(defaultDescription);
+//		messageBox=new JTextArea(defaultDescription);
 		if(!model.getProjectDescription().trim().equals(""))
 			messageBox.setText(model.getProjectDescription());
-		messageBox.setLineWrap(true);
-		messageBox.setWrapStyleWord(true);
-		messageBox.setEditable(false);
+//		messageBox.setLineWrap(true);
+//		messageBox.setWrapStyleWord(true);
+//		messageBox.setEditable(false);
 		JScrollPane scrollPane_description = new JScrollPane(messageBox);
 		scrollPane_description.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane_description.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane_description.setPreferredSize(new Dimension(360,100));
+		scrollPane_description.setPreferredSize(new Dimension(650,100));
 		mainPanel.add(scrollPane_description,BorderLayout.PAGE_END);
 	}
 	
@@ -204,29 +206,29 @@ public class CodeSortView extends JView {
 			if(failures.isEmpty())
 				messageBox.setText("Kompilieren war erfolgreich!");
 			else{
-				String failureText = "Kompilieren war nicht erfolgreich. \nAufgetretenen Fehler: ";
+				String failureText = "<html><body>Kompilieren war nicht erfolgreich. <br>Aufgetretenen Fehler: ";
 				for(HashMap<String, String> failure : failures){
-					failureText = failureText+"\n "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
+					failureText = failureText+"<br> "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
 				}
-				messageBox.setText(failureText);
+				messageBox.setText(failureText+"</body></html>");
 			}
 			dragList.setEnabled(false);
 			saveDropList.setEnabled(false);
 		}
 		if(arg1==DCCommand.TestCode){
-			String failureText = new String("Ergebnis des Unit-Test:\n"+model.getjUnitFailures().size()+" Fehler");
+			String failureText = new String("<html><body><u>Ergebnis des Unit-Test:</u>"+model.getjUnitFailures().size()+" Fehler<br>");
 			for(Failure failure: model.getjUnitFailures()){
-				failureText=failureText+"\n"+failure;
+				failureText=failureText+"<br>"+failure;
 			}
-			failureText = failureText + "\n";
+			failureText = failureText + "<br>";
 			for(String key : model.getSuccessMap().keySet()){
-				failureText = failureText +"\n"+key+": ";
+				failureText = failureText +"<br>"+key+": ";
 				if(model.getSuccessMap().get(key))
 					failureText+="Erfolgreich!";
 				else 
 					failureText+="Failed!";
 			}
-			messageBox.setText(failureText);
+			messageBox.setText(failureText+"</body></html>");
 		}
 		update();
 	}
