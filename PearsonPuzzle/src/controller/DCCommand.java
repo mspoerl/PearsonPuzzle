@@ -10,25 +10,37 @@ public enum DCCommand {
 	// Text Component Connection
 		ConnectedComponent,
 	// Button Commands
-		ShowHelp, Save, ResetDB, SetConfig, DeleteProject, AddOrder, Compile, TestCode, SaveProjectConfiguration,
+		ShowHelp, Save, ResetDB, SetConfig, DeleteProject, AddOrder, Compile, TestCode, SaveProjectConfiguration, Randomize,
 	// View Changes
-		Login, EditProject, EditUsers, EditJUnit, AddUser, NewProject, OpenProject, ProjectList,  Logout,	Admin, ConfigureProject, DeleteOrder ;
+		EditConfig,EditProject, EditUsers, EditJUnit, EditPreview, NewProject, OpenProject, ProjectList, Login, Logout, Admin, DeleteOrder,
+	// Dialogs
+		AddUser, AddClasses, AddMethods, EditOrderGroup;
 	
 	@Override
 	public String toString(){
 		switch(this){
 		case AddUser:
 			return "AddUser";
+		case AddClasses:
+			return "AddClasses";
+		case AddMethods:
+			return "AddMethods";
 		case EditUsers:
 			return "EditUsers";
 		case EditProject:
 			return "EditProject";
+		case EditPreview: 
+			return "EditPreview";
+		case EditOrderGroup:
+			return "EditOrderGroup";
 		case NewProject:
 			return "NewProject";
 		case OpenProject:
 			return "OpenProject";
 		case ProjectList:
 			return "ProjectList";
+		case Randomize:
+			return "Randomize";
 		case Login:
 			return "Login";
 		case Logout:
@@ -45,8 +57,8 @@ public enum DCCommand {
 			return "SetConfig";
 		case ShowHelp:
 			return "ShowHelp";
-		case ConfigureProject:
-			return "ConfigureProject";
+		case EditConfig:
+			return "EditConfig";
 		case ConnectedComponent:
 			return "ConnectedComponent";
 		case AddOrder:

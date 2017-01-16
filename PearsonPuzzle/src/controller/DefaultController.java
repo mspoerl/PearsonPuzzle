@@ -13,6 +13,7 @@ import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 import javax.swing.*;
+
 import org.junit.runner.Result;
 import compiler.TestCompiler;
 
@@ -26,6 +27,7 @@ import view.pupil.CodeSortView;
 import view.pupil.PupilView;
 import view.teacher.OptionConfiguration;
 import view.teacher.ConfigEditor;
+import view.teacher.PreViewEditor;
 import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
@@ -67,10 +69,16 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				&& cmd!=DCCommand.ConnectedComponent){
 			if (view.getClass().equals(TextEditor.class)
 					&& ((view.get("projectname")== null || ((String) view.get("projectname")).trim().isEmpty()))
-					&& (cmd==DCCommand.ConfigureProject || cmd == DCCommand.EditJUnit)){
+					&& (cmd==DCCommand.EditConfig || cmd == DCCommand.EditJUnit)){
 				view.showDialog(Allert.noContentInput);
 				return;
 			}
+			else if(e.getSource().getClass().equals(JButton.class) 
+					&& cmd != DCCommand.EditConfig
+					&& cmd != DCCommand.EditJUnit
+					&& cmd != DCCommand.EditProject
+					&& cmd != DCCommand.EditPreview)
+			{}
 			else if(model.hasChanged()){
 				Integer allert=view.showDialog(Allert.notSaved);
 				if(allert==JOptionPane.YES_OPTION)
@@ -98,6 +106,14 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				}
 				view.showDialog(cmd, false);
 				break;
+			case AddClasses: 
+				if(view.getClass().equals(UnitEditor.class))
+					view.showDialog(cmd, true);
+				break;
+			case AddMethods:
+				if(view.getClass().equals(UnitEditor.class))
+					view.showDialog(cmd, true);
+				break;
 			case EditUsers:
 				view.quitView();
 				this.view = new UserEditor(model);
@@ -112,6 +128,17 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					this.view=new TextEditor(model);
 					view.addController(this);
 				}
+				break;
+			case EditPreview:
+				view.quitView();
+				view = new PreViewEditor(model);
+				view.addController(this);
+				break;
+			case EditOrderGroup:
+				if(model.getGroupMatrix().size()!=0)
+					view.showDialog(cmd, true);
+				else 
+					view.showDialog("Es sind keine Gruppen vorhanden, die man bearbeiten könnte.");
 				break;
 			case NewProject:
 				model.selectProject(null);
@@ -162,6 +189,12 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				this.view=startView;
 				view.update();
 				break;
+			case Randomize:
+				if(view.getClass().equals(PreViewEditor.class)){
+					model.saveProject();
+					view.update(null, DCCommand.Randomize);
+				}
+				break;
 			case ShowHelp:
 				view.showDialog(DCCommand.ShowHelp, false);
 				break;
@@ -188,6 +221,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				}
 				else if(view.getClass().equals(UnitEditor.class)){
 					model.setJUnitCode(((UnitEditor) view).getContent());
+					model.setImports("online", ((UnitEditor) view).getImport());
 					model.saveProjectSettings();
 				}
 				else if(view.getClass().equals(ConfigEditor.class)){
@@ -199,6 +233,9 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					//view.addController(this);
 					act(DCCommand.EditUsers, null);
 				}
+				else if(view.getClass().equals(PreViewEditor.class)){
+					model.savePuzzlemodus(((PreViewEditor) view).getPuzzleModus());
+				}
 				break;
 			case DeleteProject:
 				if(view.getClass().equals(TeacherView.class) 
@@ -206,7 +243,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					if(model.getProjectListID()==null)
 						view.showDialog(Allert.noProjectSelected);
 					else{
-						view.allert("Sind Sie sicher, dass Sie das Projekt löschen wollen?");
+						view.showDialog("Sind Sie sicher, dass Sie das Projekt löschen wollen?");
 						// TODO: Auswahlmöglichkeit zu Allert hinzufügen
 						if(model.removeProject())
 						{
@@ -220,13 +257,13 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				if(model.getGroupMatrix().size()!=0)
 					view.showDialog(cmd, true);
 				else 
-					view.allert("Es sind keine Gruppen vorhanden, die man löschen könnte.");
+					view.showDialog("Es sind keine Gruppen vorhanden, die man löschen könnte.");
 				break;
 			case SetConfig:
 				if(model.getAccessGroup()==AccessGroup.TEACHER)
 					model.updateConfig();
 				break;
-			case ConfigureProject:
+			case EditConfig:
 				if(model.getAccessGroup()==AccessGroup.TEACHER){
 					view.quitView();
 					this.view = new ConfigEditor(model);
@@ -307,7 +344,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 	public void login(String username, char[] password){
 		model.setUsername(username);
 		if(username.isEmpty() || password.length==0){
-			view.allert("Bitte Nutzernamen und Passwort eingeben");
+			view.showDialog("Bitte Nutzernamen und Passwort eingeben");
 		}
 		model.login(username, password);
 		if(model.getAccessGroup()==AccessGroup.TEACHER){
@@ -321,7 +358,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			view.addController(this);
 		}
 		else if(model.getAccessGroup()==AccessGroup.UNAUTHORIZED){
-			view.allert("Zugang verweigert");
+			view.showDialog("Zugang verweigert");
 		}
 	}
 	
@@ -400,6 +437,11 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				((JTextArea)(e.getComponent())).setText("");
 			}
 		}
+		else if(view.getClass().equals(UnitEditor.class)){
+			if(e.getComponent().getName().equals("Imports")
+					&& model.getImport("online").equals(""))
+				((JTextComponent) e.getComponent()).setText("");
+		}
 		else if(view.getClass().equals(ConfigEditor.class)){
 			
 		}
@@ -409,19 +451,28 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 		if(view.getClass().equals(TextEditor.class)
 				|| view.getClass().equals(UnitEditor.class)){
 			String compName = ((Component) e.getSource()).getName();
-			String compValue = ((JTextComponent) e.getSource()).getText();
-			if(compName.equals("ProjectCode"))
-				model.setProjectCode(compValue);
-			else if(compName.equals("ProjectDescription"))
-				model.setProjectDescription(compValue);
-			else if(compName.equals("TabSize"))
-				model.setTabSize(Integer.parseInt(compValue));
-			else if(compName.equals("ProjectName"))
-				model.setProjectName(compValue);
-			else if(compName.equals("Grade"))
-				model.setGrade(Integer.parseInt(compValue));
-			else if(compName.equals("JUnitCode"))
-				model.setJUnitCode(compValue);
+			if(e.getSource().getClass().equals(JTextComponent.class)){
+				String compValue = ((JTextComponent) e.getSource()).getText();
+				if(compName.equals("ProjectCode"))
+					model.setProjectCode(compValue);
+				else if(compName.equals("ProjectDescription"))
+					model.setProjectDescription(compValue);
+				else if(compName.equals("TabSize"))
+					model.setTabSize(Integer.parseInt(compValue));
+				else if(compName.equals("ProjectName"))
+					model.setProjectName(compValue);
+				else if(compName.equals("Grade"))
+					model.setGrade(Integer.parseInt(compValue));
+				else if(compName.equals("JUnitCode"))
+					model.setJUnitCode(compValue);
+			}
+			else if(e.getSource().getClass().equals(JComboBox.class))
+			{
+				if(compName.equals("AccessGroup")) {
+					JComboBox<String> jComboBox = (JComboBox<String>) e.getSource();
+					model.setStudentGroup((String) jComboBox.getSelectedItem());
+				}
+			}
 			//System.out.println("Focus Lost: "+e.getComponent().getName());
 		}
 	}

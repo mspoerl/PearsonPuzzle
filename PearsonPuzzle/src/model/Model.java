@@ -46,6 +46,7 @@ public class Model extends Observable {
 	private String projectName;
 	private String projectDescription;
 	private String projectCode;
+	private HashMap<String, String> projectImports;
 	
 	private List<String> projectList;
 	private Vector<String> projectVector;
@@ -55,11 +56,13 @@ public class Model extends Observable {
 	private boolean randomMode;
 	private boolean resetDB;
 	private int grade;
+	private int puzzleModus;
 	private dbTransaction dataBase;
 	private AccessGroup accessGroup;
 	private AccessGroup userGroup_toEdit;
 	
 	private String jUnitCode;
+	private LinkedList<String> orderFailureText;
 	private LinkedList<Failure> jUnitFailures;
 	private Vector<HashMap<String, String>> compileFailures;
 	//private LinkedList<Boolean> groupFailures;
@@ -69,13 +72,15 @@ public class Model extends Observable {
 
 	private HashMap<String, String> personMap;
 
+	private String studentGroup;
+
 	// private Exception exceptionModel;
 
 	public Model() {
 		jUnitFailures=new LinkedList<Failure>();
 		compileFailures = new Vector<HashMap<String,String>>();
 		personMap = new HashMap<String, String>();
-				
+		
 		try{
 			dataBase = new dbTransaction(this);			
 		}
@@ -151,7 +156,7 @@ public class Model extends Observable {
 		} else {
 			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
-		boolean hasChanged = hasChanged();
+		boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
@@ -168,7 +173,7 @@ public class Model extends Observable {
 			tabSize = 10;
 		setChanged(this.tabSize, tabSize);
 		this.tabSize = tabSize;
-		Boolean hasChanged = hasChanged();
+		Boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
@@ -192,6 +197,7 @@ public class Model extends Observable {
 	// TODO: in accessGroup auslagern
 	public void login(String username, char[] password){
 		this.accessGroup = getAccessGroup(username, password);
+		this.username = username;
 	}
 	public AccessGroup getAccessGroup(String username, char[] password) {
 		if (dataBase.lookUpstudent(username, password)) {
@@ -269,16 +275,24 @@ public class Model extends Observable {
 		codeBuffer.deleteCharAt(codeBuffer.lastIndexOf("\n"));
 		setChanged(this.projectCode, codeBuffer.toString());
 		projectCode=codeBuffer.toString();
-		boolean hasChanged = hasChanged();
+		boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
 		if(hasChanged)
 			setChanged();
 	}
 				// Projektvektor
-	public Vector<String> getCodeVector() {
+	
+	/**
+	 * Liefert einen Code Vektor. <br>
+	 * Für STUDENT kann nur der ranomisierte Vektor abgefragt werden.
+	 * @param random
+	 * @return
+	 */
+	public Vector<String> getCodeVector(Boolean random) {
 		if(projectID==null)
 			return new Vector<String>();
-		if(accessGroup == AccessGroup.TEACHER)
+		if(accessGroup == AccessGroup.TEACHER
+				&& (random==null || random == false))
 			return codeVector_normal;
 		return codeVector_random;
 	}
@@ -314,15 +328,19 @@ public class Model extends Observable {
 			codeGroup.add(new Integer(0));
 		}
 		codeLine_GroupMatrix.add(codeGroup);
+		orderFailureText.add(new String());
 		setChanged();
 		notifyObservers();
 		setChanged();
 	}
 	public void removeTestGroup(int index){
-		if(index < codeLine_GroupMatrix.size())
-			codeLine_GroupMatrix.remove(index);	
+		if(index < codeLine_GroupMatrix.size()){
+			codeLine_GroupMatrix.remove(index);
+			orderFailureText.remove(index);
+		}
 		setChanged();
 		notifyObservers(DCCommand.DeleteOrder);
+		setChanged();
 	}
 	public Vector<String> getTestExpressionsVector() {
 		if(projectID==null)
@@ -517,6 +535,9 @@ public class Model extends Observable {
 		clearChanged();
 	}	
 	
+	public void saveProject(){
+		saveProject(getProjectCode(), getProjectName(), getProjectDescription(), null);
+	}
 	/**
 	 * Speichert das Projekt. Für den Fall, dass das Projekt umbenannt wurde, <br>
 	 * wird projectName und der gewählte Eintrag ind projectList auf Ungleichheit geprüft.
@@ -524,9 +545,13 @@ public class Model extends Observable {
 	 * @param projectName Neuer Projektname 
 	 * @param linelength
 	 */
-	public boolean saveProject(String codeString, String projectName, String projectDescription,int linelength) {
+	public boolean saveProject(String codeString, String projectName, String projectDescription,Integer linelength) {
 		projectCode = new String(codeString);
-		
+		System.out.println("ID"+projectID);
+		if(projectID!=null)
+		System.out.println(projectList.get(projectID));
+		System.out.println(projectName);
+		System.out.println("this: "+this.projectName);
 		// ---- Prüfen, ob bereits ein gleichnamiges Projekt existiert 
 		if(projectID==null 
 				|| !projectName.equals(projectList.get(projectID))){
@@ -534,14 +559,15 @@ public class Model extends Observable {
 				return false;
 			}
 		}
-		
 		// ---- Wenn der Projektname geändert wurde, Projektnamen updaten
 		else if(!projectName.equals(projectList.get(projectID))){
+			// FIXME: hier kommt nie jemand an
+			System.out.println("rename");
 			dataBase.renameProject(projectList.get(projectID), projectName);
 		}
 		
 		// ----- Projekt speichern
-		dataBase.saveProject(projectName, codeString,"", projectDescription ,tabSize);
+		dataBase.saveProject(projectName, codeString,"", "", projectDescription ,tabSize);
 		dataBase.updateDescription(projectName, projectDescription);
 		
 		// TODO: Test, ob erfolgreich gespeichert wurde
@@ -550,6 +576,7 @@ public class Model extends Observable {
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(projectName,jUnitCode);
 			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
+			dataBase.saveImports(projectName, projectImports);
 			System.out.println(codeLine_GroupMatrix);
 		}
 		
@@ -568,8 +595,8 @@ public class Model extends Observable {
 		if(projectID!=null){
 			dataBase.saveProjectSettings(projectList.get(projectID), tabSize, grade);
 			if(jUnitCode!=null)
-				dataBase.saveJUnitTest(getProjectName(),jUnitCode);
-			System.out.println(getProjectName());
+				dataBase.saveJUnitTest(getProjectName(),jUnitCode);		
+			dataBase.saveImports(projectList.get(projectID), projectImports);
 		}
 		notifyObservers();
 		clearChanged();
@@ -632,6 +659,7 @@ public class Model extends Observable {
 				this.projectDescription="Noch keine Beschreibung vorhanden";
 				}
 			jUnitCode = dataBase.getJUnitCode(getProjectName());
+			projectImports = dataBase.getImports(getProjectName());
 		}
 		else{
 			this.projectDescription = new String();
@@ -665,8 +693,10 @@ public class Model extends Observable {
 				sortedCode = new LinkedList<Integer>();
 				codeLine_GroupMatrix = new Vector<Vector<Integer>>();
 				codeLine_GroupMatrix = dataBase.getOrdervektor(getProjectName());
-			
-
+				orderFailureText = new LinkedList<String>();
+				for(Vector<Integer> clGroup: codeLine_GroupMatrix){
+					orderFailureText.add(new String());
+				}
 				for(int index=0; index<strings.length; index++){
 					
 					
@@ -806,7 +836,56 @@ public class Model extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-	
+
+	public void setImports(String type, String text) {
+		setChanged(projectImports.get(type), text);
+		System.out.println(projectImports);
+		if(type.equals("methods"))
+			projectImports.put("methods", text);
+		else if(type.equals("classes"))
+			projectImports.put("classes", text);
+		else if(type.equals("online"))
+			projectImports.put("online", text);
+	}
+	public String getImport(String type){
+		if(projectImports!=null
+				&& projectImports.get(type)!=null)
+			return projectImports.get(type);
+		return "";
+	}
+
+	public void setStudentGroup(String student) {
+		if(getUsers(AccessGroup.STUDENT).contains(student)){
+			this.studentGroup = student;
+			setChanged();
+		}
+	}
+	public String getStudentGroup(){
+		return studentGroup;
+	}
+
+	public int getPuzzlemodus() {
+		return puzzleModus;
+	}
+
+	public void savePuzzlemodus(int puzzlemodus) {
+		puzzleModus = puzzlemodus;
+	}
+
+	public void setOrderFailures(Integer index, String failureText) {
+		setChanged(failureText, orderFailureText.get(index));
+		this.orderFailureText.set(index, failureText);
+	}
+
+	public String getOrderFailures(int index) {
+		if(orderFailureText!=null)
+			return orderFailureText.get(index);
+		return null;
+	}
+
+	public void saveOrderFailures() {
+		// FIXME: Datenbankanbindung
+	}	
 }
 
 /*
