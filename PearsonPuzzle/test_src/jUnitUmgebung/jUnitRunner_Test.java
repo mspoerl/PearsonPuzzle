@@ -2,6 +2,8 @@ package jUnitUmgebung;
 
 import static org.junit.Assert.assertEquals;
 
+import jUnitUmgebung.JUnitRunner;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -10,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
-import JUnitUmgebung.JUnitRunner;
 
 public class jUnitRunner_Test {
 	Boolean expectedResult;
@@ -20,7 +21,7 @@ public class jUnitRunner_Test {
 	
 	@Before
 	   public void initialize() {
-			jUnitRunner = new JUnitRunner(testString, null);
+			jUnitRunner = new JUnitRunner(unitText, testString, null);
 	   }
 
 	   // Each parameter should be placed as an argument here

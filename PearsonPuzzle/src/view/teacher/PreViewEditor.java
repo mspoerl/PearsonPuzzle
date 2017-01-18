@@ -16,6 +16,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -23,13 +24,13 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
-import Listener.FromTransferHandler;
-import Listener.ToSaveTransferHandler;
 
 import model.Model;
 
 import controller.Controller;
 import controller.DCCommand;
+import controller.transferHandler.FromTransferHandler;
+import controller.transferHandler.ToSaveTransferHandler;
 import view.JView;
 
 public class PreViewEditor extends JView{
@@ -150,10 +151,14 @@ public class PreViewEditor extends JView{
 	private void setupEditPanel(){
 		JPanel selectDragAndDrop = new JPanel();
 		selectDragAndDrop.setLayout(new BoxLayout(selectDragAndDrop, BoxLayout.Y_AXIS));
+		selectDragAndDrop.setAlignmentX(Component.CENTER_ALIGNMENT);
+		selectDragAndDrop.add(new JLabel("<html><body text-align=\"center\"><p align=\"center\">Drag&Drop Modus <br>wählen:</p></body></html>"));
+		selectDragAndDrop.add(Box.createRigidArea(new Dimension(0,10)));
+		
 		puzzleModeButtons = new LinkedList<JRadioButton>();
 		dropMode = new ButtonGroup();
-		ImageIcon[] dragIcons= {new ImageIcon("rsc/dragDrop_0.png"), new ImageIcon("rsc/dragDrop_2.png"), new ImageIcon("rsc/dragDrop_2.png"), new ImageIcon("rsc/dragDrop_2.png")};
-		ImageIcon[] dragIcons_pressed = {new ImageIcon("rsc/dragDrop_0_pressed.png"), new ImageIcon("rsc/dragDrop_2_pressed.png"), new ImageIcon("rsc/dragDrop_2_pressed.png"), new ImageIcon("rsc/dragDrop_2_pressed.png")};
+		ImageIcon[] dragIcons= {new ImageIcon("rsc/icon/Icon_1.jpg"), new ImageIcon("rsc/icon/Icon_2.jpg"), new ImageIcon("rsc/icon/Icon_3.jpg"), new ImageIcon("rsc/icon/Icon_4.jpg")};
+		ImageIcon[] dragIcons_pressed = {new ImageIcon("rsc/icon/Icon_1_pressed.jpg"), new ImageIcon("rsc/icon/Icon_2_pressed.jpg"), new ImageIcon("rsc/icon/Icon_3_pressed.jpg"), new ImageIcon("rsc/icon/Icon_4_pressed.jpg")};
 		for(int i=0; i<dragIcons.length;i++){
 			JRadioButton radioButton = new JRadioButton();
 			radioButton.setIcon(dragIcons[i]);
@@ -172,7 +177,10 @@ public class PreViewEditor extends JView{
 			puzzleModeButtons.add(radioButton);
 			selectDragAndDrop.add(radioButton);
 		}
-		selectDragAndDrop.setAlignmentX(Component.LEFT_ALIGNMENT);
+		selectDragAndDrop.add(Box.createRigidArea(new Dimension(0,10)));
+		save = new JButton("Speichern");
+		save.setAlignmentX(Component.LEFT_ALIGNMENT);
+		selectDragAndDrop.add(save);
 		mainPanel.add(selectDragAndDrop, BorderLayout.LINE_START);
 	}
 	private DefaultListModel<String> makeDefaultListModel(){
@@ -191,14 +199,11 @@ public class PreViewEditor extends JView{
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		randomize = new JButton("<html><body><p align=\"center\">Liste neu<br>randomisieren</p></body></html>.");
-		save = new JButton("Speichern");
 		randomize.setAlignmentX(Component.CENTER_ALIGNMENT);
-		save.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		buttonPanel.add(randomize);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0,10)));
-		buttonPanel.add(save);
 		mainPanel.add(buttonPanel, BorderLayout.LINE_END);
 		
 	}

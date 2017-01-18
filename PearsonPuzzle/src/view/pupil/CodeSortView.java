@@ -24,9 +24,9 @@ import view.JView;
 
 import controller.Controller;
 import controller.DCCommand;
+import controller.transferHandler.FromTransferHandler;
+import controller.transferHandler.ToSaveTransferHandler;
 
-import Listener.FromTransferHandler;
-import Listener.ToSaveTransferHandler;
 
 import model.Model;
 

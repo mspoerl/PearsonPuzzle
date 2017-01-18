@@ -17,6 +17,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import view.PPException;
+import view.teacher.UnitEditor;
 
 import controller.DCCommand;
 
@@ -595,7 +596,8 @@ public class Model extends Observable {
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(projectName,jUnitCode);
 			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
-			dataBase.saveImports(projectName, projectImports);
+			if(projectImports!=null)
+				dataBase.saveImports(projectName, projectImports);
 			System.out.println(codeLine_GroupMatrix);
 		}
 		
@@ -869,6 +871,8 @@ public class Model extends Observable {
 	 * @return
 	 */
 	public boolean setImports(String type, String text) {
+		if(text.equals(UnitEditor.DEFAULT_IMPORT_TEXT))
+			return true;
 		setChanged(projectImports.get(type), text);
 		if(type.equals("methods"))
 			projectImports.put("methods", text);

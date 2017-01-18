@@ -21,6 +21,8 @@ import view.JView;
 
 public class UnitEditor extends JView{
 	
+	public static String DEFAULT_UNIT_CODE;
+	public final static String DEFAULT_IMPORT_TEXT="Hier können imports in der Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.";
 	private JTextArea textArea;
 	private JTextArea messageBox;
 	private JTextArea imports;
@@ -32,6 +34,7 @@ public class UnitEditor extends JView{
 
 	public UnitEditor(Model model) {
 		super(model);
+		DEFAULT_UNIT_CODE = "// Automatisch erstellte Vorlage für JUnit Test\n \nimport org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n"+"}";
 		menu = new MenuTeacher(2);
 		this.addMenuToFrame(menu);
 		setupEditor();
@@ -48,7 +51,7 @@ public class UnitEditor extends JView{
 		textArea.setBorder(BorderFactory.createCompoundBorder(border, 
 	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
 		if(textArea.getText().equals(""))
-			textArea.setText("// Automatisch erstellte Vorlage für JUnit Test\n \nimport org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n"+"}");
+			textArea.setText(DEFAULT_UNIT_CODE);
 		JScrollPane textScrollPane = new JScrollPane(textArea);
 		textScrollPane.setVerticalScrollBarPolicy(
 		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -73,7 +76,7 @@ public class UnitEditor extends JView{
 	
 		String importText = model.getImport("online");
 		if(importText== null|| importText.isEmpty())
-			imports = new JTextArea("Hier können imports in der Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.");
+			imports = new JTextArea(DEFAULT_IMPORT_TEXT);
 		else 
 			imports = new JTextArea(importText);
 		imports.setLineWrap(true);

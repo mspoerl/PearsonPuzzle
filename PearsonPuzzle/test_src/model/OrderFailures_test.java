@@ -34,13 +34,18 @@ public class OrderFailures_test {
 		switch (testCase) {
 		case 0:
 			codeLines= new String[]			{"Line0","Line1","Line2","Line3","Line4","Line5"};
-			sortedLines = new Integer[]		{5,2,3,1, 0};
+			sortedLines = new Integer[]		{0,1,3,2, 4,5};
 			ruleGroup = new Integer[][] 	{{0,1,1,2,3,0}, {1,1,1,1,1,1}};
 			break;
 		case 1:
 			codeLines= new String[]			{"Line0","Line0","Line2","Line3","Line2","Line5"};
 			sortedLines = new Integer[]		{1,0,4,2,5,3};
 			ruleGroup = new Integer[][] 	{{1,2,3,0,0,4}, {1,1,2,3,0,0}};
+			break;
+		case 2:
+			codeLines= new String[]			{"Line0","Line0","Line0","Line1","Line2","Line2"};
+			sortedLines = new Integer[]		{1,0,2,5,3,4};
+			ruleGroup = new Integer[][] 	{{1,2,3,4,4,6}, {1,1,1,2,2,3}};
 			break;
 		default:
 			codeLines= new String[] 		{"Line0","Line1","Line2","Line3","Line4","Line5"};
@@ -65,21 +70,26 @@ public class OrderFailures_test {
 
 	@Test
 	public void test() {
-		System.out.println("0");
+		System.out.println("Testfall 0");
 		getTestCase(0);
 		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		assertFalse(groupFailures.get(0));
 		assertTrue(groupFailures.get(1));
 		
 
-		System.out.println("1");
+		System.out.println("Testfall 1");
 		getTestCase(1);
 		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		assertTrue(groupFailures.get(0));
 		assertTrue(groupFailures.get(1));
 		
-
-		System.out.println("2");
+		System.out.println("Testfall 2");
+		getTestCase(2);
+		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
+		assertTrue(groupFailures.get(0));
+		assertTrue(groupFailures.get(1));
+		
+		System.out.println("Testfall 10");
 		getTestCase(10);
 		groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
 		assertTrue(groupFailures.get(0));

@@ -53,7 +53,7 @@ public class DBAccess {
 	}
 	
 	@Test void saveProject_Test2() throws SQLException{
-		db.saveProject(normalString, normalString.split("\n"),"" ,"", new ArrayList<Integer>(), 100, 0);
+		db.saveProject(normalString,"", normalString.split("\n"),"",  new ArrayList<Integer>(), 100, 0);
 	}
 	
 	@Test
@@ -61,7 +61,7 @@ public class DBAccess {
 		for(String projectName : stringList){
 			for(String codeString : stringList){
 				// ---- Projekt wird gespeichert.
-				db.saveProject(projectName, codeString.split("\n"),"","",new ArrayList<Integer>(),100, 0);
+				db.saveProject(projectName, "",codeString.split("\n"),"",new ArrayList<Integer>(),100, 0);
 				
 				try{
 					// --- Projektname wird auf richtige Länge gebracht
@@ -176,7 +176,7 @@ public class DBAccess {
 	 */
 	private boolean isEqual(final String code, final String split_String, final String projectname, final int linelength){
 		try {
-			db.saveProject(projectname, code.split(split_String),"" ,"", new ArrayList<Integer>(), linelength, 0);
+			db.saveProject(projectname, "",code.split(split_String),"", new ArrayList<Integer>(), linelength, 0);
 		} catch (SQLException e) {
 			fail("Problem beim Speichern");
 			e.printStackTrace();

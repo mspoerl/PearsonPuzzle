@@ -1,4 +1,4 @@
-package JUnitUmgebung;
+package jUnitUmgebung;
 
 import java.util.*;
 import junit.textui.TestRunner;
@@ -29,6 +29,7 @@ public class MemClassLoader_JUnit extends ClassLoader
       byte[] bytes = fileObject.getClassBytes();
       return defineClass( name, bytes, 0, bytes.length );
     }
+    System.out.println(name);
 
     return super.findClass( name );
   }
