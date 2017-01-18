@@ -11,13 +11,20 @@ import model.access.AccessGroup;
  * @author workspace
  */
 public enum Allert {
-	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser;
+	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser, help_Orders;
 	
 	public Integer allert(Model model){
 		Integer n;
 		String[] yesNoCancelOptions = { "Ja", "Nein", "Abbrechen" };
 		String[] yesNoOptions = {"Ja", "Nein"};
 		switch(this){
+			case help_Orders:
+				JOptionPane.showMessageDialog(null, "<html><body style=\"text-align: center;\"><p style=\"width:700px; text-align:justify;\">An dieser Stelle werden Reihenfolgen festgelegt, in denen die SchülerInnnen die Codezeilen zusammensetzen sollen. <br>" +
+						"Dabei werden Codezeilen, die nach anderen Codezeilen kommen sollen, mit höheren Zahlen markiert und die Codezeilen, die vorher kommen sollen, " +
+						"mit niedrigeren Zahlen. Codezeilen, die austauschbar sind, werden mit gleichen Zahlen markiert." +
+						" Die Zahl '0' wird beim Testen der Reihenfolgen nicht beachtet. Die Zahlen einer Reihenfolge müssen stets aufsteigend sein und sollten aufeinander folgen. " +
+						"Über die Schaltfläche 'Gruppe hinzufügen' können weitere Reihenfolgen festgelegt werden.</p></body></html>");
+				return null;
 			case noProjectSelected:
 				JOptionPane.showMessageDialog(null, "Bitte Projekt auswählen");
 				return null;

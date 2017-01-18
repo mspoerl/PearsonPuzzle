@@ -175,7 +175,7 @@ public abstract class JView implements Observer {
 					dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
 					break;
 				case ShowHelp:
-					JOptionPane.showMessageDialog(frame, "Hilfetext");
+					showDialog(Allert.help_Orders);
 					dialog = null;
 					break;
 				case EditOrderGroup:

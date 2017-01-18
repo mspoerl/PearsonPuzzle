@@ -25,6 +25,7 @@ public class TestCompiler {
 		packageString = new String();
 		importStrings = new LinkedList<String>();
 		classes = new HashMap<String, String>();
+		 compileFailures = new Vector<HashMap<String, String>>();
 		}
 	
 	public Vector<HashMap<String,String>> getFailures(){
@@ -88,7 +89,7 @@ public class TestCompiler {
 		 */
 		public boolean compileCode(String src){
 			
-			 compileFailures = new Vector<HashMap<String, String>>();
+			
 			 // Konflikte bezüglich des Klassennamens werden ausgeschlossen
 			 String className=new String(DEFAULT_CLASS_NAME);
 			 

@@ -443,7 +443,8 @@ public class Model extends Observable {
 		result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
 		successMap.put("Test auf 1:1 Reihenfolge", result);
 		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
-		successMap.put("Gruppentests", !groupFailures.contains(false));
+		if(groupFailures.size()!=0)
+			successMap.put("Gruppentests", !groupFailures.contains(false));
 		for(int i=0;i<groupFailures.size();i++){
 			successMap.put("Test "+(i+1), groupFailures.get(i));
 		}
