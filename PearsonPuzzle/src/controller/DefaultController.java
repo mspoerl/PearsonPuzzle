@@ -336,9 +336,19 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				Result result;
 				if(model.getAccessGroup()==AccessGroup.STUDENT){
 					System.out.println(model.getSollution());
+					
 					//model.testSolution();
 					model.testOrderOfSollution();
 					//result = JUnitRunner.run();
+					if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
+						JUnitRunner unitRunner = new JUnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
+						unitRunner.addOnlineImport(model.getImport("online"));
+						unitRunner.addClasses(model.getImport("classes"));
+						result = unitRunner.run();
+						System.out.println(result.getFailures());
+						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+						model.setJunitFailures(result);
+					}
 				}
 				else{
 					JUnitRunner unitRunner = new JUnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
