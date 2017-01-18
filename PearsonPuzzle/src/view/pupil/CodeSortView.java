@@ -21,12 +21,13 @@ import javax.swing.TransferHandler;
 import org.junit.runner.notification.Failure;
 
 import view.JView;
+import view.teacher.UnitEditor;
 
 import controller.Controller;
 import controller.DCCommand;
+import controller.transferHandler.FromTransferHandler;
+import controller.transferHandler.ToSaveTransferHandler;
 
-import Listener.FromTransferHandler;
-import Listener.ToSaveTransferHandler;
 
 import model.Model;
 
@@ -216,18 +217,22 @@ public class CodeSortView extends JView {
 			saveDropList.setEnabled(false);
 		}
 		if(arg1==DCCommand.TestCode){
-			String cssClass;
-			if(model.getjUnitFailures().size()==0)
-				 cssClass = " class=\"success\" ";
-			else
-				cssClass = " class=\"failure\" ";
-			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>" +
-					"<span class=\"heading\">Ergebnis des Unit-Test:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>");
-			System.out.println(failureText);
-			for(Failure failure: model.getjUnitFailures()){
-				System.out.println(failure);
-				failureText=failureText+"<div class=\"failure\">"+failure+"</div>";
+			
+			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
+			if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){
+				String cssClass;
+				if(model.getjUnitFailures().size()==0)
+					 cssClass = " class=\"success\" ";
+				else
+					cssClass = " class=\"failure\" ";
+				failureText+="<span class=\"heading\">Ergebnis des Unit-Test:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
+				System.out.println(failureText);
+				for(Failure failure: model.getjUnitFailures()){
+					System.out.println(failure);
+					failureText=failureText+"<div class=\"failure\">"+failure+"</div>";
+				}
 			}
+					
 			//failureText = failureText + "<br>";
 			for(String key : model.getSuccessMap().keySet()){
 				if(key.equals("Gruppentests") || key.contains("Reihenfolge"))

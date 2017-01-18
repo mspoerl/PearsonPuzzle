@@ -25,6 +25,7 @@ public class TestCompiler {
 		packageString = new String();
 		importStrings = new LinkedList<String>();
 		classes = new HashMap<String, String>();
+		 compileFailures = new Vector<HashMap<String, String>>();
 		}
 	
 	public Vector<HashMap<String,String>> getFailures(){
@@ -88,12 +89,12 @@ public class TestCompiler {
 		 */
 		public boolean compileCode(String src){
 			
-			 compileFailures = new Vector<HashMap<String, String>>();
+			
 			 // Konflikte bezüglich des Klassennamens werden ausgeschlossen
 			 String className=new String(DEFAULT_CLASS_NAME);
 			 
 			 // Falls der Code keine Klasse enthält, wird hier eine generiert 
-			 if(!src.contains("class")){
+			 if(!src.contains(" class ")){
 				 while(src.contains(className)){
 					 className=className+"_";
 				 }
@@ -119,14 +120,14 @@ public class TestCompiler {
 			
 			// TODO: Imports hinzufügen
 			//System.out.println("package:"+packageString);
-			 StringJavaFileObject javaFile = new StringJavaFileObject( "gen_src//"+className, src );
+			 StringJavaFileObject javaFile = new StringJavaFileObject( "gen_src/"+className, src );
 			 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			 DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 			 StandardJavaFileManager fileManager = compiler.getStandardFileManager( diagnostics, null, null );
 			 Iterable<? extends JavaFileObject> units = Arrays.asList( javaFile );
 			 CompilationTask task = compiler.getTask( null, fileManager, diagnostics, null, null, units );
 			 task.call();
-			 System.out.println(src);
+			 //System.out.println(src);
 
 			 // Diagnose (bei aufgetretenem Fehler)
 			 for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
@@ -161,7 +162,7 @@ public class TestCompiler {
 				 return false;
 			 }
 			 try {
-				 System.out.println(className);
+				 //System.out.println(className);
 				 //className = "sourceCode_toTest/"+className;
 				 Class.forName( className, true, classLoader );
 				 deleteTestClass(className);
@@ -183,45 +184,3 @@ public class TestCompiler {
 			 }
 		 }
 }
-
-
-// Alternative:
-// -------------------------- http://openbook.rheinwerk-verlag.de/java7/1507_19_002.html ---------------------
-
-
-//public static boolean compile(ArrayList solution) throws IOException{
-//	
-//	String solutionString= String.join(" ", solution);
-//			
-//	
-//
-//	File javaSrcFile = new File( "B.java" );
-//	Writer p = new FileWriter( javaSrcFile );
-//	p.write( "class B { static { "+solutionString+" } }" );
-//	p.close();
-//	
-//	
-//	JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-//	StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null );
-//	Iterable<? extends JavaFileObject> units;
-//	units = fileManager.getJavaFileObjectsFromFiles( Arrays.asList( javaSrcFile ) );
-////	Iterable<String> options = Arrays.asList( "-verbose" );
-//	CompilationTask task = compiler.getTask( null, fileManager, null, null, null, units );
-//	task.call();
-//	fileManager.close();
-//	
-//	
-//	URLClassLoader classLoader = new URLClassLoader(
-//			  new URL[] { javaSrcFile.getAbsoluteFile().getParentFile().toURI().toURL() } );
-//			try {
-//				Class.forName( "B", true, classLoader );
-//			} catch (ClassNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}    // Java Compiler API
-//
-//			javaSrcFile.delete();
-//
-
-
-

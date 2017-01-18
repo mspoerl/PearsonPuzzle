@@ -1,5 +1,7 @@
 package controller;
 
+import jUnitUmgebung.JUnitRunner;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
@@ -15,6 +17,8 @@ import javax.swing.text.JTextComponent;
 import javax.swing.*;
 
 import org.junit.runner.Result;
+
+import compiler.CodeCompletion;
 import compiler.TestCompiler;
 
 import model.Model;
@@ -33,7 +37,6 @@ import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
 import view.teacher.UserEditor;
 
-import JUnitUmgebung.JUnitRunner;
 /**
  * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
  * mit dem Controller zu verknüpfen.
@@ -313,23 +316,45 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				break;
 			case Compile:
 				TestCompiler testCompiler = new TestCompiler();
-				if(model.getAccessGroup()==AccessGroup.STUDENT)
+				if(model.getAccessGroup()==AccessGroup.STUDENT){
 					testCompiler.compileCode(model.getSolutionStrings());
-				else if(model.getAccessGroup()==AccessGroup.TEACHER)
+					model.setCompilerFailures(testCompiler.getFailures());
+				}
+				else if(model.getAccessGroup()==AccessGroup.TEACHER){
+//					JUnitRunner unitRunner = new JUnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
+//					unitRunner.addOnlineImport(model.getImport("online"));
+//					unitRunner.addClasses(model.getImport("classes"));
+//					unitRunner.compileClasses_ToDisk();
+//					model.setCompilerFailures(unitRunner.getFailures());
+					
 					testCompiler.compileCode(((UnitEditor)view).getContent());
-				model.setCompilerFailures(testCompiler.getFailures());
+					testCompiler.compileCode(model.getProjectCode());
+					model.setCompilerFailures(testCompiler.getFailures());
+				}
 				break;
 			case TestCode:
 				Result result;
 				if(model.getAccessGroup()==AccessGroup.STUDENT){
 					System.out.println(model.getSollution());
+					
 					//model.testSolution();
 					model.testOrderOfSollution();
 					//result = JUnitRunner.run();
+					if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
+						JUnitRunner unitRunner = new JUnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
+						unitRunner.addOnlineImport(model.getImport("online"));
+						unitRunner.addClasses(model.getImport("classes"));
+						result = unitRunner.run();
+						System.out.println(result.getFailures());
+						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+						model.setJunitFailures(result);
+					}
 				}
 				else{
-					JUnitRunner unitRunner = new JUnitRunner(model.getProjectCode(), null);
-					result = unitRunner.run(((UnitEditor) view).getContent());
+					JUnitRunner unitRunner = new JUnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
+					unitRunner.addOnlineImport(model.getImport("online"));
+					unitRunner.addClasses(model.getImport("classes"));
+					result = unitRunner.run();
 					System.out.println(result.getFailures());
 					System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 					model.setJunitFailures(result);

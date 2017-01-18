@@ -398,6 +398,15 @@ public class UserDBaccess {
 		   		}			
 		}
 	   public void saveImports(String projectname, String onlineImports, String localImports, String methods){
+		   if(onlineImports==null)
+			   onlineImports="";
+		   if(localImports==null)
+			   localImports="";
+		   if(methods==null)
+			   methods = "";
+		   Math.sqrt(4.0);
+		   
+		   
 		   Statement stmt;
 		   try {
 			   System.out.println(onlineImports+" "+localImports+" "+methods);

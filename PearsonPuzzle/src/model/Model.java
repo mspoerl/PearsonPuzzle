@@ -17,6 +17,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import view.PPException;
+import view.teacher.UnitEditor;
 
 import controller.DCCommand;
 
@@ -442,7 +443,8 @@ public class Model extends Observable {
 		result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
 		successMap.put("Test auf 1:1 Reihenfolge", result);
 		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
-		successMap.put("Gruppentests", !groupFailures.contains(false));
+		if(groupFailures.size()!=0)
+			successMap.put("Gruppentests", !groupFailures.contains(false));
 		for(int i=0;i<groupFailures.size();i++){
 			successMap.put("Test "+(i+1), groupFailures.get(i));
 		}
@@ -595,7 +597,8 @@ public class Model extends Observable {
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(projectName,jUnitCode);
 			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
-			dataBase.saveImports(projectName, projectImports);
+			if(projectImports!=null)
+				dataBase.saveImports(projectName, projectImports);
 			System.out.println(codeLine_GroupMatrix);
 		}
 		
@@ -869,6 +872,8 @@ public class Model extends Observable {
 	 * @return
 	 */
 	public boolean setImports(String type, String text) {
+		if(text.equals(UnitEditor.DEFAULT_IMPORT_TEXT))
+			return true;
 		setChanged(projectImports.get(type), text);
 		if(type.equals("methods"))
 			projectImports.put("methods", text);
