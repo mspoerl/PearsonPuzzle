@@ -22,5 +22,6 @@ public interface Controller extends java.awt.event.ActionListener, ListSelection
 	
 	public abstract void valueChanged(ListSelectionEvent arg0);
 	
-	public JView getView();
+	// für Tests
+	public Object getView();
 }
