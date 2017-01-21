@@ -1,10 +1,12 @@
-package model;
+package model_Test;
 
 import static org.junit.Assert.*;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Vector;
+
+import model.OrderFailures;
 
 import org.junit.Before;
 import org.junit.Test;

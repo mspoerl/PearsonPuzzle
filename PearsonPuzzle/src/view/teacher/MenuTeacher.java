@@ -9,6 +9,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+
+import model.Model;
 import view.Menu;
 
 import controller.Controller;
@@ -24,36 +26,60 @@ public class MenuTeacher extends Menu{
 	
 	private List <JMenuItem> menuItems;
 	private List <JButton> extendedNavigation;
+	private Model model;
 	
 	MenuTeacher(){
 		menuItems=new ArrayList <JMenuItem>();
 		extendedNavigation = new ArrayList <JButton>();
 		setupMenu();
 	}
-	MenuTeacher(int navigationSelection){
+	MenuTeacher(Model model, int navigationSelection){
+		this.model=model;
 		menuItems=new ArrayList <JMenuItem>();
 		extendMenu();
 		this.setNavigation(navigationSelection);
 		setupMenu();
 	}
 	private void extendMenu(){
+		JButton buttonBuffer;
+		Color containsSomething = new Color(013220);
 		// Wenn das Menü noch nicht erweitert ist, geschieht dies hier.
 		if(this.getComponentCount()<=menuItems.size()){
 			extendedNavigation = new ArrayList <JButton>();
-			extendedNavigation.add(new JButton("Code"));
-			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.EditProject.toString());
-			extendedNavigation.add(new JButton("Reihenfolgen"));
-			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.EditConfig.toString());
-			extendedNavigation.add(new JButton("JUnit"));
-			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.EditJUnit.toString());
-			extendedNavigation.add(new JButton("Preview"));
-			extendedNavigation.get(extendedNavigation.size()-1).setActionCommand(DCCommand.EditPreview.toString());
+			buttonBuffer = new JButton("Code");
+			if(model.getProjectCode() != null && !model.getProjectCode().isEmpty())
+				buttonBuffer.setForeground(containsSomething);
+			buttonBuffer.setActionCommand(DCCommand.EditProject.toString());
+			extendedNavigation.add(buttonBuffer);
+			
+			buttonBuffer = new JButton("Reihenfolgen");
+			if(model.getGroupMatrix() != null && !model.getGroupMatrix().isEmpty()){
+				buttonBuffer.setForeground(containsSomething);
+				//buttonBuffer.setForeground(Color.LIGHT_GRAY);
+			}
+			buttonBuffer.setActionCommand(DCCommand.EditConfig.toString());
+			extendedNavigation.add(buttonBuffer);
+			
+			buttonBuffer = new JButton("JUnit");
+			if(model.getJUnitCode() != null && !model.getJUnitCode().isEmpty() && model.getJUnitCode()!=UnitEditor.DEFAULT_UNIT_CODE){
+				buttonBuffer.setForeground(containsSomething);
+			}
+			buttonBuffer.setActionCommand(DCCommand.EditJUnit.toString());
+			extendedNavigation.add(buttonBuffer);
+			
+			buttonBuffer = new JButton("Preview");
+			if(model.getProjectCode()!= null && !model.getProjectCode().isEmpty())
+				buttonBuffer.setForeground(containsSomething);
+			buttonBuffer.setActionCommand(DCCommand.EditPreview.toString());
+			extendedNavigation.add(buttonBuffer);
+			
 			for(JButton comp: extendedNavigation){
 				comp.setOpaque(true);
 				comp.setBackground(Color.WHITE);
 				//comp.setMaximumSize(new Dimension(200,20));
 				this.add(comp);
 			}
+			
 		}
 	}
 	

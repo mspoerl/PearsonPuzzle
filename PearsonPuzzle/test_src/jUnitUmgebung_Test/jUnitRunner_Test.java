@@ -1,4 +1,4 @@
-package jUnitUmgebung;
+package jUnitUmgebung_Test;
 
 import static org.junit.Assert.assertEquals;
 

@@ -50,7 +50,7 @@ public class TextEditor extends JView{
 		save=new JButton("Speichern");
 		configure = new JButton("Projekt konfigurieren");
 		configFields = new ArrayList <JTextField>();
-		menu = new MenuTeacher(0);
+		menu = new MenuTeacher(model, 0);
 		this.addMenuToFrame(menu);		
 		description = new JTextArea(model.getProjectDescription());
 		

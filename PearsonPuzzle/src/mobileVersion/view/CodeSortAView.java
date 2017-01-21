@@ -14,8 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.TransferHandler;
 
 import model.Model;
 
@@ -23,9 +21,7 @@ import org.junit.runner.notification.Failure;
 
 import controller.Controller;
 import controller.DCCommand;
-import controller.transferHandler.FromTransferHandler;
 import controller.transferHandler.ToSaveTransferHandler;
-import view.pupil.MenuPupil;
 import view.teacher.UnitEditor;
 
 public class CodeSortAView extends AppletView {
@@ -163,7 +159,6 @@ public class CodeSortAView extends AppletView {
 			saveDropList.setEnabled(false);
 		}
 		if(arg1==DCCommand.TestCode){
-			
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 			if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){
 				String cssClass;

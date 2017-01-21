@@ -1,6 +1,7 @@
 package view.teacher;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class UnitEditor extends JView{
 	public UnitEditor(Model model) {
 		super(model);
 		DEFAULT_UNIT_CODE = "// Automatisch erstellte Vorlage für JUnit Test\n \nimport org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class "+model.getProjectName()+"_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n"+"}";
-		menu = new MenuTeacher(2);
+		menu = new MenuTeacher(model, 2);
 		this.addMenuToFrame(menu);
 		setupEditor();
 		draw();
@@ -65,6 +66,7 @@ public class UnitEditor extends JView{
 		messageBox.setEditable(false);
 		messageBox.setLineWrap(false);
 		messageBox.setName("MessageBox");
+		messageBox.setTabSize(3);
 		messageBox.setBorder(BorderFactory.createCompoundBorder(border, 
 	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
 		JScrollPane messageSP = new JScrollPane(messageBox);
@@ -102,6 +104,7 @@ public class UnitEditor extends JView{
 		compile = new JButton("Test Kompilieren");
 		save = new JButton("Speichern");
 		test = new JButton("Run Test");
+		test.setEnabled(false);
 		buttonPanel.add(compile);
 		buttonPanel.add(test);
 		buttonPanel.add(save);
@@ -142,21 +145,35 @@ public class UnitEditor extends JView{
 	public void update(Observable o, Object arg) {
 		if(arg==DCCommand.Compile){
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
-			if(failures.isEmpty())
+			if(failures.isEmpty()){
 				messageBox.setText("Kompilieren war erfolgreich!");
+				compile.setBackground(Color.decode("#008000"));
+				compile.setForeground(Color.decode("#FFFFFF"));
+				test.setEnabled(true);
+			}
 			else{
 				String failureText = "Kompilieren war nicht erfolgreich. \nAufgetretenen Fehler: ";
 				for(HashMap<String, String> failure : failures){
 					failureText = failureText+"\n "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
 				}
+				compile.setBackground(Color.decode("#AF002A"));
+				compile.setForeground(Color.decode("#FFFFFF"));
 				messageBox.setText(failureText);
 			}
 		}
 		else if(arg==DCCommand.TestCode){
 			// FIXME: Nur, falls ein Test existeiert! Zusätzlich noch Reihenfolgentest.
-			String failureText = new String("Ergebnis des Unit-Test:\n"+model.getjUnitFailures().size()+" Fehler");
+			String failureText = new String("Ergebnis des Unit-Test: "+model.getjUnitFailures().size()+" Fehler");
 			for(Failure failure: model.getjUnitFailures()){
-				failureText=failureText+"\n"+failure;
+				failureText=failureText+"\n\t"+failure.getTestHeader();
+			}
+			if(model.getjUnitFailures().size()==0){
+				test.setBackground(Color.decode("#008000"));
+				test.setForeground(Color.decode("#FFFFFF"));
+			}
+			else{
+				test.setBackground(Color.decode("#AF002A"));
+				test.setForeground(Color.decode("#FFFFFF"));
 			}
 			messageBox.setText(failureText);
 		}
