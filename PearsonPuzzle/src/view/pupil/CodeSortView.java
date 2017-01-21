@@ -218,7 +218,7 @@ public class CodeSortView extends JView {
 		}
 		if(arg1==DCCommand.TestCode){
 			
-			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
+			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 			if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){
 				String cssClass;
 				if(model.getjUnitFailures().size()==0)
@@ -229,7 +229,7 @@ public class CodeSortView extends JView {
 				System.out.println(failureText);
 				for(Failure failure: model.getjUnitFailures()){
 					System.out.println(failure);
-					failureText=failureText+"<div class=\"failure\">"+failure+"</div>";
+					failureText=failureText+"<div class=\"unitFailure\">"+failure+"</div>";
 				}
 			}
 					

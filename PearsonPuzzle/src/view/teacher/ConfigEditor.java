@@ -30,7 +30,7 @@ public class ConfigEditor extends JView{
 	
 	public ConfigEditor(Model model) {
 		super(model);
-		menu = new MenuTeacher(1);
+		menu = new MenuTeacher(model, 1);
 		this.addMenuToFrame(menu);
 		setupConfigPanel();
 		draw();

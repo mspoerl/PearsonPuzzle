@@ -225,6 +225,7 @@ public class Model extends Observable {
 		projectName = new String("");
 		projectCode = new String("");
 		projectDescription = new String("");
+		jUnitCode = null;
 		tabSize = 0;
 		grade = 0;
 		testExpressionsVector = new Vector<String>();
@@ -495,6 +496,7 @@ public class Model extends Observable {
 	 * @param jUnitFailures the jUnitFailures to set
 	 */
 	public void setJunitFailures(Result result) {
+		jUnitFailures = new LinkedList<Failure>();
 		for (Failure failure : result.getFailures()) {
 			if(failure!=null)
 				this.jUnitFailures.add(failure);

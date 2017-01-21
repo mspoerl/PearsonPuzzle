@@ -206,10 +206,15 @@ public class JUnitRunner {
 		
 		String solutionString = new String();
 			for(String line: codeLines){
+				String nextLine = null;
+				if(codeLines.indexOf(line)+1<codeLines.size()){
+					nextLine = codeLines.get(codeLines.indexOf(line)+1);
+				}
 				if(line.trim().startsWith("package ")){
 					if(packageString.isEmpty()){
-						packageString = line.substring(line.indexOf("package")+7, line.indexOf(";"));
-						packageString = packageString.trim();
+						packageString = CodeCompletion.extractDeclarationName(line, nextLine, "package");
+//						packageString = line.substring(line.indexOf("package")+7, line.indexOf(";"));
+//						packageString = packageString.trim();
 					}
 					else if(!className.isEmpty()){
 						srcCodeMap.put(className, solutionString);
@@ -219,9 +224,11 @@ public class JUnitRunner {
 						solutionString=new String(line);
 					}
 				}
-				else if (line.trim().startsWith("import ")){
+				else if(CodeCompletion.extractDeclarationName(line, nextLine, "import")!=null){
+				//else if (line.trim().startsWith("import ")){
 					if(className.isEmpty()){
-						String importString = line.substring(line.indexOf("import")+6, line.indexOf(";"));
+						String importString = CodeCompletion.extractDeclarationName(line, nextLine, "import");
+//						String importString = line.substring(line.indexOf("import")+6, line.indexOf(";"));
 						importStrings.add(importString.trim());
 					}
 					else{
@@ -404,11 +411,7 @@ public class JUnitRunner {
 		return run();
 	}
 	
-	/**
-	 * Führt die UnitTests, die im Konstruktor in einer Testklasse in Stringform übergeben wurde aus und bindet die Klasse(n), die ebenfalls im Construktor übergeben wurden, aus.
-	 * @return Result
-	 */
-	public Result run(){
+	public MemClassLoader_JUnit compile(){
 		String unitSourceCode = unitImports+this.unitSourceCode;
 		System.out.println(srcCodeMap);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -417,7 +420,8 @@ public class JUnitRunner {
 	
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		JavaFileManager unitFileManager = new MemJavaFileManager_JUnit(diagnostics, compiler, unitClassLoader, normalClassLoader);
-		makeDiagnose(diagnostics);
+		System.out.println(unitClassName);
+		System.out.println(unitSourceCode);
 	
 		JavaFileObject unitFile = new StringJavaFileObject( unitClassName, unitSourceCode );
 		LinkedList<JavaFileObject> classFiles = new LinkedList<JavaFileObject>();
@@ -431,17 +435,28 @@ public class JUnitRunner {
 			// Hier kann man den Compiler verfolgen mit :
 			// options.add( "-verbose");
 			// options.add("-deprecation");
-		CompilationTask task = compiler.getTask( null, unitFileManager,null, options, null, units );
+		CompilationTask task = compiler.getTask( null, unitFileManager,diagnostics, options, null, units );
 		task.call();
+		makeDiagnose(diagnostics);
 		
 		try {
 			unitFileManager.close();
-		} catch (IOException e1) { e1.printStackTrace(); }		
+		} catch (IOException e1) { e1.printStackTrace(); }
+		return unitClassLoader;
+	}
+	
+	/**
+	 * Führt die UnitTests, die im Konstruktor in einer Testklasse in Stringform übergeben wurde aus und bindet die Klasse(n), die ebenfalls im Construktor übergeben wurden, aus.
+	 * @return Result
+	 */
+	public Result run(){
+		MemClassLoader_JUnit unitClassLoader = compile();
 		try {
 			Result result = JUnitCore.runClasses(unitClassLoader.findClass(unitClassName));
 			System.out.println("Fehler beim Test: "+result.getFailures());
 			return result;
-		} catch (ClassNotFoundException e1) { 
+		} catch (ClassNotFoundException e1) {
+			
 			
 			e1.printStackTrace(); return null; }
 	}

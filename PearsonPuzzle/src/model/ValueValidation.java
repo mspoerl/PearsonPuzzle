@@ -72,4 +72,10 @@ public class ValueValidation {
 		System.out.println("code Buffer: "+ codeBuffer.toString());
 		return codeBuffer.toString();
 	}
+
+	public static boolean isValidProjectName(String projectName) {
+		if(projectName.contains("_Test"))
+			return false;
+		return false;
+	}
 }

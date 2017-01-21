@@ -1,4 +1,4 @@
-package Compiler;
+package compiler_Test;
 
 import static org.junit.Assert.*;
 

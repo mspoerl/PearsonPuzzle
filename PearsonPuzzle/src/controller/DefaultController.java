@@ -324,17 +324,14 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					testCompiler.compileCode(model.getSolutionStrings());
 					model.setCompilerFailures(testCompiler.getFailures());
 				}
-				else if(model.getAccessGroup()==AccessGroup.TEACHER){
-//					JUnitRunner unitRunner = new JUnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
-//					unitRunner.addOnlineImport(model.getImport("online"));
-//					unitRunner.addClasses(model.getImport("classes"));
-//					unitRunner.compileClasses_ToDisk();
-//					model.setCompilerFailures(unitRunner.getFailures());
-					
-					testCompiler.compileCode(((UnitEditor)view).getContent());
-					testCompiler.compileCode(model.getProjectCode());
-					model.setCompilerFailures(testCompiler.getFailures());
-				}
+				else if(model.getAccessGroup()==AccessGroup.TEACHER)
+					if(view.getClass().equals(UnitEditor.class)){
+						JUnitRunner unitRunner = new JUnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
+						unitRunner.addOnlineImport(model.getImport("online"));
+						unitRunner.addClasses(model.getImport("classes"));
+						unitRunner.compile();
+						model.setCompilerFailures(unitRunner.getFailures());
+					}
 				break;
 			case TestCode:
 				Result result;
@@ -344,7 +341,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					//model.testSolution();
 					model.testOrderOfSollution();
 					//result = JUnitRunner.run();
-					if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
+					if(model.getJUnitCode()!=null && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){ //Junit Test soll nur erfolgen, wenn auch einer definerit ist
 						JUnitRunner unitRunner = new JUnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
 						unitRunner.addOnlineImport(model.getImport("online"));
 						unitRunner.addClasses(model.getImport("classes"));
