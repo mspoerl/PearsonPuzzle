@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
+import view.PPException;
+
 
 public class jUnitRunner_Test {
 	Boolean expectedResult;
@@ -21,7 +23,12 @@ public class jUnitRunner_Test {
 	
 	@Before
 	   public void initialize() {
-			jUnitRunner = new JUnitRunner(unitText, testString, null);
+			try {
+				jUnitRunner = new JUnitRunner(unitText, testString, null);
+			} catch (PPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	   }
 
 	   // Each parameter should be placed as an argument here

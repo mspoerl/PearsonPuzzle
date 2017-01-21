@@ -21,6 +21,7 @@ import model.Model;
 import model.access.AccessGroup;
 
 import view.Allert;
+import view.PPException;
 import view.pupil.CodeSortView;
 import view.pupil.PupilView;
 import view.teacher.ConfigEditor;
@@ -67,13 +68,19 @@ public class AppletController implements Controller{
 			Result result;
 			model.testOrderOfSollution();
 				if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
-					JUnitRunner unitRunner = new JUnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
-					unitRunner.addOnlineImport(model.getImport("online"));
-					unitRunner.addClasses(model.getImport("classes"));
-					result = unitRunner.run();
-					System.out.println(result.getFailures());
-					System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
-					model.setJunitFailures(result);
+					JUnitRunner unitRunner;
+					try {
+						unitRunner = new JUnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
+						unitRunner.addOnlineImport(model.getImport("online"));
+						unitRunner.addClasses(model.getImport("classes"));
+						result = unitRunner.run();
+						System.out.println(result.getFailures());
+						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+						model.setJunitFailures(result);
+					} catch (PPException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			break;
 		default:

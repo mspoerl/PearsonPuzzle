@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -27,10 +29,25 @@ import javax.tools.ToolProvider;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
+import view.PPException;
+
+import compiler.CodeCompletion;
 import compiler.StringJavaFileObject;
 
+/**
+ * Klasse hält jUnit Test und zugehörige, zu testende Klassen in Form von Strings bereit, um diese bei bedarf zu kompilieren.
+ * Es können auch nur Mehtoden oder nur der Inhalt einer Methode (ohne Methodenrumpf) übergeben werden. Diese werden dann "gewrapt".<br><br>
+ * 
+ * Falls kein Klassenname existiert, wird versucht, den Sourcecode mit dem unter DEFAULT_CLASS_NAME definierten Namen zu wrappen. 
+ * Bsp: public void do(){ return;} -> public class <DEFAULT_CLASS_NAME> { public void do( return;} } <br><br>
+ * 
+ * Falls kein Methodenrumpf existiert, wird zusätzlich noch ein Methodenrumpf dazugebaut, um das ganze kompilierbar zu machen. 
+ * Bsp: int a; int b=0; a=b; return a; -> public int methode(){ int a; int b; a=b; return a; } <br><br>
+ * @author workspace
+ */
 public class JUnitRunner {
-	private final static String DEFAULT_CLASS_NAME="testCode";
+	private final static String DEFAULT_CLASS_NAME= "TestClass";
+	private final static String DEFAULT_METHOD_NAME = "testMehtod";
 	private HashMap<String, String> srcCodeMap;
 	private String unitClassName;
 	private String unitSourceCode;
@@ -38,15 +55,15 @@ public class JUnitRunner {
 	private Integer unitLineOffset;
 	private Vector<HashMap<String, String>> compileFailures;
 	/**
-	 * Klasse dient dazu, in Textform vorliegenden Code <br>
-	 * auf unterschiedliche Art und Weise zu testen.
+	 *
 	 * @param sourceCode_ToBeTested zu testende Klassen, Methoden, ...
 	 * @param imports evtl. notwendige imports
+	 * @throws PPException 
 	 */
-	public JUnitRunner(String unitSourceCode, String sourceCode_ToBeTested, String methodImports){
+	public JUnitRunner(String unitSourceCode, String sourceCode_ToBeTested, String methodImports) throws PPException {
 		unitLineOffset = 0;
 		this.unitSourceCode = unitSourceCode;
-		this.unitClassName = extractClassName(unitSourceCode);
+			extractClassName(unitSourceCode);		
 		compileFailures = new Vector<HashMap<String, String>>();
 		fillNeccessaryImports();
 		fillSrcCodeMap(sourceCode_ToBeTested);
@@ -66,6 +83,11 @@ public class JUnitRunner {
 		}
 	}
 	
+	/**
+	 * Gewünschte Mehtoden oder Feld-Definitionen werden am Ende !aller! zu testenden Klassen eingefügt. 
+	 * (Beziehungsweise aller zu dieser Zeit in srcCodeMap entahltenen Klassen)
+	 * @param methodImports
+	 */
 	private void addMethods(String methodImports){
 		if(methodImports == null || methodImports.trim().isEmpty())
 			return;
@@ -73,10 +95,13 @@ public class JUnitRunner {
 			StringBuffer codeString = new StringBuffer(srcCodeMap.get(codeName));
 			Integer closeIndex = codeString.lastIndexOf("}");
 			codeString.insert(closeIndex, methodImports.trim()+"\n");
-			
 			srcCodeMap.put(codeName, codeString.toString());
 		}
 	}
+	/**
+	 * Fügt zu importierende Klassen der srcCodeMap hinzu.
+	 * @param classImports Klassen in String Form
+	 */
 	public void addClasses(String classImports){
 		if(classImports == null || classImports.trim().isEmpty())
 			return;
@@ -90,13 +115,11 @@ public class JUnitRunner {
 		return unitLineOffset;
 	}
 	
-	private String extractClassName(String unitSourceCode){
-		if(!unitSourceCode.contains(" class "))
-			return null;
-		String unitClassName = new String();
-		
-		unitClassName=unitSourceCode.substring(unitSourceCode.indexOf("class")+5, unitSourceCode.indexOf("{")).trim();
-		return unitClassName;
+	private void extractClassName(String unitSourceCode) throws PPException{
+		this.unitClassName = CodeCompletion.extractClassName(unitSourceCode);
+		if(unitClassName==null || unitClassName.trim().isEmpty()){
+			throw new PPException(PPException.NoClassName);
+		}
 	}
 	
 	private void fillNeccessaryImports(){
@@ -112,25 +135,55 @@ public class JUnitRunner {
 	
 	/**
 	 * HashMap sourceCodeMap wird mit Inhalt gefüllt.<br>
-	 * Falls in src keine Klasse defineirt wird, wird klasse "gewrapt".
+	 * Falls in src keine Klasse definiert wird, wird der Code "gewrapt". Dies geschieht, in dem eine Klasse namens <DEFAULT_CLASS_NAME> erstellt wird, kommt dieser Name bereits in der srcCodeMap (als Key) oder in src vor, werden Uterstriche angefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist.<br>
+	 * Falls in src zusätzlich auch keine Methode deklariert ist, wird  auch diese "gewrapt". Dies geschieht, indem eine Methode namens <DEFAULT_METHOD_NAME> erstellt wird. Kommt dieser Name bereits in src vor, werden Unterstriche eingefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist. <br>
+	 * Falls ein return enthalten ist, wird der Methode der Rückgabewert Object gegeben.
 	 * 
-	 * @param src sourceCode
+	 * @param src Sourcecode
 	 */
 	private void fillSrcCodeMap(String src){
+		String method="";
 		if(srcCodeMap==null)
 			srcCodeMap = new HashMap<String, String>();
 		
 		 // Konflikte bezüglich des Klassennamens werden ausgeschlossen
 		 String className=new String(DEFAULT_CLASS_NAME);
-		 
-		 // Falls der Code keine Klasse enthält, wird hier eine generiert 
+		 // Falls der Code keine Klasse enthält, wird hier eine generiert.
 		 if(!src.contains(" class ")){
-			 while(src.contains(className)){
+			 // Es wird überprüft, ob ein Methodenkopf existiert
+			 String patternString = "(public|protected|native|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])";
+			 Pattern pattern = Pattern.compile(patternString);
+			 Matcher matcher_method = pattern.matcher(src);
+			 if(!matcher_method.find()){
+				 // Eindeutiger Methodenname wird erstellt
+				 String methodName = DEFAULT_METHOD_NAME;
+				 while(src.contains(methodName)){
+					 methodName+="_";
+				 }
+				 patternString = "\\s+[return]+\\s+.+;";
+				 pattern = Pattern.compile(patternString);
+				 Matcher matcher_ret = pattern.matcher(src);
+				 if(matcher_ret.find()){	// kein return Statement im Sourcecode
+					 method = "public Object "+methodName+"() {\n";
+				 }
+				 else	// return statement im Sourcecode
+					 method = "public void "+methodName+"(){\n";				 
+			 }
+			 
+			 while(src.contains(className) | srcCodeMap.containsKey(className)){
 				 className=className+"_";
 			 }
-			 src = "class "+className+" {\n"+src+"}";
+			 
+			 // Code wird um Klasse und/oder Methode ergänzt.
+			 src = "class "+className+" {\n"+method+src+"}";
+			 if(!method.isEmpty()){
+				 src+="\n}";
+			 }
+			 System.out.println(src);
 			 srcCodeMap.put(className, src);
 		 }
+		 
+		 // Falls der Code " class " enthält, werden diese Klassen herausgefiltert.
 		 else{
 			 Vector<String> srcVector= new Vector<String>();
 			 for(String line: src.split("\n")){
@@ -141,15 +194,12 @@ public class JUnitRunner {
 	}
 	
 	/**
-	 * HashMap sourceCodeMap wird mit Inhalt gefüllt.<br>
-	 * Kann nicht agieren, wenn keine codeLine mit " class " enthalten ist,<br>
-	 * spirch in codeLines keine Klasse definiert ist. <br>
+	 * HashMap sourceCodeMap wird mit Inhalt gefüllt. Tut nicht, wenn keine codeLine mit " class " enthalten, spirch in codeLines keine Klasse definiert ist. 
 	 * Imports und packages werden herausgefiltert und Klassenspezifisch verarbeitet.
 	 * 
 	 * @param codeLines
 	 */
 	private void fillSrcCodeMap(Vector<String> codeLines){
-		// FIXME: packages und imports sollen verwertet werden.
 		String className=new String();
 		String packageString = new String();
 		LinkedList<String> importStrings = new LinkedList<String>();
@@ -184,8 +234,7 @@ public class JUnitRunner {
 				}
 				if(line.contains(" class ")){
 					if(className.isEmpty()){
-						className=line.substring(line.indexOf("class")+5, line.indexOf("{"));
-						className=className.trim();
+						className = CodeCompletion.extractClassName(line);
 						solutionString=solutionString+"\n"+line;
 					}
 					else{						
@@ -208,8 +257,7 @@ public class JUnitRunner {
 	
 	
 	/**
-	 * Klassen in srcCodeMap werden 
-	 * @return
+	 * Klassen in srcCodeMap werden in den Hauptspeicher geladen, stehen dann zwischenzeitlich zum Zugriff bereit und werden dann wieder gelöscht.
 	 */
 	public void compileClasses_ToDisk(){
 		for(String className:srcCodeMap.keySet()){
@@ -312,6 +360,25 @@ public class JUnitRunner {
 			 compileFailure.put("Endposition", ""+diagnostic.getEndPosition() );
 			 compileFailures.add(compileFailure);			 
 		 }	
+	}
+	private void makeDiagnose(DiagnosticCollector<JavaFileObject> diagnostics){
+		// Diagnose (bei aufgetretenem Fehler)
+		for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
+		 {
+			 HashMap <String, String> compileFailure = new HashMap<String, String>(9);
+			 compileFailure.put("Class", ""+diagnostic.getClass().getName());
+			 compileFailure.put("Kind", ""+diagnostic.getKind());
+			 compileFailure.put("Quelle", ""+diagnostic.getSource());
+			 compileFailure.put("Code", ""+diagnostic.getCode());
+			 // TODO: Fehlerbericht anpassen (Nachricht)
+			 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
+			 compileFailure.put("Zeile", ""+diagnostic.getLineNumber() );
+			 compileFailure.put("Position", ""+diagnostic.getPosition());
+			 compileFailure.put("Spalte", ""+diagnostic.getColumnNumber() );
+			 compileFailure.put("Startpostion", ""+diagnostic.getStartPosition());
+			 compileFailure.put("Endposition", ""+diagnostic.getEndPosition() );
+			 compileFailures.add(compileFailure);			 
+		 }	
 		
 	}
 	
@@ -327,46 +394,14 @@ public class JUnitRunner {
 		String unitClassName = new String();
 		final String[] imports = {"\n import org.junit.Test; \n", "import static org.junit.Assert.*"};
 		
-		unitClassName=unitText.substring(unitText.indexOf("class")+5, unitText.indexOf("{")).trim();
+		unitClassName = CodeCompletion.extractClassName(unitText);
 		for(String importString: imports){
 			if(!unitText.contains(importString))
 				unitText=importString+unitText;
 		}
-		
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		MemClassLoader_JUnit unitClassLoader = new MemClassLoader_JUnit();
-		MemClassLoader normalClassLoader = new MemClassLoader(); 
-				
-		JavaFileManager unitFileManager = new MemJavaFileManager_JUnit( compiler, unitClassLoader, normalClassLoader);		
-		JavaFileObject javaClassFile = null;
-		
-		LinkedList<JavaFileObject> classFiles = new LinkedList<JavaFileObject>();
-		JavaFileObject unitFile = new StringJavaFileObject( unitClassName, unitText );
-		classFiles.add(unitFile);
-		for(String className : srcCodeMap.keySet()){
-			classFiles.add(new StringJavaFileObject(className, srcCodeMap.get(className)));
-			//javaClassFile = new StringJavaFileObject(className, srcCodeMap.get(className));
-		}
-		
-		//Iterable<? extends JavaFileObject> units = Arrays.asList( new JavaFileObject[]{unitFile, javaClassFile} );
-		Iterable <?extends JavaFileObject> units = classFiles;
-		
-		Set<String> options = new HashSet<String>();		
-			// Hier kann man den Compiler verfolgen mit :
-			// options.add( "-verbose");
-			// options.add("-deprecation");
-		CompilationTask task = compiler.getTask( null, unitFileManager,null, options, null, units );
-		task.call();
-		
-		try {
-			unitFileManager.close();
-		} catch (IOException e1) { e1.printStackTrace(); }
-		
-		try {
-			Result result = JUnitCore.runClasses(unitClassLoader.findClass(unitClassName));
-			System.out.println("Fehler beim Test: "+result.getFailures());
-			return result;
-		} catch (ClassNotFoundException e1) { e1.printStackTrace(); return null; }
+		this.unitClassName = unitClassName;
+		this.unitSourceCode = unitText;
+		return run();
 	}
 	
 	/**
@@ -378,9 +413,12 @@ public class JUnitRunner {
 		System.out.println(srcCodeMap);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		MemClassLoader_JUnit unitClassLoader = new MemClassLoader_JUnit();
-		MemClassLoader normalClassLoader = new MemClassLoader(); 
-		JavaFileManager unitFileManager = new MemJavaFileManager_JUnit( compiler, unitClassLoader, normalClassLoader);				
-		
+		MemClassLoader normalClassLoader = new MemClassLoader();
+	
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		JavaFileManager unitFileManager = new MemJavaFileManager_JUnit(diagnostics, compiler, unitClassLoader, normalClassLoader);
+		makeDiagnose(diagnostics);
+	
 		JavaFileObject unitFile = new StringJavaFileObject( unitClassName, unitSourceCode );
 		LinkedList<JavaFileObject> classFiles = new LinkedList<JavaFileObject>();
 		classFiles.add(unitFile);
@@ -403,6 +441,8 @@ public class JUnitRunner {
 			Result result = JUnitCore.runClasses(unitClassLoader.findClass(unitClassName));
 			System.out.println("Fehler beim Test: "+result.getFailures());
 			return result;
-		} catch (ClassNotFoundException e1) { e1.printStackTrace(); return null; }
+		} catch (ClassNotFoundException e1) { 
+			
+			e1.printStackTrace(); return null; }
 	}
 }
