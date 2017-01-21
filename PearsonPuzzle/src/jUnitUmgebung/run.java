@@ -1,5 +1,7 @@
 package jUnitUmgebung;
 
+import view.PPException;
+
 public class run {
 	public static void main (String args[]){
 		runUnitTest();
@@ -33,9 +35,14 @@ public class run {
 									"return true;" +
 								"}" +
 							"}";
-		JUnitRunner jUnitRunner = new JUnitRunner(unitText, code, null);
+		JUnitRunner jUnitRunner;
+		try {
+			jUnitRunner = new JUnitRunner(unitText, code, null);
+			jUnitRunner.run();
+		} catch (PPException e) {
+			e.printStackTrace();
+		}
 		//jUnitRunner.compileClasses();
-		jUnitRunner.run();
 	}
 
 }

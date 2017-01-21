@@ -212,8 +212,7 @@ public class PreViewEditor extends JView{
 	 * Controller hinzuzufügen
 	 */
 	public void addController(Controller controller){
-		// TODO: In den offiziellen Controller auslagern
-		//saveDropList.addMouseListener((DefaultController)controller);
+//		saveDropList.addMouseListener((DefaultController)controller);
 //		compileButton.addActionListener(controller);
 //		compileButton.setActionCommand(DCCommand.Compile.toString());
 //		testButton.setActionCommand(DCCommand.TestCode.toString());

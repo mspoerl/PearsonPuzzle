@@ -56,14 +56,18 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// !!!ACHTUNG!!! hier wird eine Exception geworfen, falls zu diesem Action Event kein Kommando existiert!
-		act(DCCommand.valueOf(e.getActionCommand()), e);
+		try {
+			act(DCCommand.valueOf(e.getActionCommand()), e);
+		} catch (PPException ppe) {
+			ppe.printMessage();
+		}
 	}
 
 	/**
 	 * Legt fest, was bei einem Action Event (z.B. Button drücken) passiert
+	 * @throws PPException 
 	 */
-	private void act(DCCommand cmd, ActionEvent e){
+	private void act(DCCommand cmd, ActionEvent e) throws PPException{
 		// Es erfolgt Warnung, wenn Projekt noch nicht gespeicher wurde
 		if( (view.getClass().equals(TextEditor.class)  
 				|| view.getClass().equals(UnitEditor.class)
@@ -450,7 +454,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 		if(view.getClass()==UserEditor.class){
 			if(e.getSource().getClass()==JRadioButton.class){
 				model.setUserGroup_toEdit(AccessGroup.valueOf(( (Component) e.getSource()).getName()));
-				act(DCCommand.EditUsers, null);
+				try { act(DCCommand.EditUsers, null); } catch (PPException e1) {}
 			}
 			else if(e.getSource().getClass()==JCheckBox.class){
 			}

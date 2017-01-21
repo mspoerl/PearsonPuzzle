@@ -16,7 +16,7 @@ public class MenuPupil extends Menu{
 	private static final long serialVersionUID = 1L;
 	JMenuItem enterProject;
 	JMenuItem logout;
-	MenuPupil(){
+	public MenuPupil(){
 		setupMenu();
 	}
 	MenuPupil(JFrame frame){

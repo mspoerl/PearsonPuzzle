@@ -11,6 +11,7 @@ import controller.ExceptionController;
 import model.Model;
 import view.JView;
 import view.LoginView;
+import view.PPException;
 import view.dialog.InitializeAccess;
 
 /**
@@ -44,7 +45,13 @@ public class user {
 		
 		final String unitText = "import org.junit.Test; \nimport static org.junit.Assert.*; \n\npublic class testcase_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue( true);\n\t}}\n";
 		final String code = "public class test{public static boolean runt(){int a=0; int b=3; int c=a+b; return true;}}";
-		JUnitRunner jUnitRunner = new JUnitRunner(unitText, code, null);
-		jUnitRunner.run(unitText);
+		JUnitRunner jUnitRunner;
+		try {
+			jUnitRunner = new JUnitRunner(unitText, code, null);
+			jUnitRunner.run(unitText);
+		} catch (PPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
