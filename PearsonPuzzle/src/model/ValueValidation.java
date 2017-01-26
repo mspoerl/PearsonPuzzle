@@ -1,13 +1,18 @@
 package model;
 
 /**
- * Klasse ist dafür zuständig, die Daten, die das Model erhält zu validieren. <br>
+ * Klasse ist dafür zuständig, die Daten, die das Model erhält zu validieren und nötige Casts durchzuführen.<br>
  * 
  * @author workspace
  *
  */
 public class ValueValidation {
 	
+	/**
+	 * Passwort wird auf Stärke geprüft (mindestens eine Zahl, ein Sonderzeichen, einen Großbuchstaben und einen Kleinbuchstaben) 
+	 * @param password
+	 * @return Passwort entspricht Sicherheitsanforderungen
+	 */
 	public static boolean proovePassword(char[] password){
 		boolean number = false;
 		boolean specialChar = false;
@@ -49,6 +54,20 @@ public class ValueValidation {
 	}
 	
 	public static Integer validateTabSize(Integer tabSize){
+		if(tabSize==null)
+			return 0;
+		else if(tabSize>10)
+			tabSize = 10;
+		return tabSize;
+	}
+	public static Integer validateTabSize(String tabSize_String){
+		Integer tabSize=null;
+		try{
+			tabSize = Integer.parseInt(tabSize_String);
+		}
+		catch(NumberFormatException e){
+			return 0;
+		}
 		if(tabSize==null)
 			return 0;
 		else if(tabSize>10)

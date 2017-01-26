@@ -67,7 +67,7 @@ public class CodeSortView extends JView {
 		
 		setupCodeLists();
 		setupButtons();
-		draw();
+		mainPanel.revalidate();
 	}
 
 	// private Methode, um die Drag and Drop Liste zu konstruieren
@@ -220,6 +220,7 @@ public class CodeSortView extends JView {
 			
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 			if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){
+				System.out.println(model.getJUnitCode());
 				String cssClass;
 				if(model.getjUnitFailures().size()==0)
 					 cssClass = " class=\"success\" ";

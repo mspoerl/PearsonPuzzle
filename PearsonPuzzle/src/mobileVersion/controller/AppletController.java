@@ -1,6 +1,6 @@
 package mobileVersion.controller;
 
-import jUnitUmgebung.JUnitRunner;
+import jUnitUmgebung.UnitRunner;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -22,10 +22,6 @@ import model.access.AccessGroup;
 
 import view.Allert;
 import view.PPException;
-import view.pupil.CodeSortView;
-import view.pupil.PupilView;
-import view.teacher.ConfigEditor;
-import view.teacher.TeacherView;
 
 public class AppletController implements Controller{
 	
@@ -38,13 +34,11 @@ public class AppletController implements Controller{
 		view.addController(this);
 	}
 
-	@Override
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		DCCommand cmd = DCCommand.valueOf(e.getActionCommand());
 		switch(cmd){
@@ -68,9 +62,9 @@ public class AppletController implements Controller{
 			Result result;
 			model.testOrderOfSollution();
 				if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
-					JUnitRunner unitRunner;
+					UnitRunner unitRunner;
 					try {
-						unitRunner = new JUnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
+						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
 						unitRunner.addOnlineImport(model.getImport("online"));
 						unitRunner.addClasses(model.getImport("classes"));
 						result = unitRunner.run();
@@ -99,7 +93,6 @@ public class AppletController implements Controller{
 		}
 	}
 
-	@Override
 	public AppletView getView() {
 		return null;
 	}
@@ -108,7 +101,6 @@ public class AppletController implements Controller{
 	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert.
 	 * @param <ListSelectionModel>
 	 */
-	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		System.out.println("asd"+view.getClass());
 		ListSelectionModel lsm = (ListSelectionModel)e.getSource();

@@ -2,22 +2,16 @@ package mobileVersion.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.LayoutManager;
 import java.util.Observable;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 
 import model.Model;
-
-import view.beans.ProjectList;
-import view.pupil.MenuPupil;
 
 import controller.Controller;
 import controller.DCCommand;
@@ -29,8 +23,6 @@ public class ProjectListAView extends AppletView{
 	private ListSelectionModel listSelectionModel;
 	private JTextArea projectDescription;
 	private JButton enter;
-	private MenuPupil menu;
-	private ProjectList projectList;
 	
 	public ProjectListAView(Model model) {
 		super(model);
@@ -38,7 +30,6 @@ public class ProjectListAView extends AppletView{
 		setLayout(new BorderLayout());
 		enter = new JButton("Projekt öffnen");
 		// Bei Konstruktion wird Ansicht "Projektliste" aufgerufen
-		menu = new MenuPupil();
 		this.setPreferredSize(new Dimension(200,200));
 		//this.addMenuToFrame(menu);
 		setupProjectList();
@@ -90,7 +81,6 @@ public class ProjectListAView extends AppletView{
 		//menu.addActionListener(controller);
 	}
 	
-	@Override
 	public void update(Observable arg0, Object arg1) {
 		projectDescription.setText(model.getProjectDescription());
 	}

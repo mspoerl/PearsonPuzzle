@@ -61,7 +61,7 @@ public class TextEditor extends JView{
 		
 		setupTextEditor();
 		setupConfigPanel();
-		draw();
+		mainPanel.revalidate();
 	}
 	
 	/**
@@ -235,7 +235,7 @@ public class TextEditor extends JView{
 		textArea.setTabSize(model.getTabSize());
 		textArea.setText(model.getProjectCode());
 		description.setText(model.getProjectDescription());
-		this.draw();
+		mainPanel.revalidate();
 		// TODO Auto-generated method stub	
 	}
 	

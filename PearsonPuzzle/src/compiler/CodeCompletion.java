@@ -3,6 +3,12 @@ package compiler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Klasse mit primär ststischen Methoden, die primär dazu dienen, Sourccodeteile in der richtigen Reihenfolge zusammenzufügen, 
+ * oder Informationen, wir Klassenname, Packeges und Imports aus derm Sourcecode zu extrahieren.
+ * 
+ * @author workspace
+ */
 public class CodeCompletion {
 	
 	public static String completeCode(String code, String onlineImports, String methodsImport){
@@ -17,6 +23,9 @@ public class CodeCompletion {
 	 * @return Klassenname (erster vorkommender)
 	 */
 	public static String extractClassName(String sourceCode){
+		System.out.println("TOEXTRACT"+sourceCode);
+		if(sourceCode==null)
+			return null;
 		String className = null;
 		String substring = null;
 		Pattern pattern = Pattern.compile("(\\s+class+\\s)");
@@ -38,11 +47,20 @@ public class CodeCompletion {
 		return className;
 	}
 
+	/**
+	 * Estrahiert aus den beiden Codezeilen line1 und line2 den auf expression folgenden zusammenhängenden String. 
+	 * Eignet sich primär, um packages und imports herauszufiltern.
+	 * 
+	 * @param line1	Codezeile
+	 * @param line2	darauf folgende Codezeile
+	 * @param expression {"import", "package"}
+	 * @return	Paket- bzw. Import-Name
+	 */
 	public static String extractDeclarationName(String line1, String line2, String expression) {
 		if(line2==null)
 			line2="";
 		String declarationName=null;
-		Pattern pattern = Pattern.compile("(;|\\s)+import+\\s");
+		Pattern pattern = Pattern.compile("(;|\\s)+"+expression+"+\\s");
 		Matcher matcher = pattern.matcher(line1.trim());
 		// Wenn die ertse Zeile nur aus dem zu suchenden String besteht
 		if(line1.trim().equals(expression.trim())){

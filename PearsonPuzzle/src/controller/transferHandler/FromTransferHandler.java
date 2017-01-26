@@ -89,7 +89,7 @@ public class FromTransferHandler extends TransferHandler {
         } catch (java.io.IOException e) {
             return false;
         }
-
+        
 		JList<String> list = (JList<String>)support.getComponent();
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
         

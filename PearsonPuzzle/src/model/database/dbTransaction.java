@@ -247,7 +247,7 @@ public class dbTransaction implements Transaction{
 	}
 	
 	public void saveProject(String projectname, String codeString, String onlineimports, String localimports,
-			String description, int tab) {
+			String description, int tab, Vector<Integer> lineOrder) {
 		   // TODO: Linelength umdefinieren (wird nicht zwingend benötigt, übergebene Integer kann aber evtl. Verwendung finden
 		String[] codeStrings=codeString.split("\n");
 		
@@ -278,7 +278,19 @@ public class dbTransaction implements Transaction{
 		   
 		   // -- Code Array wird erzeugt und wieder zu einem String zusammengefasst
 		   codeString = unite(codeStrings, false, tab);
-		   ArrayList<Integer> randomKey = getRandomKeys(codeStrings.length);
+		   
+		   // -- Eine zufällige Abfolge von Zahlen wird für die Sortierung der Zeilen hinterlegt.
+		   ArrayList<Integer> randomKey = null;
+		   if(lineOrder == null || lineOrder.size()!=codeStrings.length){
+			   randomKey = getRandomKeys(codeStrings.length);
+		   }
+		   else{
+			   randomKey = new ArrayList<Integer>(codeStrings.length);
+			   for(Integer key: lineOrder){
+				   randomKey.add(key);
+			   }
+		   }
+		   
 		   try {
 			//userDBaccess.saveProject(projectname, codeStrings, imports, description, randomKey, tab, linelength); 13.01.2017
 			   userDBaccess.saveProject(projectname, createRandomString(15), codeStrings, description, randomKey,
@@ -558,8 +570,36 @@ public class dbTransaction implements Transaction{
 
 
 
-	public void saveOrderFailure(String string,
+	public void saveOrderFailure(String projectname,
 			LinkedList<String> orderFailureText) {
-		// FIXME: Implementierung
+		String randomname = getRandomName(projectname);
+		
+		String failurname = randomname+"orderfailure";
+		for(int index=0;index<orderFailureText.size();index++){
+		userDBaccess.addOrderfailurMassage(failurname, index, orderFailureText.get(index));
+		}
 	}
+
+	public boolean updateOrderFailure(String projectname, int ordernumber, String orderFailureText){
+		String randomname = getRandomName(projectname);
+		String failurname = randomname+"orderfailure";
+		return userDBaccess.updateOrderfailurMassage(failurname, ordernumber, orderFailureText);
+	}
+	
+	public String getOrderFailure(String projectname, int ordernumber){
+		String randomname = getRandomName(projectname);
+		String failurname = randomname+"orderfailure";
+		return userDBaccess.getOrderFailurMassage(failurname, ordernumber);
+	}
+	
+	public LinkedList<String> getOrderFailure(String projectname){
+		LinkedList<String> OrderFailureText = new LinkedList<String>();
+		String randomname = getRandomName(projectname);
+		String failurname = randomname+"orderfailure";
+		for(int ordernumber= 0; userDBaccess.doesOrderExist(randomname, ordernumber);ordernumber++){
+		OrderFailureText.add(getOrderFailure(projectname, ordernumber));
+		}
+		return OrderFailureText;
+	}
+	
 }

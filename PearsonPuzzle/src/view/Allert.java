@@ -11,7 +11,7 @@ import model.access.AccessGroup;
  * @author workspace
  */
 public enum Allert {
-	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser, help_Orders;
+	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser, help_Orders, code_not_fully_sorted;
 	
 	public Integer allert(Model model){
 		Integer n;
@@ -27,6 +27,9 @@ public enum Allert {
 				return null;
 			case noProjectSelected:
 				JOptionPane.showMessageDialog(null, "Bitte Projekt auswählen");
+				return null;
+			case code_not_fully_sorted:
+				JOptionPane.showMessageDialog(null, "Code nicht vollstädnig sortiert, bitte sortieren Sie den Code fertig.<br> Erst dann ist diese Aktion möglich.");
 				return null;
 			case noContentInput:
 				JOptionPane.showMessageDialog(null,"Bitte Titel und Inhalt des Projekts angeben");

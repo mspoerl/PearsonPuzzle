@@ -10,7 +10,7 @@ public enum DCCommand {
 	// Text Component Connection
 		ConnectedComponent,
 	// Button Commands
-		ShowHelp, Save, ResetDB, SetConfig, DeleteProject, AddOrder, Compile, TestCode, SaveProjectConfiguration, Randomize,
+		ShowHelp, Save, ResetDB, SetConfig, DeleteProject, AddOrder, Compile, TestCode, SaveProjectConfiguration,
 	// View Changes
 		EditConfig,EditProject, EditUsers, EditJUnit, EditPreview, NewProject, OpenProject, ProjectList, Login, Logout, Admin, DeleteOrder,
 	// Dialogs
@@ -39,8 +39,6 @@ public enum DCCommand {
 			return "OpenProject";
 		case ProjectList:
 			return "ProjectList";
-		case Randomize:
-			return "Randomize";
 		case Login:
 			return "Login";
 		case Logout:

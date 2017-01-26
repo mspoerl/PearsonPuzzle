@@ -1,6 +1,5 @@
 package mobileVersion.view;
 
-import java.awt.BorderLayout;
 import java.util.Observable;
 
 import javax.swing.BoxLayout;
@@ -100,7 +99,6 @@ public class LoginAView extends AppletView {
 			return password.getPassword();
 	return null;
 	}
-	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
 		

@@ -45,7 +45,7 @@ public class TeacherView extends JView{
 		this.addMenuToFrame(menu);
 		
 		setupProjektList();
-		draw();
+		mainPanel.revalidate();
 	}
 	
 	/**
