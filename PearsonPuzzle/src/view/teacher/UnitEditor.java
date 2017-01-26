@@ -11,7 +11,10 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+
 import org.junit.runner.notification.Failure;
+import org.syntax.jedit.JEditTextArea;
+import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 
 import model.Model;
 
@@ -24,7 +27,8 @@ public class UnitEditor extends JView{
 	
 	public static String DEFAULT_UNIT_CODE;
 	public final static String DEFAULT_IMPORT_TEXT="Hier können imports in der Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.";
-	private JTextArea textArea;
+	//private JTextArea textArea;
+	private JEditTextArea textArea; 
 	private JTextArea messageBox;
 	private JTextArea imports;
 	private JButton addClasses;
@@ -39,26 +43,33 @@ public class UnitEditor extends JView{
 		menu = new MenuTeacher(model, 2);
 		this.addMenuToFrame(menu);
 		setupEditor();
-		draw();
+		mainPanel.revalidate();
 	}
 
 	private void setupEditor() {
-		textArea = new JTextArea();
-		textArea.setEditable(true);
-		textArea.setLineWrap(false);
-		textArea.setTabSize(3);
+		textArea = new JEditTextArea();
+		textArea.setElectricScroll(10);
+		textArea.setPreferredSize(new Dimension(450,350));
 		textArea.setText(model.getJUnitCode());
+		textArea.setTokenMarker(new JavaTokenMarker());		
+		textArea.validate();
+		
+//		textArea = new JTextArea();
+//		textArea.setEditable(true);
+//		textArea.setLineWrap(false);
+//		textArea.setTabSize(3);
+		//textArea.setText(model.getJUnitCode());
 		Border border = BorderFactory.createEmptyBorder();
 		textArea.setBorder(BorderFactory.createCompoundBorder(border, 
 	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
 		if(textArea.getText().equals(""))
 			textArea.setText(DEFAULT_UNIT_CODE);
-		JScrollPane textScrollPane = new JScrollPane(textArea);
-		textScrollPane.setVerticalScrollBarPolicy(
-		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		textScrollPane.setPreferredSize(new Dimension(400,350));
-		textScrollPane.setMinimumSize(new Dimension(400,100));
+//		JScrollPane textScrollPane = new JScrollPane(textArea);
+//		textScrollPane.setVerticalScrollBarPolicy(
+//		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+//		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//		textScrollPane.setPreferredSize(new Dimension(400,350));
+//		textScrollPane.setMinimumSize(new Dimension(400,100));
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
@@ -91,9 +102,17 @@ public class UnitEditor extends JView{
 		importsSP.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		importsSP.setPreferredSize(new Dimension(200,150));
 		importsSP.setMinimumSize(new Dimension(200,150));
-		addClasses = new JButton("<html><body>Zum Ausführen nötige <b>Klassen hinzufügen</b></body></html>");
+		
+		if(model.getImport("classes")==null || model.getImport("classes").isEmpty())
+			addClasses = new JButton("<html><body>Zum Ausführen nötige <b>Klassen hinzufügen</b></body></html>");
+		else 
+			addClasses = new JButton("<html><body>Zum Ausführen nötige <b>Klassen bearbeiten</b></body></html>");
 		addClasses.setAlignmentX(Component.CENTER_ALIGNMENT);
-		addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden hinzufügen</b></body></html>");
+		
+		if(model.getImport("methods") == null || model.getImport("methods").isEmpty())
+			addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden hinzufügen</b></body></html>");
+		else 
+			addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden bearbeiten</b></body></html>");
 		addMethods.setAlignmentX(Component.CENTER_ALIGNMENT);
 		leftPanel.add(importsSP);
 		leftPanel.add(addClasses);
@@ -109,7 +128,8 @@ public class UnitEditor extends JView{
 		buttonPanel.add(test);
 		buttonPanel.add(save);
 		
-		mainPanel.add(textScrollPane);
+//		mainPanel.add(textScrollPane);
+		mainPanel.add(textArea);
 		mainPanel.add(leftPanel, BorderLayout.EAST);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 	}
@@ -154,7 +174,7 @@ public class UnitEditor extends JView{
 			else{
 				String failureText = "Kompilieren war nicht erfolgreich. \nAufgetretenen Fehler: ";
 				for(HashMap<String, String> failure : failures){
-					failureText = failureText+"\n "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
+					failureText = failureText+"\n  "+failure.get("Art")+" "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile")+" von "+failure.get("Klasse");
 				}
 				compile.setBackground(Color.decode("#AF002A"));
 				compile.setForeground(Color.decode("#FFFFFF"));

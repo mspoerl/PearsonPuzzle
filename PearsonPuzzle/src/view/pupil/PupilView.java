@@ -33,7 +33,7 @@ public class PupilView extends JView{
 		menu = new MenuPupil();
 		this.addMenuToFrame(menu);
 		setupProjectList();
-		draw();
+		mainPanel.revalidate();
 	}
 	
 	/**

@@ -45,7 +45,7 @@ import compiler.StringJavaFileObject;
  * Bsp: int a; int b=0; a=b; return a; -> public int methode(){ int a; int b; a=b; return a; } <br><br>
  * @author workspace
  */
-public class JUnitRunner {
+public class UnitRunner {
 	private final static String DEFAULT_CLASS_NAME= "TestClass";
 	private final static String DEFAULT_METHOD_NAME = "testMehtod";
 	private HashMap<String, String> srcCodeMap;
@@ -60,15 +60,16 @@ public class JUnitRunner {
 	 * @param imports evtl. notwendige imports
 	 * @throws PPException 
 	 */
-	public JUnitRunner(String unitSourceCode, String sourceCode_ToBeTested, String methodImports) throws PPException {
+	public UnitRunner(String unitSourceCode, String sourceCode_ToBeTested, String methodImports) throws PPException {
 		unitLineOffset = 0;
 		this.unitSourceCode = unitSourceCode;
-			extractClassName(unitSourceCode);		
+			extractClassName(unitSourceCode);
 		compileFailures = new Vector<HashMap<String, String>>();
 		fillNeccessaryImports();
 		fillSrcCodeMap(sourceCode_ToBeTested);
 		addMethods(methodImports);
 	}
+	
 	/**
 	 * FIXME: package handeln
 	 */
@@ -354,8 +355,8 @@ public class JUnitRunner {
 		for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
 		 {
 			 HashMap <String, String> compileFailure = new HashMap<String, String>(9);
-			 compileFailure.put("Class", ""+className);
-			 compileFailure.put("Kind", ""+diagnostic.getKind());
+			 compileFailure.put("Klasse", ""+className);
+			 compileFailure.put("Art", ""+diagnostic.getKind());
 			 compileFailure.put("Quelle", ""+diagnostic.getSource());
 			 compileFailure.put("Code", ""+sourceCode);
 			 // TODO: Fehlerbericht anpassen (Nachricht)
@@ -365,17 +366,24 @@ public class JUnitRunner {
 			 compileFailure.put("Spalte", ""+diagnostic.getColumnNumber() );
 			 compileFailure.put("Startpostion", ""+diagnostic.getStartPosition());
 			 compileFailure.put("Endposition", ""+diagnostic.getEndPosition() );
-			 compileFailures.add(compileFailure);			 
+			 compileFailures.add(compileFailure);		 
 		 }	
 	}
 	private void makeDiagnose(DiagnosticCollector<JavaFileObject> diagnostics){
 		// Diagnose (bei aufgetretenem Fehler)
 		for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
 		 {
+			String className = null;
+			Pattern pattern = Pattern.compile("string:///");
+			Matcher matcher  = pattern.matcher(diagnostic.getSource().toString());
+			if(matcher.find())
+				className = diagnostic.getSource().toString().substring(matcher.end()).replaceAll("]", "");
+			else 
+				className = diagnostic.getSource().toString();
 			 HashMap <String, String> compileFailure = new HashMap<String, String>(9);
-			 compileFailure.put("Class", ""+diagnostic.getClass().getName());
-			 compileFailure.put("Kind", ""+diagnostic.getKind());
-			 compileFailure.put("Quelle", ""+diagnostic.getSource());
+			 compileFailure.put("Klasse", ""+className);
+			 compileFailure.put("Art", ""+diagnostic.getKind());
+			 compileFailure.put("Quelle", ""+diagnostic.getSource().toString());
 			 compileFailure.put("Code", ""+diagnostic.getCode());
 			 // TODO: Fehlerbericht anpassen (Nachricht)
 			 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
@@ -438,6 +446,7 @@ public class JUnitRunner {
 		CompilationTask task = compiler.getTask( null, unitFileManager,diagnostics, options, null, units );
 		task.call();
 		makeDiagnose(diagnostics);
+		System.out.println(srcCodeMap);
 		
 		try {
 			unitFileManager.close();

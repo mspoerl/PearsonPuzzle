@@ -585,6 +585,20 @@ public class UserDBaccess {
 		} 
 	   }
 	   
+	   public boolean doesOrderExist(String randomName, int ordernumber){
+		   try{
+			   Statement stmt = conn.createStatement();
+			   ResultSet rs = stmt.executeQuery("SELECT order_"+ordernumber+" FROM "+randomName+" ");
+			   return rs.next();
+		   }catch(SQLException e){if(e.getSQLState().equals("42X04")){
+			   return false;
+		   }
+			   e.printStackTrace();
+			   return false;
+		   }
+		
+}
+	   
 	   
 	   /**
 	    * Holt sich eine Projektliste aus der Datenbank.<br>
@@ -871,5 +885,88 @@ public class UserDBaccess {
 	   				e.printStackTrace();
 	   			}
 	   		}			
+	}
+	public void createOrderfailurMassage(String failurname) throws SQLException {
+		try{
+			Statement stmt = conn.createStatement();
+			   stmt.executeUpdate("Create table "+failurname+" (" +
+				   		"ordernumber int UNIQUE, " +
+				   		"failurmassage varchar(200))");
+		}
+		catch(SQLException e){
+			if(e.getSQLState().equals("X0Y32")){return;}
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean addOrderfailurMassage(String failurname, int ordernumber, String massage){
+		String randomname = (String) failurname.subSequence(0, 15);
+		try {
+			createOrderfailurMassage(failurname);
+			}
+		   catch(SQLException e){	
+			   e.printStackTrace();
+			   
+		   }
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate("INSERT INTO "+failurname+" (ordernumber, failurmassage) values ("+ordernumber+",'"+massage+"')");
+		   return true;}
+		   catch(SQLException e){	//ordernumber bereits vorhanden => false (falls handling erforderlich)
+			   if(e.getSQLState().equals("23505")){ // The statement was aborted because it would have caused a 
+				   // duplicate key value in a unique or primary key constraint or unique index identified by '<value>' defined on '<value>'.	   
+				   return updateOrderfailurMassage(failurname, ordernumber, massage);
+			   }
+			   e.printStackTrace();
+			   //TODO: besseres exeption handling (Order existiert nicht) (table does not exist)
+			   return false;
+		   }
+	}
+	
+	
+	public boolean updateOrderfailurMassage(String failurname, int ordernumber, String massage){
+		String randomname = (String) failurname.subSequence(0, 15);
+		
+	
+			try {
+				createOrderfailurMassage(failurname);
+				}
+			   catch(SQLException e){	
+				   e.printStackTrace();
+				   
+			   }
+			try {
+			
+			Statement stmt = conn.createStatement();
+			 stmt.executeUpdate("UPDATE "+failurname+" SET "
+				   		+ "failurmassage='"+massage+"'"
+				   		+ "WHERE ordernumber= "+ordernumber+"");
+		   return true;}
+		   catch(SQLException e){	
+			   e.printStackTrace();
+			   // besseres exeption handling 
+			   return false;
+		   }
+		
+	}
+	
+	
+	public String getOrderFailurMassage(String failurname, int ordernumber){
+		Statement stmt;
+		   ResultSet te;
+		   
+		   try {
+			stmt = conn.createStatement();
+		
+		   te = stmt.executeQuery("SELECT failurmassage FROM "+failurname+" "
+		   		+ " WHERE ordernumber="+ordernumber+"");
+		   te.next(); 
+			   //stmt.close();
+		   return te.getString("failurmassage");
+		   } catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return "databasefailur occurred";
+			}
 	}
 }

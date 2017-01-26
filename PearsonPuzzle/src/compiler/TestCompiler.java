@@ -13,20 +13,23 @@ import java.util.Vector;
 import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
 
+/**
+ * Testcompiler, der sehr rudimentär arbeitet, Klassen nach dem kompilieren in den Hauptspeicher schreibt (und nach dem kompilieren wieder löscht)
+ * @author workspace
+ *
+ */
 public class TestCompiler {		
 	
 	private final static String DEFAULT_CLASS_NAME="testCode";
 	private Vector<HashMap<String, String>> compileFailures;
 	private String packageString;
 	private LinkedList<String> importStrings;
-	private HashMap <String, String> classes;
 	
 	public TestCompiler(){
 		packageString = new String();
 		importStrings = new LinkedList<String>();
-		classes = new HashMap<String, String>();
-		 compileFailures = new Vector<HashMap<String, String>>();
-		}
+		compileFailures = new Vector<HashMap<String, String>>();
+	}
 	
 	public Vector<HashMap<String,String>> getFailures(){
 		return compileFailures;
@@ -165,11 +168,12 @@ public class TestCompiler {
 				 //System.out.println(className);
 				 //className = "sourceCode_toTest/"+className;
 				 Class.forName( className, true, classLoader );
-				 deleteTestClass(className);
+				 
 				 
 			 } catch (ClassNotFoundException e) {
 				 return false;
 			 }    // Java Compiler API 2
+			 deleteTestClass(className);
 			 return true;
 		 }
 		 

@@ -2,16 +2,10 @@ package mobileVersion.view;
 
 import java.awt.BorderLayout;
 
-import java.awt.LayoutManager;
-import java.awt.Window;
-import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JLayeredPane;
 
-import mobileVersion.Applet;
 import model.Model;
 import view.Allert;
 

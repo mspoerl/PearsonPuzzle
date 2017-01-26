@@ -35,9 +35,9 @@ public class run {
 									"return true;" +
 								"}" +
 							"}";
-		JUnitRunner jUnitRunner;
+		UnitRunner jUnitRunner;
 		try {
-			jUnitRunner = new JUnitRunner(unitText, code, null);
+			jUnitRunner = new UnitRunner(unitText, code, null);
 			jUnitRunner.run();
 		} catch (PPException e) {
 			e.printStackTrace();

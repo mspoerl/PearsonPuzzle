@@ -59,7 +59,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         	removeElements=true;
         	dragElements_infinitly=false;
         	Vector<String> codeVector = model.getCodeVector(null);
-        	if(model.getSollution().isEmpty())
+        	if(model.getSollutionOrder().isEmpty())
         		for(int i=0;i<codeVector.size();i++){
         			model.insertInSollution(i, codeVector.get(i));
         		}

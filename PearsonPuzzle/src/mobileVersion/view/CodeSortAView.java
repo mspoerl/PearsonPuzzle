@@ -142,7 +142,6 @@ public class CodeSortAView extends AppletView {
 		return listModel;
 	}
 
-	@Override
 	public void update(Observable arg0, Object arg1) {
 		if(arg1==DCCommand.Compile){
 			// Fehlerbericht oder Erfolg ausgeben

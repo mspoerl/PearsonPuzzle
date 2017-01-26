@@ -1,19 +1,18 @@
 package mobileVersion;
 
-import java.awt.Dimension;
-
 import javax.swing.JFrame;
 
 import controller.Controller;
 
 import mobileVersion.controller.AppletController;
 import mobileVersion.view.AppletView;
-import mobileVersion.view.ProjectListAView;
 import mobileVersion.view.LoginAView;
 import model.Model;
 
 
 public class Applet extends JFrame{
+	private static final long serialVersionUID = -6156615178571385705L;
+
 	public static void main(String[] args) {
 		Applet app = new Applet();
 		app.createGUI();

@@ -1,7 +1,9 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -18,10 +20,11 @@ import view.JView;
  */
 public interface Controller extends java.awt.event.ActionListener, ListSelectionListener, ItemListener {
 	
-	public abstract void actionPerformed(ActionEvent arg0);
+	void actionPerformed(ActionEvent arg0);
 	
-	public abstract void valueChanged(ListSelectionEvent arg0);
+	void valueChanged(ListSelectionEvent arg0);
 	
 	// für Tests
 	public Object getView();
+
 }

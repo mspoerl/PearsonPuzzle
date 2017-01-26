@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -21,8 +22,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
+import javax.swing.border.Border;
 
 
 import model.Model;
@@ -31,6 +34,7 @@ import controller.Controller;
 import controller.DCCommand;
 import controller.transferHandler.FromTransferHandler;
 import controller.transferHandler.ToSaveTransferHandler;
+import view.Allert;
 import view.JView;
 
 public class PreViewEditor extends JView{
@@ -50,6 +54,7 @@ public class PreViewEditor extends JView{
 		private ButtonGroup dropMode;
 		private LinkedList<JRadioButton> puzzleModeButtons;
 		private JPanel studentPanel;
+		private JTextArea messagePanel;
 		
 	public PreViewEditor(Model model) {
 		super(model);
@@ -64,7 +69,7 @@ public class PreViewEditor extends JView{
 		setupPreviewPanel();
 		setupEditPanel();
 		setupButtons();
-		draw();
+		mainPanel.revalidate();
 	}
 	
 	private void setupPreviewPanel(){
@@ -149,6 +154,17 @@ public class PreViewEditor extends JView{
 	}
 	
 	private void setupEditPanel(){
+		messagePanel = new JTextArea();
+		messagePanel.setEditable(false);
+		messagePanel.setLineWrap(true);
+		messagePanel.setWrapStyleWord(true);
+		Border border = BorderFactory.createEmptyBorder();
+		messagePanel.setBorder(BorderFactory.createCompoundBorder(border, 
+	            BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+		messagePanel.setText("Information: In diesem Modus stehen dem Schüler die Reihenfolgen-Muster nicht zur Verfügung. In diesem Modus macht es nur Sinn, den generierten Code zu kompilieren und mit JUnit test zu testen.");
+		if(Puzzlemode!=3)
+			messagePanel.setVisible(false);
+		
 		JPanel selectDragAndDrop = new JPanel();
 		selectDragAndDrop.setLayout(new BoxLayout(selectDragAndDrop, BoxLayout.Y_AXIS));
 		selectDragAndDrop.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -170,6 +186,10 @@ public class PreViewEditor extends JView{
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					Puzzlemode = n;
+					if(n==3)
+						messagePanel.setVisible(true);
+					else
+						messagePanel.setVisible(false);
 					update();
 				}
 			});
@@ -178,10 +198,11 @@ public class PreViewEditor extends JView{
 			selectDragAndDrop.add(radioButton);
 		}
 		selectDragAndDrop.add(Box.createRigidArea(new Dimension(0,10)));
-		save = new JButton("Speichern");
+		save = new JButton("<html><body text-align=\"center\"><p align=\"center\">Drag&Drop Modus<br>Speichern</p></body></html>");
 		save.setAlignmentX(Component.LEFT_ALIGNMENT);
 		selectDragAndDrop.add(save);
 		mainPanel.add(selectDragAndDrop, BorderLayout.LINE_START);
+		mainPanel.add(messagePanel, BorderLayout.SOUTH);
 	}
 	private DefaultListModel<String> makeDefaultListModel(){
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
@@ -219,8 +240,9 @@ public class PreViewEditor extends JView{
 //		testButton.addActionListener(controller);
 		
 		randomize.setName("randomize");
-		randomize.setActionCommand(DCCommand.Randomize.toString());
+		randomize.setActionCommand(DCCommand.Save.toString());
 		randomize.addActionListener(controller);
+		save.setName("save");
 		save.setActionCommand(DCCommand.Save.toString());
 		save.addActionListener(controller);
 		
@@ -234,12 +256,15 @@ public class PreViewEditor extends JView{
 	public void update() {
 		mainPanel.remove(studentPanel);
 		setupPreviewPanel();
-		draw();
+		mainPanel.revalidate();
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		update();		
+		if(arg!=null && arg.equals(Allert.code_not_fully_sorted))
+			this.showDialog(Allert.code_not_fully_sorted);
+		else
+			update();
 	}
 
 }

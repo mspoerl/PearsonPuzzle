@@ -26,6 +26,7 @@ public class MenuTeacher extends Menu{
 	
 	private List <JMenuItem> menuItems;
 	private List <JButton> extendedNavigation;
+	private JMenuItem save;
 	private Model model;
 	
 	MenuTeacher(){
@@ -89,27 +90,46 @@ public class MenuTeacher extends Menu{
 		JMenu classMenu = new JMenu("Nutzer");
 		JMenu configMenu = new JMenu("Account");
 		
-		menuItems.add(new JMenuItem("Neues Projekt"));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.NewProject.toString());
-		menuItems.get(menuItems.size()-1).setAccelerator(KeyStroke.getKeyStroke(
+		JMenuItem itemBuffer;
+		
+		itemBuffer = new JMenuItem("Neues Projekt");
+		itemBuffer.setActionCommand(DCCommand.NewProject.toString());
+		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
 		        java.awt.event.KeyEvent.VK_N, 
 		        java.awt.Event.CTRL_MASK));		
+		menuItems.add(itemBuffer);
 		
-		menuItems.add(new JMenuItem("Projekte anzeigen"));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.ProjectList.toString());
-		menuItems.get(menuItems.size()-1).setAccelerator(KeyStroke.getKeyStroke(
-		        java.awt.event.KeyEvent.VK_A, 
+		itemBuffer = new JMenuItem("Projekte anzeigen");
+		itemBuffer.setActionCommand(DCCommand.ProjectList.toString());
+		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_P, 
 		        java.awt.Event.CTRL_MASK));
+		menuItems.add(itemBuffer);
 		
-		menuItems.add(new JMenuItem("Nutzer hinzufügen"));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.AddUser.toString());
-		menuItems.add(new JMenuItem("Nutzer löschen"));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.EditUsers.toString());
+		itemBuffer = new JMenuItem("Nutzer hinzufügen");
+		itemBuffer.setActionCommand(DCCommand.AddUser.toString());
+		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_PLUS, 
+		        java.awt.Event.CTRL_MASK));
+		menuItems.add(itemBuffer);
 		
-		menuItems.add(new JMenuItem("Account verwalten"));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.Admin.toString());
-		menuItems.add(new JMenuItem("Logout"));
-		menuItems.get(menuItems.size()-1).setActionCommand(DCCommand.Logout.toString());
+		itemBuffer = new JMenuItem("Nutzer löschen");
+		itemBuffer.setActionCommand(DCCommand.EditUsers.toString());
+		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_MINUS, 
+		        java.awt.Event.CTRL_MASK));
+		menuItems.add(itemBuffer);
+		
+		itemBuffer = new JMenuItem("Account verwalten");
+		itemBuffer.setActionCommand(DCCommand.Admin.toString());
+		menuItems.add(itemBuffer);
+		
+		itemBuffer = new JMenuItem("Logout");
+		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_Q, 
+		        java.awt.Event.CTRL_MASK));
+		itemBuffer.setActionCommand(DCCommand.Logout.toString());
+		menuItems.add(itemBuffer);
 		
 		this.add(Box.createHorizontalGlue());
 		this.add(mainMenu);
@@ -128,6 +148,12 @@ public class MenuTeacher extends Menu{
 			}
 			seperator++;
 		}
+		save = new JMenuItem("save");
+		save.setActionCommand(DCCommand.Save.toString());
+		save.setAccelerator(KeyStroke.getKeyStroke(
+		        java.awt.event.KeyEvent.VK_S, 
+		        java.awt.Event.CTRL_MASK));
+		configMenu.add(save);
 	}
 
 	public void reduceMenu(){
@@ -152,5 +178,8 @@ public class MenuTeacher extends Menu{
 		for(JButton comp: extendedNavigation){
 			comp.addActionListener(controller);
 		}
+		
+		save.addActionListener(controller);
+		save.setVisible(false);
 	}
 }

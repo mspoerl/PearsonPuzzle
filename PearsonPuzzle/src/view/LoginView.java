@@ -29,7 +29,7 @@ public class LoginView extends JView{
 		setupFrame();
 		setupLoginPanel();
 		this.addMenuToFrame(new JMenuBar());
-		draw();
+		mainPanel.revalidate();
 	}
 	
 	private void setupLoginPanel(){

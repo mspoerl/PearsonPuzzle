@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.Observable;
 import java.util.Observer;
@@ -63,6 +64,7 @@ public abstract class JView implements Observer {
 		public void setupFrame(){
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setLayout(new FlowLayout());
+			//mainPanel.setPreferredSize(new Dimension(1000,500));
 			frame.add(mainPanel);
 			frame.setSize(800,500);
 			frame.setLocationRelativeTo(null);
@@ -79,9 +81,9 @@ public abstract class JView implements Observer {
 		/**
 		 * Frame wird auf sichtbar gesetzt und Größe festgelegt.
 		 */
-		public void draw(){
+		public void drawFrame(){
 		    frame.pack();
-			frame.setSize(800,520);
+			frame.setSize(850,500);
 			if(frame.isVisible()==false){
 				frame.setVisible(true);
 			}

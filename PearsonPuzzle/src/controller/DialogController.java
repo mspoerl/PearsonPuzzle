@@ -6,13 +6,10 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.LinkedList;
 
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.text.JTextComponent;
 
 import model.Model;
 
@@ -34,31 +31,26 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 		this.model = model;
 	}
 
-	@Override
 	public void itemStateChanged(ItemEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	/** This method handles events for the text field. */
     public void actionPerformed(ActionEvent e) {
         //view.getOptionPane().setValue(btnString1);
     }
 
-	@Override
 	public void valueChanged(ListSelectionEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public JView getView() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	/** This method reacts to state changes in the option pane. */
     public void propertyChange(PropertyChangeEvent e) {
 	        String prop = e.getPropertyName();
@@ -144,7 +136,6 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 			}
 		}
 
-	@Override
 	public void focusGained(FocusEvent e) {
 		if(dialog.getClass().equals(EditOrderDialog.class)){
 			if(e.getSource().getClass().equals(JTextArea.class)
@@ -156,7 +147,6 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 		
 	}
 
-	@Override
 	public void focusLost(FocusEvent e) {
 		if(e.getSource().getClass().equals(JTextArea.class)){
 			model.setOrderFailures((Integer)dialog.get("groupID"), (String)dialog.get("text"));

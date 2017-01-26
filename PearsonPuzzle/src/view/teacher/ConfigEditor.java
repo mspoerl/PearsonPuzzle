@@ -33,7 +33,7 @@ public class ConfigEditor extends JView{
 		menu = new MenuTeacher(model, 1);
 		this.addMenuToFrame(menu);
 		setupConfigPanel();
-		draw();
+		mainPanel.revalidate();
 	}
 	
 	private void setupConfigPanel(){
