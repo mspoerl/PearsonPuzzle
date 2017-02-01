@@ -27,8 +27,8 @@ public class UnitEditor extends JView{
 	
 	public static String DEFAULT_UNIT_CODE;
 	public final static String DEFAULT_IMPORT_TEXT="Hier können imports in der Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.";
-	//private JTextArea textArea;
-	private JEditTextArea textArea; 
+	private JTextArea textArea;
+	//private JEditTextArea textArea; 
 	private JTextArea messageBox;
 	private JTextArea imports;
 	private JButton addClasses;
@@ -47,18 +47,19 @@ public class UnitEditor extends JView{
 	}
 
 	private void setupEditor() {
-		textArea = new JEditTextArea();
-		textArea.setElectricScroll(10);
-		textArea.setPreferredSize(new Dimension(450,350));
-		textArea.setText(model.getJUnitCode());
-		textArea.setTokenMarker(new JavaTokenMarker());		
-		textArea.validate();
+//		textArea = new JEditTextArea();
+//		textArea.setElectricScroll(10);
+//		textArea.setPreferredSize(new Dimension(450,350));
+//		textArea.setText(model.getJUnitCode());
+//		textArea.setTokenMarker(new JavaTokenMarker());		
+//		textArea.validate();
 		
-//		textArea = new JTextArea();
-//		textArea.setEditable(true);
-//		textArea.setLineWrap(false);
-//		textArea.setTabSize(3);
-		//textArea.setText(model.getJUnitCode());
+		textArea = new JTextArea();
+		textArea.setEditable(true);
+		textArea.setLineWrap(false);
+		textArea.setTabSize(3);
+		textArea.setText(model.getJUnitCode());
+		
 		Border border = BorderFactory.createEmptyBorder();
 		textArea.setBorder(BorderFactory.createCompoundBorder(border, 
 	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));

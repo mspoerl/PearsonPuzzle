@@ -41,8 +41,7 @@ public class Model extends Observable {
 	// Die linked Hash Map soll NICHT frei verfügbar sein 
 	// (sonst kann man eventuell die richtige Reihenfolge auslesen)
 	private LinkedHashMap<String, Integer> codeMap;
-	private LinkedList<Integer> sortedCode;
-	
+	private LinkedList<Integer> sortedCode;	
 	private Vector<String> testExpressionsVector;
 	private Vector<Vector<Integer>> codeLine_GroupMatrix;
 	private String projectName;
@@ -514,6 +513,9 @@ public class Model extends Observable {
 	 * @param jUnitFailures the jUnitFailures to set
 	 */
 	public void setJunitFailures(Result result) {
+		if(result == null)
+			jUnitFailures = null;
+		else{
 		jUnitFailures = new LinkedList<Failure>();
 		for (Failure failure : result.getFailures()) {
 			if(failure!=null)
@@ -521,6 +523,7 @@ public class Model extends Observable {
 		}
 		setChanged();
 		notifyObservers(DCCommand.TestCode);
+		}
 	}
 	
 	/**
@@ -627,6 +630,7 @@ public class Model extends Observable {
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(projectName,jUnitCode);
 			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
+			dataBase.saveOrderFailure(projectName, orderFailureText);
 			if(projectImports!=null)
 				dataBase.saveImports(projectName, projectImports);
 			System.out.println(codeLine_GroupMatrix);
@@ -991,6 +995,14 @@ public class Model extends Observable {
 
 	public void saveOrderFailures() {
 		dataBase.saveOrderFailure(projectList.get(projectID), orderFailureText);
+	}
+	
+	public void exportDatabase(String diskplace){
+		dataBase.exportAll(diskplace);
+	}
+	
+	public void replaceDatabase(String importfile, String diskplace){
+		dataBase.replaceDb(importfile, diskplace);
 	}
 
 }

@@ -47,7 +47,7 @@ public class AddImportDialog extends JDialog{
 		textArea = new JEditTextArea();
 		textArea.setElectricScroll(10);
 		textArea.setPreferredSize(new Dimension(450,350));
-		textArea.setText(model.getJUnitCode());
+		//textArea.setText(model.getJUnitCode());
 		textArea.setTokenMarker(new JavaTokenMarker());		
 		textArea.validate();
 		

@@ -203,4 +203,7 @@ public abstract class JView implements Observer {
 		public Object get(String variable){
 			return null;
 		}
+		public void hide(){
+			frame.setVisible(false);
+		}
 }

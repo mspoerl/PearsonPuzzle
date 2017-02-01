@@ -1,6 +1,7 @@
 package model.database;
 
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -600,6 +601,84 @@ public class dbTransaction implements Transaction{
 		OrderFailureText.add(getOrderFailure(projectname, ordernumber));
 		}
 		return OrderFailureText;
+	}
+	
+
+	public boolean exportAll(String diskplace){
+		// Ein Vector wird mit den Namen aller existierenden Tabellen gefüllt
+		String randomname = new String();
+		ArrayList<String> ProjectList = getProjects(0);
+		Vector<String> TableVector = new Vector<String>();
+		TableVector.add("projects");
+		TableVector.add("teacher");
+		TableVector.add("student");
+		try {
+			for(int index=0; index < ProjectList.size(); index++){
+				randomname=userDBaccess.getRandomName(ProjectList.get(index));
+				
+				TableVector.add(randomname);
+				if(userDBaccess.doesTableExist(randomname+"orderfailure")){
+					TableVector.add(randomname+"orderfailure");
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return export(TableVector, diskplace);
+	}
+
+	
+	public boolean export(Vector<String> projectnames, String diskplace){
+		Vector<String> fileVector = new Vector<String>();
+		
+		for(int index=0; index <projectnames.size();index++){	
+		String tablename = projectnames.get(index);
+		fileVector.add(tablename+".dat");
+		userDBaccess.exportTable(tablename, diskplace);
+		}
+		return ZipApp.zipIt(fileVector, diskplace);
+	}
+	
+	public void replaceDb(String importfile, String diskplace){
+		try {
+			userDBaccess.resetAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//befüllen fe
+		String fileName = new String();
+		String tableName = new String();
+		String[] codeString = new String[0];
+		ArrayList<Integer> randomKeys = new ArrayList<Integer>();
+		Vector<String> dataNames = ZipApp.unZipIt(importfile, diskplace);
+		for(int index =0;index < dataNames.size(); index++){
+			fileName=dataNames.get(index);
+			tableName=fileName.substring(0,fileName.length()-4);
+			if(userDBaccess.doesTableExist(tableName)){ 
+				userDBaccess.importTable(tableName, diskplace);
+			}else{	if(tableName.length()==15){									//case1: eine Project-tabelle
+						userDBaccess.createProject(tableName, codeString, randomKeys, 0);}
+					else{														//case1: eine Orderfailre-tabelle
+						try {
+							userDBaccess.createOrderfailurMassage(tableName);
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				userDBaccess.importTable(tableName, diskplace);
+			}
+			
+			//datei löschen
+			File file = new File(diskplace+File.separator +fileName);
+			file.delete();
+		}
+		
 	}
 	
 }

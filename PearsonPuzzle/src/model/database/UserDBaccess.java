@@ -1,5 +1,6 @@
 package model.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -50,8 +51,9 @@ public class UserDBaccess {
 			System.out.println("success");
 		   return true;}
 		   catch(SQLException e){	//username bereits vorhanden => false (falls handling erforderlich)
+			   
 			   if(e.getSQLState().equals("23505")){ // The statement was aborted because it would have caused a 
-				   // duplicate key value in a unique or primary key constraint or unique index identified by '<value>' defined on '<value>'.	   
+				   PPException exception = new PPException("Suau dummer Fehler");// duplicate key value in a unique or primary key constraint or unique index identified by '<value>' defined on '<value>'.	   
 				   return false;
 			   }
 			   e.printStackTrace();
@@ -678,7 +680,7 @@ public class UserDBaccess {
 		   Statement stmt = conn.createStatement();
 		   stmt.executeUpdate("Create table "+accessGroup.toString()+" (" +
 			   		"username varchar(30) UNIQUE, " +
-			   		"password varchar(8) NOT NULL default 'student')");
+			   		"password varchar(20) NOT NULL default 'student')");
 	   }
 	   
 	   protected void dropTable(AccessGroup accessGroup){
@@ -705,7 +707,7 @@ public class UserDBaccess {
 		   catch(SQLException e){}
 		   stmt.executeUpdate("Create table student (" +
 		   		"username varchar(30) UNIQUE, " +
-		   		"password varchar(8) NOT NULL default 'student')");  
+		   		"password varchar(20) NOT NULL default 'student')");  
 		   // insert 2 rows
 		   //stmt.executeUpdate("insert into students values ('tom','tom')");
 		   //stmt.executeUpdate("insert into students values ('peter','peter')");
@@ -725,7 +727,7 @@ public class UserDBaccess {
 		   catch(SQLException e){}
 		   stmt.executeUpdate("CREATE TABLE teacher (" +
 		   		"username varchar(30) UNIQUE, " +
-		   		"password varchar(8)  NOT NULL default 'teacher')");
+		   		"password varchar(20)  NOT NULL default 'teacher')");
 		   //stmt.executeUpdate("insert into teachers values ('Herr','Herr')");
 		   //stmt.executeUpdate("insert into teachers values ('Frau','Frau')");
 		   //stmt.executeUpdate("insert into teachers values ('TUM','TUM')");
@@ -969,4 +971,68 @@ public class UserDBaccess {
 				return "databasefailur occurred";
 			}
 	}
+
+	public boolean doesTableExist(String tablename){
+		try{
+		Statement stmt = conn.createStatement();
+		stmt.executeQuery("SELECT * FROM "+tablename+"");
+		return true;
+		}catch(SQLException e){
+			   if(e.getSQLState().equals("42X05") || e.getSQLState().equals("42Y55")){// Table/View '<objectName>' does not exist.
+				   return false;
+			   }
+			   else{e.printStackTrace();
+			   return false;
+			   }
+		}
+	}
+	
+	
+	//---------------------------------------------------Export-Import------------------------------
+	
+	
+	public boolean exportTable(String tablename, String diskplace){
+		//create output directory if not exists
+    	File folder = new File(diskplace);
+    	if(!folder.exists()){
+    		folder.mkdir();
+    	}
+
+		
+		// SYSCS_EXPORT_TABLE akzeptiert nur Tabellennamen in UpperCase. 
+		String tablenameUC = tablename.toUpperCase();
+		
+		
+		Statement stmt;
+			try {
+				stmt = conn.createStatement();
+				stmt.execute("CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE (null, '"+tablenameUC+"', '" + diskplace + File.separator + tablename + ".dat"+ "', '%', null, null)");
+			    return true;
+			} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+			}
+		}
+	
+	
+	
+	public boolean importTable(String tablename, String diskplace){
+	String tablenameUC = tablename.toUpperCase();
+	Statement stmt;
+	try {
+		stmt = conn.createStatement();
+//		short s =1;
+//		Import.importTable(conn, "", tablename,  diskplace + File.separator + tablename + ".dat", ";", "%", "UTF-8", s, false);
+		
+		stmt.execute("CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (null, '"+tablenameUC+"', '" +diskplace + File.separator + tablename + ".dat"+ "', '%', null, null,1)");
+
+	    return true;
+	} catch (SQLException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+	return false;
+	}
+}
+	
 }

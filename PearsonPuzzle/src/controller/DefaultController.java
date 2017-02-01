@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
+import java.io.File;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
@@ -20,9 +21,11 @@ import org.junit.runner.Result;
 
 import compiler.TestCompiler;
 
+import mobileVersion.Applet;
 import model.Model;
 import model.access.AccessGroup;
 import view.*;
+import view.dialog.FileChooserDialog;
 import view.pupil.*;
 import view.teacher.*;
 
@@ -93,6 +96,11 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			}		
 		}
 		switch(cmd){
+			case Applet:
+				view.hide();
+				Applet app = new Applet();
+				app.createGUI(model);
+				break;
 			case Login:
 				if(view.getClass().equals(LoginView.class))
 					((LoginView)view).submitChangeToController();
@@ -335,6 +343,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						unitRunner.addOnlineImport(model.getImport("online"));
 						unitRunner.addClasses(model.getImport("classes"));
 						result = unitRunner.run();
+						//model.setCompilerFailures(unitRunner.getFailures());
 						//System.out.println(result.getFailures());
 						//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 						model.setJunitFailures(result);
@@ -350,6 +359,26 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					model.setJunitFailures(result);
 				}
 				break;
+			case DB_Export:
+				JFileChooser fc_exp = new JFileChooser();
+				int returnVal_exp = fc_exp.showSaveDialog(new JPanel());
+
+	            if (returnVal_exp == JFileChooser.APPROVE_OPTION) {
+	                File file = fc_exp.getSelectedFile();
+	                model.exportDatabase(file.getAbsolutePath());
+	                //This is where a real application would open the file.
+	            }
+				break;
+			case DB_Import:
+				JFileChooser fc_imp = new JFileChooser();
+				int returnVal_imp = fc_imp.showOpenDialog(new JPanel());
+
+	            if (returnVal_imp == JFileChooser.APPROVE_OPTION) {
+	                File file = fc_imp.getSelectedFile();
+	                model.replaceDatabase(file.getName(), file.getParentFile().getAbsolutePath());
+	                //This is where a real application would open the file.
+	            }
+	            break;
 			default:
 				break;
 		}
