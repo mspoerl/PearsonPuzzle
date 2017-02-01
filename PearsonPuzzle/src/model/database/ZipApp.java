@@ -11,6 +11,10 @@ import java.util.zip.ZipInputStream;
 
 
 public class ZipApp {
+	
+	public ZipApp(){
+		
+	}
 
 	public static boolean zipIt( Vector<String> fileNames, String diskplace )
 	    {

@@ -27,10 +27,12 @@ public class dbTransaction implements Transaction{
 	 
 	private UserDBaccess userDBaccess;
 	private Model model;
+	private ZipApp app;
 	
 	public dbTransaction(Model model) throws PPException{
 		this.model=model;
 		try {
+			app= new ZipApp();
 			userDBaccess = new UserDBaccess();
 			//userDBaccess.resetAll();
 		} catch (SQLException e) {
@@ -655,7 +657,7 @@ public class dbTransaction implements Transaction{
 		String tableName = new String();
 		String[] codeString = new String[0];
 		ArrayList<Integer> randomKeys = new ArrayList<Integer>();
-		Vector<String> dataNames = ZipApp.unZipIt(importfile, diskplace);
+		Vector<String> dataNames = app.unZipIt(importfile, diskplace);
 		for(int index =0;index < dataNames.size(); index++){
 			fileName=dataNames.get(index);
 			tableName=fileName.substring(0,fileName.length()-4);

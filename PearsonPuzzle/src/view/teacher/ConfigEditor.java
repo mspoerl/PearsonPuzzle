@@ -16,7 +16,6 @@ import view.JView;
 import model.Model;
 
 public class ConfigEditor extends JView{
-
 	
 	private JButton save;
 	private JButton newGroup;
