@@ -1,5 +1,10 @@
 package compiler;
 
+import jUnitUmgebung.MemClassLoader;
+import jUnitUmgebung.MemClassLoader_JUnit;
+import jUnitUmgebung.MemJavaFileManager;
+import jUnitUmgebung.MemJavaFileManager_JUnit;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -7,8 +12,12 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -24,15 +33,75 @@ public class TestCompiler {
 	private Vector<HashMap<String, String>> compileFailures;
 	private String packageString;
 	private LinkedList<String> importStrings;
+	private HashMap<String, String> srcCodeMap;
 	
-	public TestCompiler(){
+	public TestCompiler(String sourceCode_ToBeTested, String methodImports, String onlineImports, String classImports){
 		packageString = new String();
 		importStrings = new LinkedList<String>();
 		compileFailures = new Vector<HashMap<String, String>>();
+		CodeModel model = new CodeModel(sourceCode_ToBeTested, methodImports, onlineImports, classImports);
+		srcCodeMap = model.getCodeMap();
 	}
 	
 	public Vector<HashMap<String,String>> getFailures(){
 		return compileFailures;
+	}
+	
+	public MemClassLoader compile(){
+		System.out.println(srcCodeMap);
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		MemClassLoader normalClassLoader = new MemClassLoader();
+	
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		JavaFileManager classFileManager = new MemJavaFileManager(diagnostics, compiler, normalClassLoader);
+	
+		LinkedList<JavaFileObject> classFiles = new LinkedList<JavaFileObject>();
+		for(String className : srcCodeMap.keySet()){
+			classFiles.add(new StringJavaFileObject(className, srcCodeMap.get(className)));
+		}
+		Iterable <?extends JavaFileObject> units = classFiles;
+		
+		Set<String> options = new HashSet<String>();		
+			// Hier kann man den Compiler verfolgen mit :
+			// options.add( "-verbose");
+			// options.add("-deprecation");
+		CompilationTask task = compiler.getTask( null, classFileManager,diagnostics, options, null, units );
+		task.call();
+		makeDiagnose(diagnostics);
+		System.out.println(srcCodeMap);
+		
+		try {
+			classFileManager.close();
+		} catch (IOException e1) { e1.printStackTrace(); }
+		return normalClassLoader;
+	}
+	
+	private void makeDiagnose(DiagnosticCollector<JavaFileObject> diagnostics){
+		// Diagnose (bei aufgetretenem Fehler)
+		for ( Diagnostic<?> diagnostic : diagnostics.getDiagnostics() )
+		 {
+			String className = null;
+			Pattern pattern = Pattern.compile("string:///");
+			Matcher matcher  = pattern.matcher(diagnostic.getSource().toString());
+			if(matcher.find())
+				className = diagnostic.getSource().toString().substring(matcher.end()).replaceAll("]", "");
+			else 
+				className = diagnostic.getSource().toString();
+			 HashMap <String, String> compileFailure = new HashMap<String, String>(9);
+			 compileFailure.put("Klasse", ""+className);
+			 compileFailure.put("Art", ""+diagnostic.getKind());
+			 compileFailure.put("Quelle", ""+diagnostic.getSource().toString());
+			 compileFailure.put("Code", ""+diagnostic.getCode());
+			 // TODO: Fehlerbericht anpassen (Nachricht)
+			 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
+			 compileFailure.put("Zeile", ""+diagnostic.getLineNumber() );
+			 compileFailure.put("Position", ""+diagnostic.getPosition());
+			 compileFailure.put("Spalte", ""+diagnostic.getColumnNumber() );
+			 compileFailure.put("Startpostion", ""+diagnostic.getStartPosition());
+			 compileFailure.put("Endposition", ""+diagnostic.getEndPosition() );
+			 compileFailures.add(compileFailure);			 
+		 }	
+		
 	}
 
 		/**

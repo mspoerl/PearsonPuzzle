@@ -5,12 +5,14 @@ import java.util.Observable;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import view.PPException;
 import view.dialog.AddUserDialog;
+import view.dialog.FileChooserDialog;
 
 import controller.Controller;
 import controller.DCCommand;
@@ -68,7 +70,22 @@ public class LoginAView extends AppletView {
 		view.dialog.JDialog dialog;
 		if(exception.getMessage()==PPException.databaseIsEmpty){
 			// Titel "Ersten Nutzer anlegen" wichtig für Dialog Controller
-			dialog = new AddUserDialog(null, model, "Ersten Nutzer anlegen");
+			Object[] options = {"Datensatz laden", "Datensatz erstellen"};
+			int n = JOptionPane.showOptionDialog(null,
+				    "Would you like some green eggs to go "
+				    + "with that ham?",
+				    "A Silly Question",
+				    JOptionPane.OK_CANCEL_OPTION,
+				    JOptionPane.QUESTION_MESSAGE,
+				    null,
+				    options,
+				    options[0]);
+			if(n==0){
+				new FileChooserDialog();
+				return;
+			}
+			else
+				dialog = new AddUserDialog(null, model, "Ersten Nutzer anlegen");
 		}
 		else 
 			dialog=null;

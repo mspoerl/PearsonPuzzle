@@ -55,7 +55,7 @@ public class user {
 		final String code = "public class test{public static boolean runt(){int a=0; int b=3; int c=a+b; return true;}}";
 		UnitRunner jUnitRunner;
 		try {
-			jUnitRunner = new UnitRunner(unitText, code, null);
+			jUnitRunner = new UnitRunner(unitText, code, null, null, null);
 			jUnitRunner.run(unitText);
 		} catch (PPException e) {
 			// TODO Auto-generated catch block

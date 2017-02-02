@@ -1,5 +1,7 @@
 package mobileVersion;
 
+import java.awt.Dimension;
+
 import javax.swing.JFrame;
 
 import controller.Controller;
@@ -35,6 +37,8 @@ public class Applet extends JFrame{
 		startPanel.setOpaque(true);
 		setContentPane(startPanel);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		startPanel.setPreferredSize(new Dimension(400,800));
+		this.setSize(new Dimension(400,800));
 		pack();
 		setVisible(true);
 		Controller controller = new AppletController(model, startPanel);

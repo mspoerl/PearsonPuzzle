@@ -11,6 +11,12 @@ import org.junit.runners.Parameterized;
 
 import compiler.CodeCompletion;
 
+/**
+ * Parametrisierter Test, der die Klasse Code Completion prüft.
+ * @author workspace
+ *
+ */
+
 @RunWith(Parameterized.class)
 public class CodeCompletion_Test {
 	

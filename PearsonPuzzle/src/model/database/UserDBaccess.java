@@ -20,8 +20,8 @@ public class UserDBaccess {
 	 Connection conn;
 	 private final static int length_projectName = 36;
 	 private final static int length_projectDescription = 1024;
+	 private final static String dbUrl = "jdbc:derby:database;create=true";
 	 public UserDBaccess() throws SQLException {
-		String dbUrl = "jdbc:derby:database;create=true";
 		conn = DriverManager.getConnection(dbUrl);
 		//derby.ui.codeset
 		}
@@ -272,7 +272,7 @@ public class UserDBaccess {
 				   
 			   stmt.execute("CREATE TABLE "+randomName+" ( " +
 				   		"lineKey int PRIMARY KEY, " +	
-				   		"codeLine varchar("+linelength+"), " +	
+				   		"codeLine varchar("+Math.max(linelength,150)+"), " +	
 				   		"randomKey int)");
 
 			   
@@ -502,6 +502,20 @@ public class UserDBaccess {
 			return randomKeys;
 		}
 	   }
+	   public boolean setRandomKeys(String randomname, ArrayList<Integer> randomKeys){
+		   try{
+			   Statement stmt = conn.createStatement();
+			   for(int index=0;index<randomKeys.size();index++){
+			   stmt.execute("UPDATE "+randomname+" SET randomKey="+randomKeys.get(index)+" WHERE lineKey="+index+"");
+			   }
+			   return true;
+		   }
+		   catch(SQLException e1){
+			   e1.printStackTrace();
+			   //TODO: Auto generated Method stub 
+			   }
+		   return false;
+	   }
 	   
 	   public ArrayList <String> getCodeList(String randomName) throws SQLException{
 		   //System.out.println("getcodelist");
@@ -658,11 +672,42 @@ public class UserDBaccess {
 		}
 	   protected void recreateTable_Projects() throws SQLException{
 		   Statement stmt = conn.createStatement();
+		   ResultSet rs;
 		   // TODO: Allert soll erfolgen, der abfrägt, ob dies das erst Projekt ist, das man erstellt. Erst bei ja soll DROP TABLE erfolgen (sonst werden eventuell vorhandenen DAten verworfen)
-		   try{stmt.executeUpdate("DROP TABLE Projects");
-		   //stmt.close();
+		   try{//löschen aller Tabellen
+
+			   rs = stmt.executeQuery("SELECT randomName FROM Projects");
+			   String randomname = new String();
+			   
+			   while(rs.next()){
+				   randomname = rs.getString("randomName");
+				   //löschen aller Projekttabellen
+				   if(doesTableExist(randomname)){
+					   System.out.println(randomname);
+				   stmt.executeUpdate("DROP TABLE "+randomname);
+				   }
+				   //löschen aller orderFailureTabellen
+				   if(doesTableExist(randomname+"ORDERFAILURE")){
+					   stmt.executeUpdate("DROP TABLE "+randomname+"ORDERFAILURE");
+				   }
+			   }
 		   }
-		   catch(SQLException e){}
+		   
+		   catch(SQLException e){
+			   if(e.getSQLState().equals("XCL16")) // while-Schleife wurde verlassen ( Error: ResultSet not open. Operation '<operation>' not permitted. Verify that autocommit is OFF.)
+			   { }
+			   else e.printStackTrace();}
+		   
+		   try{
+			   //löschen der Tabelle Projects
+			   stmt.executeUpdate("DROP TABLE Projects");
+		   }catch(SQLException e){
+			   if(e.getSQLState().equals("42Y55")) // Tabelle Projects existiert nicht (Error: '<value>' cannot be performed on '<value>' because it does not exist.)
+			   { }
+			   else e.printStackTrace();
+		   }
+		   
+		   
 		   stmt.executeUpdate("CREATE TABLE Projects ( " +
 				   "pName varchar("+length_projectName+") UNIQUE, " +
 			   		"randomName varchar(15) UNIQUE, " +				     
@@ -675,6 +720,25 @@ public class UserDBaccess {
 		   
 		   //stmt.close();
 	   }
+//	   protected void recreateTable_Projects() throws SQLException{
+//		   Statement stmt = conn.createStatement();
+//		   // TODO: Allert soll erfolgen, der abfrägt, ob dies das erst Projekt ist, das man erstellt. Erst bei ja soll DROP TABLE erfolgen (sonst werden eventuell vorhandenen DAten verworfen)
+//		   try{stmt.executeUpdate("DROP TABLE Projects");
+//		   //stmt.close();
+//		   }
+//		   catch(SQLException e){}
+//		   stmt.executeUpdate("CREATE TABLE Projects ( " +
+//				   "pName varchar("+length_projectName+") UNIQUE, " +
+//			   		"randomName varchar(15) UNIQUE, " +				     
+//			   		"description varchar("+length_projectDescription+"), " +
+//			   		"tabSize INT)");
+////		   		"pName varchar("+length_projectName+") UNIQUE, " +   		
+////		   		"imports varchar(100) , " +  
+////		   		"description varchar("+length_projectDescription+"), " +
+////		   		"tabSize INT)");
+//		   
+//		   //stmt.close();
+//	   }
 	   
 	   protected void createTable(AccessGroup accessGroup) throws SQLException{
 		   Statement stmt = conn.createStatement();
@@ -967,8 +1031,8 @@ public class UserDBaccess {
 		   return te.getString("failurmassage");
 		   } catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "databasefailur occurred";
+				//e.printStackTrace();
+				return "";
 			}
 	}
 
@@ -1018,9 +1082,13 @@ public class UserDBaccess {
 	
 	
 	public boolean importTable(String tablename, String diskplace){
+		try{
+			conn.close();
+		} catch(SQLException e1){e1.printStackTrace();}
 	String tablenameUC = tablename.toUpperCase();
 	Statement stmt;
 	try {
+		conn = DriverManager.getConnection(dbUrl);
 		stmt = conn.createStatement();
 //		short s =1;
 //		Import.importTable(conn, "", tablename,  diskplace + File.separator + tablename + ".dat", ";", "%", "UTF-8", s, false);
@@ -1033,6 +1101,9 @@ public class UserDBaccess {
 	e.printStackTrace();
 	return false;
 	}
-}
-	
+}	
+	public void refreshConnection() throws SQLException{
+		conn.close();
+		conn = DriverManager.getConnection(dbUrl);
+	}
 }

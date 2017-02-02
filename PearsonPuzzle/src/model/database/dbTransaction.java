@@ -222,6 +222,7 @@ public class dbTransaction implements Transaction{
 		   for (int j=0; j<length; j++) {
 		     Randomname = Randomname + (char) ('a' + 26*Math.random());  // 'a' + (0..23) = ('a' .. 'z')
 		   }
+		   Randomname = Randomname.toUpperCase();
 		   alreadyexists=userDBaccess.doesRandomnameExist(Randomname);
 		}
 		return Randomname;
@@ -350,6 +351,35 @@ public class dbTransaction implements Transaction{
 	public Vector<Integer> getRandomKeys(String projectname){
 		projectname = getRandomName(projectname); //13.1.2017 
 		return userDBaccess.getRandomKeys(projectname);
+	}
+	
+	public boolean setRandomKeys(String projectname, LinkedList<Integer> sortedKeys){
+		String randomname=new String()	;
+		try {
+			randomname = userDBaccess.getRandomName(projectname);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		Vector<Integer> originalRandomKeys = userDBaccess.getRandomKeys(randomname);
+//		Vector<Integer> randomKeys = new Vector<Integer>(sortedKeys.size());
+//		try{
+//			for(Integer index: sortedKeys){
+//				randomKeys.add(0);
+//			}
+//			for(Integer index: sortedKeys){
+//				randomKeys.set(index, originalRandomKeys.get(index));
+//			}
+//			
+//		} catch(Exception e){
+//			e.printStackTrace();
+//			return false;
+//		}
+		
+		
+		ArrayList<Integer> newrandomKeys= new ArrayList<Integer>(sortedKeys);
+		return userDBaccess.setRandomKeys(randomname, newrandomKeys);
 	}
 	
 	private ArrayList<Integer> getRandomKeys(int number){
@@ -577,7 +607,7 @@ public class dbTransaction implements Transaction{
 			LinkedList<String> orderFailureText) {
 		String randomname = getRandomName(projectname);
 		
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		for(int index=0;index<orderFailureText.size();index++){
 		userDBaccess.addOrderfailurMassage(failurname, index, orderFailureText.get(index));
 		}
@@ -585,20 +615,20 @@ public class dbTransaction implements Transaction{
 
 	public boolean updateOrderFailure(String projectname, int ordernumber, String orderFailureText){
 		String randomname = getRandomName(projectname);
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		return userDBaccess.updateOrderfailurMassage(failurname, ordernumber, orderFailureText);
 	}
 	
 	public String getOrderFailure(String projectname, int ordernumber){
 		String randomname = getRandomName(projectname);
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		return userDBaccess.getOrderFailurMassage(failurname, ordernumber);
 	}
 	
 	public LinkedList<String> getOrderFailure(String projectname){
 		LinkedList<String> OrderFailureText = new LinkedList<String>();
 		String randomname = getRandomName(projectname);
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		for(int ordernumber= 0; userDBaccess.doesOrderExist(randomname, ordernumber);ordernumber++){
 		OrderFailureText.add(getOrderFailure(projectname, ordernumber));
 		}
@@ -619,8 +649,8 @@ public class dbTransaction implements Transaction{
 				randomname=userDBaccess.getRandomName(ProjectList.get(index));
 				
 				TableVector.add(randomname);
-				if(userDBaccess.doesTableExist(randomname+"orderfailure")){
-					TableVector.add(randomname+"orderfailure");
+				if(userDBaccess.doesTableExist(randomname+"ORDERFAILURE")){
+					TableVector.add(randomname+"ORDERFAILURE");
 				}
 			}
 		} catch (SQLException e) {
@@ -646,13 +676,13 @@ public class dbTransaction implements Transaction{
 	
 	public void replaceDb(String importfile, String diskplace){
 		try {
+			userDBaccess.refreshConnection();
 			userDBaccess.resetAll();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		//befüllen fe
 		String fileName = new String();
 		String tableName = new String();
 		String[] codeString = new String[0];

@@ -243,6 +243,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					}
 					else{
 						model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
+						model.saveRandomisation();
 						//model.saveProject(false);
 					}
 				}
@@ -309,26 +310,26 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			case AddOrder:
 				model.addTestGroup();
 				break;
-			case Compile:
-				
+			case Compile:		
 				if(model.getAccessGroup()==AccessGroup.STUDENT){
+					TestCompiler testCompiler = new TestCompiler(model.getSollution(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+					testCompiler.compile();
+					model.setCompilerFailures(testCompiler.getFailures());
 					//TestCompiler testCompiler = new TestCompiler();
 					//testCompiler.compileCode(model.getSolutionStrings());
 					//model.setCompilerFailures(testCompiler.getFailures());
-					UnitRunner unitRunner = new UnitRunner(model.getJUnitCode(), model.getSollution(), model.getImport("methods"));
-					unitRunner.addOnlineImport(model.getImport("online"));
-					unitRunner.addClasses(model.getImport("classes"));
-					unitRunner.compile();
-					model.setCompilerFailures(unitRunner.getFailures());
 				}
 				else if(model.getAccessGroup()==AccessGroup.TEACHER)
 					if(view.getClass().equals(UnitEditor.class)){
-						UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
-						unitRunner.addOnlineImport(model.getImport("online"));
-						unitRunner.addClasses(model.getImport("classes"));
+						UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+//						unitRunner.addOnlineImport(model.getImport("online"));
+//						unitRunner.addClasses(model.getImport("classes"));
 						unitRunner.compile();
 						model.setCompilerFailures(unitRunner.getFailures());
 					}
+				break;
+			case Test:
+					model.testOrderOfSollution();
 				break;
 			case TestCode:
 				Result result;
@@ -336,12 +337,12 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					//System.out.println(model.getSollution());
 					
 					//model.testSolution();
-					model.testOrderOfSollution();
+					
 					//result = JUnitRunner.run();
 					if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){ //Junit Test soll nur erfolgen, wenn auch einer definerit ist
-						UnitRunner unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
-						unitRunner.addOnlineImport(model.getImport("online"));
-						unitRunner.addClasses(model.getImport("classes"));
+						UnitRunner unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"),model.getImport("online"), model.getImport("classes"));
+//						unitRunner.addOnlineImport(model.getImport("online"));
+//						unitRunner.addClasses(model.getImport("classes"));
 						result = unitRunner.run();
 						//model.setCompilerFailures(unitRunner.getFailures());
 						//System.out.println(result.getFailures());
@@ -350,9 +351,9 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					}
 				}
 				else{
-					UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"));
-					unitRunner.addOnlineImport(model.getImport("online"));
-					unitRunner.addClasses(model.getImport("classes"));
+					UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+//					unitRunner.addOnlineImport(model.getImport("online"));
+//					unitRunner.addClasses(model.getImport("classes"));
 					result = unitRunner.run();
 					//System.out.println(result.getFailures());
 					//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;

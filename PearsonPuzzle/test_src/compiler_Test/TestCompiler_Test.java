@@ -22,7 +22,7 @@ public class TestCompiler_Test {
 	
 	@Before
 	   public void initialize() {
-			testCompiler = new TestCompiler();
+			testCompiler = new TestCompiler(null, null, null, null);
 	   }
 
 	   // Each parameter should be placed as an argument here
