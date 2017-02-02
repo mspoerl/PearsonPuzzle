@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -37,6 +38,7 @@ public class CodeSortAView extends AppletView {
 	private JLabel messageBox;
 	private Model model;
 	private JButton backButton;
+	private AbstractButton unitTestButton;
 	
 	
 	public CodeSortAView(Model model) {
@@ -93,11 +95,13 @@ public class CodeSortAView extends AppletView {
 	 */
 	private void setupButtons(){
 		compileButton=new JButton("Kompilieren");
-		testButton = new JButton("Test starten");
+		testButton = new JButton("Testen");
+		unitTestButton = new JButton("Starten");
 		backButton = new JButton("Zurück");
 		JPanel topPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		topPanel.add(compileButton);
 		topPanel.add(testButton);
+		topPanel.add(unitTestButton);
 		topPanel.add(backButton);
 		this.add(topPanel,BorderLayout.PAGE_START);
 	}
@@ -111,8 +115,12 @@ public class CodeSortAView extends AppletView {
 		//saveDropList.addMouseListener((DefaultController)controller);
 		compileButton.addActionListener(controller);
 		compileButton.setActionCommand(DCCommand.Compile.toString());
-		testButton.setActionCommand(DCCommand.TestCode.toString());
+		testButton.setActionCommand(DCCommand.Test.toString());
 		testButton.addActionListener(controller);
+		unitTestButton.setActionCommand(DCCommand.TestCode.toString());
+		unitTestButton.addActionListener(controller);
+		if(model.getJUnitCode()==null || model.getJUnitCode().isEmpty() || model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE))
+			unitTestButton.setVisible(false);
 		backButton.setActionCommand(DCCommand.ProjectList.toString());
 		backButton.addActionListener(controller);
 		//menu.addActionListener(controller);
@@ -134,7 +142,7 @@ public class CodeSortAView extends AppletView {
 		
 		// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
 		// Steht hier, weil es ein Problem von Swing ist, kein allgemeines Problem
-		Vector<String> codeVector = model.getCodeVector(null);
+		Vector<String> codeVector = model.getCodeVector(true);
 		for(String string : codeVector){
 			
 			listModel.add(listModel.size(),  string);
@@ -155,24 +163,30 @@ public class CodeSortAView extends AppletView {
 				}
 				messageBox.setText(failureText+"</body></html>");
 			}
-			saveDropList.setEnabled(false);
 		}
 		if(arg1==DCCommand.TestCode){
-			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
-			if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){
-				String cssClass;
-				if(model.getjUnitFailures().size()==0)
+			
+			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
+				System.out.println(model.getJUnitCode());
+				String cssClass;				
+				if(model.getjUnitFailures()!=null && model.getjUnitFailures().size()==0 
+						//&& model.getCompileFailures().isEmpty()
+						)
 					 cssClass = " class=\"success\" ";
 				else
 					cssClass = " class=\"failure\" ";
-				failureText+="<span class=\"heading\">Ergebnis des Unit-Test:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
+				failureText+="<span class=\"heading\">Ergebnis des Unit-Testlaufs:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
 				System.out.println(failureText);
 				for(Failure failure: model.getjUnitFailures()){
 					System.out.println(failure);
-					failureText=failureText+"<div class=\"failure\">"+failure+"</div>";
+					failureText=failureText+"<div class=\"unitFailure\">"+failure+"</div>";
 				}
-			}
-					
+				messageBox.setText(failureText+"</body></html>");
+				System.out.println(failureText);
+				update();
+		}
+		else if(arg1==DCCommand.Test){
+			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 			//failureText = failureText + "<br>";
 			for(String key : model.getSuccessMap().keySet()){
 				if(key.equals("Gruppentests") || key.contains("Reihenfolge"))
@@ -192,7 +206,7 @@ public class CodeSortAView extends AppletView {
 			messageBox.setText(failureText+"</body></html>");
 			System.out.println(failureText);
 		}
-		update();
+		messageBox.revalidate();
 	}
 
 	public void update() {
@@ -209,4 +223,7 @@ public class CodeSortAView extends AppletView {
 
 	
 
+}
+class hoho{
+	
 }

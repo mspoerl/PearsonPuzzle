@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,6 +14,7 @@ import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
+import view.dialog.FileChooserDialog;
 
 import model.Model;
 import controller.Controller;
@@ -150,8 +152,27 @@ public abstract class JView implements Observer {
 		public void showDialog(final PPException exception, boolean modal){
 			view.dialog.JDialog dialog;
 			if(exception.getMessage()==PPException.databaseIsEmpty){
-				// Titel "Ersten Nutzer anlegen" wichtig für Dialog Controller
-				dialog = new AddUserDialog(frame, model, "Ersten Nutzer anlegen");
+				Object[] options = {"Datensatz laden", "Datensatz erstellen"};
+				int n = JOptionPane.showOptionDialog(null,
+					    "<html><body>Es wurde keine Datenbank gefunden.<br>Wollen Sie einen existierenden Datensatz laden oder eigene Projekte anlegen?</body></html>",
+					    "Datenbank wählen",
+					    JOptionPane.OK_CANCEL_OPTION,
+					    JOptionPane.QUESTION_MESSAGE,
+					    null,
+					    options,
+					    options[0]);
+				if(n==0){
+					JFileChooser fc_imp = new JFileChooser();
+					int returnVal_imp = fc_imp.showOpenDialog(new JPanel());
+
+		            if (returnVal_imp == JFileChooser.APPROVE_OPTION) {
+		                File file = fc_imp.getSelectedFile();
+		                model.replaceDatabase(file.getName(), file.getParentFile().getAbsolutePath());
+		            }
+					return;
+				}
+				else
+					dialog = new AddUserDialog(null, model, "Ersten Nutzer anlegen");
 			}
 			else 
 				dialog=null;
@@ -202,5 +223,8 @@ public abstract class JView implements Observer {
 		}
 		public Object get(String variable){
 			return null;
+		}
+		public void hide(){
+			frame.setVisible(false);
 		}
 }

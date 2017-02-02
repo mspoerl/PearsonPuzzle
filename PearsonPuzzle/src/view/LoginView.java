@@ -1,6 +1,8 @@
 package view;
 
 import java.util.Observable;
+
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,6 +24,8 @@ import model.Model;
 public class LoginView extends JView{
 	private JPanel loginPanel;
 	private JButton enter;
+	private JButton startApplet;
+	private JButton importDatabase;
 	private JTextField username;
 	private JPasswordField password;
 	public LoginView(Model model){
@@ -36,6 +40,17 @@ public class LoginView extends JView{
 		loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.PAGE_AXIS));
 		
+		importDatabase = new JButton("Daten Laden");
+		importDatabase.setActionCommand(DCCommand.DB_Import.toString());
+		loginPanel.add(importDatabase);
+		loginPanel.add(Box.createVerticalStrut(10));
+		
+		startApplet = new JButton("Los gehts");
+		startApplet.setActionCommand(DCCommand.Applet.toString());
+		startApplet.setName("Applet");
+		loginPanel.add(startApplet);
+		loginPanel.add(Box.createVerticalStrut(10));
+		
 		username = new JTextField("TUM");
 		username.setActionCommand(DCCommand.Login.toString());
 		JLabel label = new JLabel("Login");
@@ -49,7 +64,7 @@ public class LoginView extends JView{
 		password.setActionCommand(DCCommand.Login.toString());
 		loginPanel.add(password);
 		
-		enter = new JButton("Los gehts");
+		enter = new JButton("Login");
 		enter.setActionCommand(DCCommand.Login.toString());
 		loginPanel.add(enter);
 		
@@ -64,6 +79,8 @@ public class LoginView extends JView{
 	 * Controller mit Action Listener Implementierung @param controller
 	 */
 	public void addController(Controller controller) {
+		importDatabase.addActionListener(controller);
+		startApplet.addActionListener(controller);
 		enter.addActionListener(controller);
 		username.addActionListener(controller);
 		password.addActionListener(controller);

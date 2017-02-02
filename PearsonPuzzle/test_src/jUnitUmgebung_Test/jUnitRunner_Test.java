@@ -2,7 +2,7 @@ package jUnitUmgebung_Test;
 
 import static org.junit.Assert.assertEquals;
 
-import jUnitUmgebung.JUnitRunner;
+import jUnitUmgebung.UnitRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,13 +18,13 @@ import view.PPException;
 public class jUnitRunner_Test {
 	Boolean expectedResult;
 	String testString;
-	JUnitRunner jUnitRunner;
+	UnitRunner jUnitRunner;
 	final String unitText = "import org.junit.Test; \nimport static org.junit.Assert.*;\n\npublic class testcase_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue(true);\n\t}\n";
 	
 	@Before
 	   public void initialize() {
 			try {
-				jUnitRunner = new JUnitRunner(unitText, testString, null);
+				jUnitRunner = new UnitRunner(unitText, testString, null, null, null);
 			} catch (PPException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

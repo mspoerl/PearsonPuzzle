@@ -173,8 +173,8 @@ public class PreViewEditor extends JView{
 		
 		puzzleModeButtons = new LinkedList<JRadioButton>();
 		dropMode = new ButtonGroup();
-		ImageIcon[] dragIcons= {new ImageIcon("rsc/icon/Icon_1.jpg"), new ImageIcon("rsc/icon/Icon_2.jpg"), new ImageIcon("rsc/icon/Icon_3.jpg"), new ImageIcon("rsc/icon/Icon_4.jpg")};
-		ImageIcon[] dragIcons_pressed = {new ImageIcon("rsc/icon/Icon_1_pressed.jpg"), new ImageIcon("rsc/icon/Icon_2_pressed.jpg"), new ImageIcon("rsc/icon/Icon_3_pressed.jpg"), new ImageIcon("rsc/icon/Icon_4_pressed.jpg")};
+		ImageIcon[] dragIcons= {new ImageIcon("rsc/icon/Drag_n_Drop/Icon_1.jpg"), new ImageIcon("rsc/icon/Drag_n_Drop/Icon_2.jpg"), new ImageIcon("rsc/icon/Drag_n_Drop/Icon_3.jpg"), new ImageIcon("rsc/icon/Drag_n_Drop/Icon_4.jpg")};
+		ImageIcon[] dragIcons_pressed = {new ImageIcon("rsc/icon/Drag_n_Drop/Icon_1_pressed.jpg"), new ImageIcon("rsc/icon/Drag_n_Drop/Icon_2_pressed.jpg"), new ImageIcon("rsc/icon/Drag_n_Drop/Icon_3_pressed.jpg"), new ImageIcon("rsc/icon/Drag_n_Drop/Icon_4_pressed.jpg")};
 		for(int i=0; i<dragIcons.length;i++){
 			JRadioButton radioButton = new JRadioButton();
 			radioButton.setIcon(dragIcons[i]);

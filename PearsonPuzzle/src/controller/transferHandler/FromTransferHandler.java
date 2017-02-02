@@ -94,7 +94,7 @@ public class FromTransferHandler extends TransferHandler {
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
         
         // Daten von Extern werden nicht anerkannt
-        if(!model.getCodeVector(null).contains(data))
+        if(!model.getCodeVector(true).contains(data))
         	return false;
         listModel.insertElementAt(data, dropIndex);
         Rectangle rect = list.getCellBounds(dropIndex, dropIndex);

@@ -11,6 +11,8 @@ import javax.swing.event.ListSelectionEvent;
 
 import org.junit.runner.Result;
 
+import compiler.TestCompiler;
+
 import controller.Controller;
 import controller.DCCommand;
 
@@ -22,6 +24,7 @@ import model.access.AccessGroup;
 
 import view.Allert;
 import view.PPException;
+import view.teacher.UnitEditor;
 
 public class AppletController implements Controller{
 	
@@ -58,18 +61,21 @@ public class AppletController implements Controller{
 				setView(view);
 			}
 			break;
+		case Compile:		
+				TestCompiler testCompiler = new TestCompiler(model.getSollution(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+				testCompiler.compile();
+				model.setCompilerFailures(testCompiler.getFailures());
+			break;
+		case Test:
+				model.testOrderOfSollution();
+			break;
 		case TestCode:
-			Result result;
-			model.testOrderOfSollution();
-				if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
+				Result result;
+				if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){ //Junit Test soll nur erfolgen, wenn auch einer definerit ist
 					UnitRunner unitRunner;
 					try {
-						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"));
-						unitRunner.addOnlineImport(model.getImport("online"));
-						unitRunner.addClasses(model.getImport("classes"));
+						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"),model.getImport("online"), model.getImport("classes"));
 						result = unitRunner.run();
-						System.out.println(result.getFailures());
-						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 						model.setJunitFailures(result);
 					} catch (PPException e1) {
 						// TODO Auto-generated catch block
@@ -77,6 +83,24 @@ public class AppletController implements Controller{
 					}
 				}
 			break;
+		
+//		case TestCode:
+//			Result result;
+//			model.testOrderOfSollution();
+//				if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
+//					UnitRunner unitRunner;
+//					try {
+//						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+//						result = unitRunner.run();
+//						System.out.println(result.getFailures());
+//						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+//						model.setJunitFailures(result);
+//					} catch (PPException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+//				}
+//			break;
 		default:
 			return;
 		}
@@ -84,12 +108,13 @@ public class AppletController implements Controller{
 
 	private void setView(AppletView view) {
 		if(view!=null){
-		JRootPane frame = this.view.getRootPane();
-		frame.setContentPane(view);
-		view.draw();
-		view.addController(this);
-		this.view=view;
-		frame.validate();
+			model.addObserver(view);
+			JRootPane frame = this.view.getRootPane();
+			frame.setContentPane(view);
+			view.draw();
+			view.addController(this);
+			this.view=view;
+			frame.validate();
 		}
 	}
 

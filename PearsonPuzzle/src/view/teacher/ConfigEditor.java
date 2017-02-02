@@ -16,7 +16,6 @@ import view.JView;
 import model.Model;
 
 public class ConfigEditor extends JView{
-
 	
 	private JButton save;
 	private JButton newGroup;
@@ -112,7 +111,7 @@ public class ConfigEditor extends JView{
 			}	
 			
 		}
-		tableModel.addColumn("Codezeile", model.getCodeVector(null));
+		tableModel.addColumn("Codezeile", model.getCodeVector(false));
 		tableModel.addColumn("Testausdruck", model.getTestExpressionsVector());
 	}
 

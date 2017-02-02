@@ -41,8 +41,7 @@ public class Model extends Observable {
 	// Die linked Hash Map soll NICHT frei verfügbar sein 
 	// (sonst kann man eventuell die richtige Reihenfolge auslesen)
 	private LinkedHashMap<String, Integer> codeMap;
-	private LinkedList<Integer> sortedCode;
-	
+	private LinkedList<Integer> sortedCode;	
 	private Vector<String> testExpressionsVector;
 	private Vector<Vector<Integer>> codeLine_GroupMatrix;
 	private String projectName;
@@ -303,9 +302,9 @@ public class Model extends Observable {
 			return codeVector_normal;
 		return codeVector_random;
 	}
-	public void setCodeVector(Vector<String> codeVector) {
-		this.codeVector_random = codeVector;
-	}
+//	public void setCodeVector(Vector<String> codeVector) {
+//		this.codeVector_random = codeVector;
+//	}
 	
 		
 	// ------------------ Reihenfolgen und Tests
@@ -339,6 +338,23 @@ public class Model extends Observable {
 		 */
 		public void saveGroupMatrix(){
 			dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
+			notifyObservers();
+		}
+		
+		public void saveRandomisation(){
+			if(sortedCode.isEmpty() || sortedCode.size()<codeVector_normal.size()){
+				setChanged();
+				notifyObservers(Allert.code_not_fully_sorted);
+			}
+			else{
+				setChanged();
+				System.out.println(getSollutionOrder());
+				normalizeSortedCode();
+				System.out.println(getSollutionOrder());
+				dataBase.setRandomKeys(getProjectName(), getSollutionOrder());
+				fetchProjectCode();
+				System.out.println(dataBase.getRandomKeys(getProjectName()));
+			}
 			notifyObservers();
 		}
 		
@@ -378,11 +394,15 @@ public class Model extends Observable {
 		
 		//sortedCode.add(index, codeMap.get(value.trim()));
 		sortedCode.add(index, codeMap.get(value));
+		setChanged();
+		notifyObservers();
 	}
 	public void replaceInSollution(int index, String value){
 		sortedCode.remove(index);
 		//sortedCode.add(index, codeMap.get(value.trim()));
 		sortedCode.add(index, codeMap.get(value));
+		setChanged();
+		notifyObservers();
 		
 		
 		
@@ -390,6 +410,8 @@ public class Model extends Observable {
 	}
 	public void removeInSollution(int index){
 		sortedCode.remove(index);
+		setChanged();
+		notifyObservers();
 	}
 	public void setSollutionVector(LinkedList<Integer> sollution){
 		sortedCode = sollution;
@@ -400,6 +422,8 @@ public class Model extends Observable {
 	public String getSollution(){
 		StringBuffer solution = new StringBuffer();
 		for(Integer index : sortedCode){
+			if(index!=0)
+				solution.append("\n");
 			solution.append(codeVector_normal.get(index));
 		}
 		return new String(solution);
@@ -439,13 +463,13 @@ public class Model extends Observable {
 		if(sortedCode.isEmpty()){
 			successMap.put("Ausreichend viele Einträge", false);
 			setChanged();
-			notifyObservers(DCCommand.TestCode);
+			notifyObservers(DCCommand.Test);
 			return successMap;
 		}
 		else if(sortedCode.size()<codeVector_normal.size()){
 			successMap.put("Ausreichend viele Einträge", false);
 			setChanged();
-			notifyObservers(DCCommand.TestCode);
+			notifyObservers(DCCommand.Test);
 			return successMap;
 		}
 		
@@ -459,17 +483,20 @@ public class Model extends Observable {
 		Boolean result;
 		
 		//result = OrderFailures.testOrder_simple(this, projectCode);
-		result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
-		successMap.put("Test auf 1:1 Reihenfolge", result);
+		
 		LinkedList<Boolean> groupFailures = OrderFailures.testOrder_groups(sortedCode, codeLine_GroupMatrix, codeMap, codeVector_normal);
-		if(groupFailures.size()!=0)
+		if(groupFailures.size()==0){
+			result = OrderFailures.testOrder_simple(getSolutionStrings(), codeVector_normal, true);
+			successMap.put("Test auf 1:1 Reihenfolge", result);
+		}
+		else
 			successMap.put("Gruppentests", !groupFailures.contains(false));
 		for(int i=0;i<groupFailures.size();i++){
 			successMap.put("Test "+(i+1), groupFailures.get(i));
 		}
 		setChanged();
 		
-		notifyObservers(DCCommand.TestCode);
+		notifyObservers(DCCommand.Test);
 		return successMap;
 //		
 //		String sollutionString = new String();
@@ -514,6 +541,9 @@ public class Model extends Observable {
 	 * @param jUnitFailures the jUnitFailures to set
 	 */
 	public void setJunitFailures(Result result) {
+		if(result == null)
+			jUnitFailures = null;
+		else{
 		jUnitFailures = new LinkedList<Failure>();
 		for (Failure failure : result.getFailures()) {
 			if(failure!=null)
@@ -521,6 +551,7 @@ public class Model extends Observable {
 		}
 		setChanged();
 		notifyObservers(DCCommand.TestCode);
+		}
 	}
 	
 	/**
@@ -588,6 +619,7 @@ public class Model extends Observable {
 			setChanged();
 			notifyObservers(Allert.code_not_fully_sorted);
 		}
+		System.out.println(dataBase.getRandomKeys(getProjectName()));
 //		else{
 //			normalizeSortedCode();			
 //			saveProject(getProjectCode(), getProjectName(), getProjectDescription(), getSollution());
@@ -627,6 +659,7 @@ public class Model extends Observable {
 			if(jUnitCode!=null)
 				dataBase.saveJUnitTest(projectName,jUnitCode);
 			dataBase.saveOrder(projectName, codeLine_GroupMatrix);
+			dataBase.saveOrderFailure(projectName, orderFailureText);
 			if(projectImports!=null)
 				dataBase.saveImports(projectName, projectImports);
 			System.out.println(codeLine_GroupMatrix);
@@ -780,7 +813,7 @@ public class Model extends Observable {
 					if(!codeMap.containsKey(bString))
 						codeMap.put(bString, index);
 				}
-				System.out.println("codeMap"+codeMap);
+				System.out.println("codeMap"+codeMap+"\trandom"+codeVector_random+" "+randomInts);
 			}				
 	}
 	// --- Datenbank zurücksetzen
@@ -991,6 +1024,16 @@ public class Model extends Observable {
 
 	public void saveOrderFailures() {
 		dataBase.saveOrderFailure(projectList.get(projectID), orderFailureText);
+	}
+	
+	public void exportDatabase(String diskplace){
+		dataBase.exportAll(diskplace);
+	}
+	
+	public void replaceDatabase(String importfile, String diskplace){
+		dataBase.replaceDb(importfile, diskplace);
+		fetchAll();
+		notifyObservers();
 	}
 
 }

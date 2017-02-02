@@ -1,6 +1,7 @@
 package view.pupil;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -29,6 +31,7 @@ import controller.transferHandler.FromTransferHandler;
 import controller.transferHandler.ToSaveTransferHandler;
 
 
+import model.GameModel;
 import model.Model;
 
 /**
@@ -45,14 +48,19 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
 	private final int Puzzlemode;
 	private static final String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
+	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
 	
 	private JList<String> dragList;
 	private JList<String> saveDropList;
 	private DefaultListModel <String> dragModel;
 	private DefaultListModel <String> saveDropModel;
 	private JButton compileButton;
+	private JButton unitTestButton;
 	private JButton testButton;
 	private JLabel messageBox;
+	
+	private GameModel gameModel;
+	private JLabel smiley;
 	
 	public CodeSortView(Model model) {
 		super(model);
@@ -67,6 +75,7 @@ public class CodeSortView extends JView {
 		
 		setupCodeLists();
 		setupButtons();
+		
 		mainPanel.revalidate();
 	}
 
@@ -159,10 +168,18 @@ public class CodeSortView extends JView {
 	 */
 	private void setupButtons(){
 		compileButton=new JButton("Kompilieren");
-		testButton = new JButton("Test starten");
+		testButton = new JButton("Testen");
+		unitTestButton = new JButton("Starten");
+		
+		gameModel = new GameModel(model);
+		smiley = new JLabel(gameModel.getScoreImage());
+		
 		JPanel topPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		topPanel.add(compileButton);
 		topPanel.add(testButton);
+		topPanel.add(unitTestButton);
+		topPanel.add(smiley);
+		System.out.println(compileButton.getBackground());
 		mainPanel.add(topPanel,BorderLayout.PAGE_START);
 	}
 	
@@ -175,9 +192,16 @@ public class CodeSortView extends JView {
 		//saveDropList.addMouseListener((DefaultController)controller);
 		compileButton.addActionListener(controller);
 		compileButton.setActionCommand(DCCommand.Compile.toString());
-		testButton.setActionCommand(DCCommand.TestCode.toString());
+		testButton.setActionCommand(DCCommand.Test.toString());
 		testButton.addActionListener(controller);
+		unitTestButton.setActionCommand(DCCommand.TestCode.toString());
+		unitTestButton.addActionListener(controller);
+		unitTestButton.setEnabled(false);
+		if(model.getJUnitCode()==null || model.getJUnitCode().isEmpty() || model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE))
+			unitTestButton.setVisible(false);
 		menu.addActionListener(controller);
+		
+		gameModel.addObserver(this);
 	}
 	
 	/**
@@ -191,7 +215,7 @@ public class CodeSortView extends JView {
 		
 		// Dies ist nötig, um bei JList Elementen die Tabbreite berücksichtigen zu können
 		// Steht hier, weil es ein Problem von Swing ist, kein allgemeines Problem
-		Vector<String> codeVector = model.getCodeVector(null);
+		Vector<String> codeVector = model.getCodeVector(true);
 		for(String string : codeVector){
 			
 			listModel.add(listModel.size(),  string);
@@ -201,43 +225,78 @@ public class CodeSortView extends JView {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if(arg1==DCCommand.Compile){
+		if(arg1==null && compileButton!=null && unitTestButton!=null && testButton!=null){
+			compileButton.setBackground(DEFAULTBUTTONCOLOR);
+			unitTestButton.setBackground(DEFAULTBUTTONCOLOR);
+			unitTestButton.setEnabled(false);
+			testButton.setBackground(DEFAULTBUTTONCOLOR);
+			gameModel.reset();
+		}
+		else if(arg1!= null && arg1.equals("score"))
+			smiley.setIcon(gameModel.getScoreImage());
+		else if(arg1==DCCommand.Compile){
 			// Fehlerbericht oder Erfolg ausgeben
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
-			if(failures.isEmpty())
+			if(failures.isEmpty()){
 				messageBox.setText("Kompilieren war erfolgreich!");
+				compileButton.setBackground(Color.GREEN);
+				gameModel.score("compile");
+				unitTestButton.setEnabled(true);
+			}
 			else{
 				String failureText = "<html><body>Kompilieren war nicht erfolgreich. <br>Aufgetretenen Fehler: ";
 				for(HashMap<String, String> failure : failures){
 					failureText = failureText+"<br> "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
 				}
 				messageBox.setText(failureText+"</body></html>");
+				compileButton.setBackground(Color.RED);
+				gameModel.loose("compile");
 			}
-			dragList.setEnabled(false);
-			saveDropList.setEnabled(false);
+//			dragList.setEnabled(false);
+//			saveDropList.setEnabled(false);
 		}
-		if(arg1==DCCommand.TestCode){
+		else if(arg1==DCCommand.TestCode){
 			
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
-			if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){
 				System.out.println(model.getJUnitCode());
-				String cssClass;
-				if(model.getjUnitFailures().size()==0)
-					 cssClass = " class=\"success\" ";
-				else
+				String cssClass;				
+				if(model.getjUnitFailures()!=null && model.getjUnitFailures().size()==0
+						//&& model.getCompileFailures().isEmpty()
+						){
+					cssClass = " class=\"success\" ";
+					unitTestButton.setBackground(Color.GREEN);
+					gameModel.score("unitTest");
+				}
+				else{
 					cssClass = " class=\"failure\" ";
-				failureText+="<span class=\"heading\">Ergebnis des Unit-Test:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
+					unitTestButton.setBackground(Color.RED);
+					gameModel.loose("unitTest");
+				}
+				failureText+="<span class=\"heading\">Ergebnis des Unit-Testlaufs:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
 				System.out.println(failureText);
 				for(Failure failure: model.getjUnitFailures()){
 					System.out.println(failure);
 					failureText=failureText+"<div class=\"unitFailure\">"+failure+"</div>";
 				}
-			}
-					
+				messageBox.setText(failureText+"</body></html>");
+				
+				update();
+		}
+		else if(arg1==DCCommand.Test){
+			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 			//failureText = failureText + "<br>";
 			for(String key : model.getSuccessMap().keySet()){
-				if(key.equals("Gruppentests") || key.contains("Reihenfolge"))
+				if(key.equals("Gruppentests") || key.contains("Reihenfolge")){
 					failureText+="<div><span class=\"heading\">"+key+": </span>";
+					if(model.getSuccessMap().get(key)){
+						testButton.setBackground(Color.GREEN);
+						gameModel.score("orderTest");
+					}
+					else{
+						testButton.setBackground(Color.RED);
+						gameModel.loose("orderTest");
+					}
+				}
 				else
 					failureText+="<div class=\"increment\"><span class=\"heading\">"+key+": </span>";		
 				
@@ -253,7 +312,7 @@ public class CodeSortView extends JView {
 			messageBox.setText(failureText+"</body></html>");
 			System.out.println(failureText);
 		}
-		update();
+		//update();
 	}
 
 	@Override

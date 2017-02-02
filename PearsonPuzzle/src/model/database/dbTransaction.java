@@ -1,6 +1,7 @@
 package model.database;
 
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +27,12 @@ public class dbTransaction implements Transaction{
 	 
 	private UserDBaccess userDBaccess;
 	private Model model;
+	private ZipApp app;
 	
 	public dbTransaction(Model model) throws PPException{
 		this.model=model;
 		try {
+			app= new ZipApp();
 			userDBaccess = new UserDBaccess();
 			//userDBaccess.resetAll();
 		} catch (SQLException e) {
@@ -219,6 +222,7 @@ public class dbTransaction implements Transaction{
 		   for (int j=0; j<length; j++) {
 		     Randomname = Randomname + (char) ('a' + 26*Math.random());  // 'a' + (0..23) = ('a' .. 'z')
 		   }
+		   Randomname = Randomname.toUpperCase();
 		   alreadyexists=userDBaccess.doesRandomnameExist(Randomname);
 		}
 		return Randomname;
@@ -347,6 +351,35 @@ public class dbTransaction implements Transaction{
 	public Vector<Integer> getRandomKeys(String projectname){
 		projectname = getRandomName(projectname); //13.1.2017 
 		return userDBaccess.getRandomKeys(projectname);
+	}
+	
+	public boolean setRandomKeys(String projectname, LinkedList<Integer> sortedKeys){
+		String randomname=new String()	;
+		try {
+			randomname = userDBaccess.getRandomName(projectname);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		Vector<Integer> originalRandomKeys = userDBaccess.getRandomKeys(randomname);
+//		Vector<Integer> randomKeys = new Vector<Integer>(sortedKeys.size());
+//		try{
+//			for(Integer index: sortedKeys){
+//				randomKeys.add(0);
+//			}
+//			for(Integer index: sortedKeys){
+//				randomKeys.set(index, originalRandomKeys.get(index));
+//			}
+//			
+//		} catch(Exception e){
+//			e.printStackTrace();
+//			return false;
+//		}
+		
+		
+		ArrayList<Integer> newrandomKeys= new ArrayList<Integer>(sortedKeys);
+		return userDBaccess.setRandomKeys(randomname, newrandomKeys);
 	}
 	
 	private ArrayList<Integer> getRandomKeys(int number){
@@ -574,7 +607,7 @@ public class dbTransaction implements Transaction{
 			LinkedList<String> orderFailureText) {
 		String randomname = getRandomName(projectname);
 		
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		for(int index=0;index<orderFailureText.size();index++){
 		userDBaccess.addOrderfailurMassage(failurname, index, orderFailureText.get(index));
 		}
@@ -582,24 +615,102 @@ public class dbTransaction implements Transaction{
 
 	public boolean updateOrderFailure(String projectname, int ordernumber, String orderFailureText){
 		String randomname = getRandomName(projectname);
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		return userDBaccess.updateOrderfailurMassage(failurname, ordernumber, orderFailureText);
 	}
 	
 	public String getOrderFailure(String projectname, int ordernumber){
 		String randomname = getRandomName(projectname);
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		return userDBaccess.getOrderFailurMassage(failurname, ordernumber);
 	}
 	
 	public LinkedList<String> getOrderFailure(String projectname){
 		LinkedList<String> OrderFailureText = new LinkedList<String>();
 		String randomname = getRandomName(projectname);
-		String failurname = randomname+"orderfailure";
+		String failurname = randomname+"ORDERFAILURE";
 		for(int ordernumber= 0; userDBaccess.doesOrderExist(randomname, ordernumber);ordernumber++){
 		OrderFailureText.add(getOrderFailure(projectname, ordernumber));
 		}
 		return OrderFailureText;
+	}
+	
+
+	public boolean exportAll(String diskplace){
+		// Ein Vector wird mit den Namen aller existierenden Tabellen gefüllt
+		String randomname = new String();
+		ArrayList<String> ProjectList = getProjects(0);
+		Vector<String> TableVector = new Vector<String>();
+		TableVector.add("projects");
+		TableVector.add("teacher");
+		TableVector.add("student");
+		try {
+			for(int index=0; index < ProjectList.size(); index++){
+				randomname=userDBaccess.getRandomName(ProjectList.get(index));
+				
+				TableVector.add(randomname);
+				if(userDBaccess.doesTableExist(randomname+"ORDERFAILURE")){
+					TableVector.add(randomname+"ORDERFAILURE");
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return export(TableVector, diskplace);
+	}
+
+	
+	public boolean export(Vector<String> projectnames, String diskplace){
+		Vector<String> fileVector = new Vector<String>();
+		
+		for(int index=0; index <projectnames.size();index++){	
+		String tablename = projectnames.get(index);
+		fileVector.add(tablename+".dat");
+		userDBaccess.exportTable(tablename, diskplace);
+		}
+		return ZipApp.zipIt(fileVector, diskplace);
+	}
+	
+	public void replaceDb(String importfile, String diskplace){
+		try {
+			userDBaccess.refreshConnection();
+			userDBaccess.resetAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String fileName = new String();
+		String tableName = new String();
+		String[] codeString = new String[0];
+		ArrayList<Integer> randomKeys = new ArrayList<Integer>();
+		Vector<String> dataNames = app.unZipIt(importfile, diskplace);
+		for(int index =0;index < dataNames.size(); index++){
+			fileName=dataNames.get(index);
+			tableName=fileName.substring(0,fileName.length()-4);
+			if(userDBaccess.doesTableExist(tableName)){ 
+				userDBaccess.importTable(tableName, diskplace);
+			}else{	if(tableName.length()==15){									//case1: eine Project-tabelle
+						userDBaccess.createProject(tableName, codeString, randomKeys, 0);}
+					else{														//case1: eine Orderfailre-tabelle
+						try {
+							userDBaccess.createOrderfailurMassage(tableName);
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				userDBaccess.importTable(tableName, diskplace);
+			}
+			
+			//datei löschen
+			File file = new File(diskplace+File.separator +fileName);
+			file.delete();
+		}
+		
 	}
 	
 }

@@ -5,6 +5,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -58,7 +59,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         	defaultDropmode = DropMode.INSERT;
         	removeElements=true;
         	dragElements_infinitly=false;
-        	Vector<String> codeVector = model.getCodeVector(null);
+        	Vector<String> codeVector = model.getCodeVector(true);
         	if(model.getSollutionOrder().isEmpty())
         		for(int i=0;i<codeVector.size();i++){
         			model.insertInSollution(i, codeVector.get(i));
@@ -70,6 +71,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         	removeElements=true;
         	deleteElements=false;
         	dragElements_infinitly=false;
+        	model.setSollutionVector(new LinkedList<Integer>());
         	break;
         case 2:
         	action=TransferHandler.MOVE;
@@ -77,6 +79,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         	removeElements=false;
         	deleteElements=false;
         	dragElements_infinitly=false;
+        	model.setSollutionVector(new LinkedList<Integer>());
         	break;
         case 3:
         	action=TransferHandler.COPY;
@@ -84,6 +87,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         	removeElements=true;
         	deleteElements=true;
         	dragElements_infinitly=true;
+        	model.setSollutionVector(new LinkedList<Integer>());
         	break;
         default:      
         	action = TransferHandler.MOVE;
@@ -91,6 +95,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         	removeElements=false;
         	deleteElements=false;
         	dragElements_infinitly=false;
+        	model.setSollutionVector(new LinkedList<Integer>());
         	break;
         }
 		internDnD=false;
@@ -158,7 +163,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         
         // Hier wird die Anzahl der Elemente gleichen Namens (in CodeString und in der DragList) gezählt 
         int ocNumber_main=0;
-        for(String string: model.getCodeVector(null)){
+        for(String string: model.getCodeVector(true)){
         	if(string.equals(data)){
         		ocNumber_main++;
         	}
@@ -179,6 +184,7 @@ public class ToSaveTransferHandler extends TransferHandler {
             list.scrollRectToVisible(rect);
             list.setSelectedIndex(dropIndex);
             list.requestFocusInWindow();
+            
         	return true;
     	}
     	else if(!model.getCodeVector(null).contains(data))

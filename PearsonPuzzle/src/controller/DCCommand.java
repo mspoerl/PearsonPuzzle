@@ -14,7 +14,7 @@ public enum DCCommand {
 	// View Changes
 		EditConfig,EditProject, EditUsers, EditJUnit, EditPreview, NewProject, OpenProject, ProjectList, Login, Logout, Admin, DeleteOrder,
 	// Dialogs
-		AddUser, AddClasses, AddMethods, EditOrderGroup;
+		AddUser, AddClasses, AddMethods, EditOrderGroup, DB_Import, DB_Export, Applet, Test;
 	
 	@Override
 	public String toString(){
@@ -25,6 +25,8 @@ public enum DCCommand {
 			return "AddClasses";
 		case AddMethods:
 			return "AddMethods";
+		case Applet: 
+			return "Applet";
 		case EditUsers:
 			return "EditUsers";
 		case EditProject:
@@ -69,8 +71,14 @@ public enum DCCommand {
 			return "EditJUnit";
 		case Compile:
 			return "Compile";
+		case Test:
+			return "Test";
 		case TestCode: 
 			return "TestCode";
+		case DB_Export:
+			return "DB_Export";
+		case DB_Import: 
+			return "DB_Import";
 		default:
 			return "DoNothing";
 		}
