@@ -240,6 +240,8 @@ public class Model extends Observable {
 		this.projectID = projectID;
 		this.fetchProjectCode();
 		this.fetchProjectSettings();
+		if(projectID!=null)
+		setChanged();
 		notifyObservers();
 	}
 	

@@ -1,6 +1,7 @@
 package mobileVersion.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.HashMap;
@@ -8,14 +9,18 @@ import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
 
+import model.GameModel;
 import model.Model;
 
 import org.junit.runner.notification.Failure;
@@ -25,7 +30,7 @@ import controller.DCCommand;
 import controller.transferHandler.ToSaveTransferHandler;
 import view.teacher.UnitEditor;
 
-public class CodeSortAView extends AppletView {
+public class CodeSortAView extends AppletView{
 	
 	private static final long serialVersionUID = -1258749785785828266L;
 	private final static int Puzzlemode=0;
@@ -37,14 +42,15 @@ public class CodeSortAView extends AppletView {
 	private JButton testButton;
 	private JLabel messageBox;
 	private Model model;
-	private JButton backButton;
 	private AbstractButton unitTestButton;
+	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
+	private GameModel gameModel;
 	
 	
 	public CodeSortAView(Model model) {
 		super(model);
 		this.model = model;
-		
+		gameModel = new GameModel(model);		
 		setupCodeLists();
 		setupButtons();
 	}
@@ -63,6 +69,9 @@ public class CodeSortAView extends AppletView {
 				saveDropList.setTransferHandler(dragDropTransferH);
 		
 		// Linke Liste (Drop)
+		Border border = BorderFactory.createEmptyBorder();
+		saveDropList.setBorder(BorderFactory.createCompoundBorder(border, 
+			            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		saveDropList.setName("dropList");
 		saveDropList.setFixedCellHeight(20);
 		saveDropList.setDragEnabled(true);
@@ -77,6 +86,9 @@ public class CodeSortAView extends AppletView {
 		
 		// Arbeitsanweisung und Ergebnisse
 		messageBox = new JLabel(defaultDescription);
+		border = BorderFactory.createEmptyBorder();
+		messageBox.setBorder(BorderFactory.createCompoundBorder(border, 
+			            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 //		messageBox=new JTextArea(defaultDescription);
 		if(!model.getProjectDescription().trim().equals(""))
 			messageBox.setText(model.getProjectDescription());
@@ -94,15 +106,17 @@ public class CodeSortAView extends AppletView {
 	 * Buttoons werden definiert. Hizufügen eines Action Listeners noch notwendig.
 	 */
 	private void setupButtons(){
+		
 		compileButton=new JButton("Kompilieren");
 		testButton = new JButton("Testen");
 		unitTestButton = new JButton("Starten");
-		backButton = new JButton("Zurück");
-		JPanel topPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+		unitTestButton.setEnabled(false);
+		
+		JPanel topPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
 		topPanel.add(compileButton);
 		topPanel.add(testButton);
 		topPanel.add(unitTestButton);
-		topPanel.add(backButton);
+		
 		this.add(topPanel,BorderLayout.PAGE_START);
 	}
 	
@@ -121,8 +135,8 @@ public class CodeSortAView extends AppletView {
 		unitTestButton.addActionListener(controller);
 		if(model.getJUnitCode()==null || model.getJUnitCode().isEmpty() || model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE))
 			unitTestButton.setVisible(false);
-		backButton.setActionCommand(DCCommand.ProjectList.toString());
-		backButton.addActionListener(controller);
+		
+		gameModel.addObserver((AppletMenu) this.getRootPane().getJMenuBar());
 		//menu.addActionListener(controller);
 	}
 	@Override
@@ -151,30 +165,49 @@ public class CodeSortAView extends AppletView {
 	}
 
 	public void update(Observable arg0, Object arg1) {
-		if(arg1==DCCommand.Compile){
+		if(arg1==null && compileButton!=null && unitTestButton!=null && testButton!=null){
+			compileButton.setBackground(DEFAULTBUTTONCOLOR);
+			unitTestButton.setBackground(DEFAULTBUTTONCOLOR);
+			unitTestButton.setEnabled(false);
+			testButton.setBackground(DEFAULTBUTTONCOLOR);
+			gameModel.reset();
+		}
+		else if(arg1==DCCommand.Compile){
 			// Fehlerbericht oder Erfolg ausgeben
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
-			if(failures.isEmpty())
+			if(failures.isEmpty()){
 				messageBox.setText("Kompilieren war erfolgreich!");
+				compileButton.setBackground(Color.GREEN);
+				gameModel.score("compile");
+				unitTestButton.setEnabled(true);
+			}
 			else{
 				String failureText = "<html><body>Kompilieren war nicht erfolgreich. <br>Aufgetretenen Fehler: ";
 				for(HashMap<String, String> failure : failures){
 					failureText = failureText+"<br> "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
 				}
 				messageBox.setText(failureText+"</body></html>");
+				compileButton.setBackground(Color.RED);
+				gameModel.loose("compile");
 			}
 		}
-		if(arg1==DCCommand.TestCode){
+		else if(arg1==DCCommand.TestCode){
 			
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 				System.out.println(model.getJUnitCode());
 				String cssClass;				
-				if(model.getjUnitFailures()!=null && model.getjUnitFailures().size()==0 
+				if(model.getjUnitFailures()!=null && model.getjUnitFailures().size()==0
 						//&& model.getCompileFailures().isEmpty()
-						)
-					 cssClass = " class=\"success\" ";
-				else
+						){
+					cssClass = " class=\"success\" ";
+					unitTestButton.setBackground(Color.GREEN);
+					gameModel.score("unitTest");
+				}
+				else{
 					cssClass = " class=\"failure\" ";
+					unitTestButton.setBackground(Color.RED);
+					gameModel.loose("unitTest");
+				}
 				failureText+="<span class=\"heading\">Ergebnis des Unit-Testlaufs:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
 				System.out.println(failureText);
 				for(Failure failure: model.getjUnitFailures()){
@@ -182,15 +215,22 @@ public class CodeSortAView extends AppletView {
 					failureText=failureText+"<div class=\"unitFailure\">"+failure+"</div>";
 				}
 				messageBox.setText(failureText+"</body></html>");
-				System.out.println(failureText);
-				update();
 		}
 		else if(arg1==DCCommand.Test){
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
 			//failureText = failureText + "<br>";
 			for(String key : model.getSuccessMap().keySet()){
-				if(key.equals("Gruppentests") || key.contains("Reihenfolge"))
+				if(key.equals("Gruppentests") || key.contains("Reihenfolge")){
 					failureText+="<div><span class=\"heading\">"+key+": </span>";
+					if(model.getSuccessMap().get(key)){
+						testButton.setBackground(Color.GREEN);
+						gameModel.score("orderTest");
+					}
+					else{
+						testButton.setBackground(Color.RED);
+						gameModel.loose("orderTest");
+					}
+				}
 				else
 					failureText+="<div class=\"increment\"><span class=\"heading\">"+key+": </span>";		
 				
@@ -205,15 +245,16 @@ public class CodeSortAView extends AppletView {
 			}
 			messageBox.setText(failureText+"</body></html>");
 			System.out.println(failureText);
-		}
+		}	
 		messageBox.revalidate();
 	}
 
 	public void update() {
 		saveDropModel=new DefaultListModel <String>();
 		saveDropList=new JList<String>(saveDropModel);
-		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model));	
+		saveDropList.setTransferHandler(new ToSaveTransferHandler(saveDropModel, saveDropList, Puzzlemode, model));
 	}
+	
 
 	@Override
 	public Object get(String valueToReturn) {
@@ -223,7 +264,4 @@ public class CodeSortAView extends AppletView {
 
 	
 
-}
-class hoho{
-	
 }

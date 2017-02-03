@@ -2,7 +2,6 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.util.Observable;
@@ -14,8 +13,10 @@ import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
-import view.dialog.FileChooserDialog;
 
+import mobileVersion.controller.AppletController;
+import mobileVersion.view.AppletMenu;
+import mobileVersion.view.AppletView;
 import model.Model;
 import controller.Controller;
 import controller.DCCommand;
@@ -31,6 +32,7 @@ import controller.DialogController;
  */
 
 public abstract class JView implements Observer {
+	
 	private static JFrame frame = new JFrame("PearsonPuzzle");
 	// BorderLayout mit 5 horizontalem und 1 vertikalem Versatz zwischen den Komponenten
 	// mainPanel = new JPanel(new BorderLayout(5,1));
@@ -71,6 +73,7 @@ public abstract class JView implements Observer {
 			frame.setSize(800,500);
 			frame.setLocationRelativeTo(null);
 		}
+		
 		
 		/**
 		 * Frame wird um Menü ergänzt.
@@ -177,6 +180,7 @@ public abstract class JView implements Observer {
 			else 
 				dialog=null;
 			dialogController = new DialogController(model, dialog);
+			dialog.addController(dialogController);
 			dialog.pack();
 			dialog.setVisible(true);
 			dialog.repaint();
@@ -210,17 +214,14 @@ public abstract class JView implements Observer {
 			}			
 			if(dialog!=null){
 				dialogController = new DialogController(model, dialog);
+				dialog.addController(dialogController);
 				dialog.pack();
 				dialog.setVisible(true);
 				dialog.repaint();
 			}
 			return null;
 		}
-		public void closeAllert(){
-			
-			//optionPane.setVisible(false);
-			//frame.remove(optionPane);
-		}
+
 		public Object get(String variable){
 			return null;
 		}

@@ -26,7 +26,7 @@ public class MenuPupil extends Menu{
 
 	@Override
 	protected void setupMenu() {		
-		JMenu menu = new JMenu ("Datei");			
+		JMenu menu = new JMenu ("Menü");			
 		enterProject = new JMenuItem("Projekte anzeigen");
 		enterProject.setActionCommand(DCCommand.ProjectList.toString());
 		logout = new JMenuItem("Logout");

@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
@@ -64,17 +63,21 @@ public class CodeSortView extends JView {
 	
 	public CodeSortView(Model model) {
 		super(model);
-		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
 		menu=new MenuPupil();
 		
 		if(model.getPuzzlemode()==null)
 			Puzzlemode = 0;
 		else 
 			Puzzlemode = model.getPuzzlemode();
+
 		this.addMenuToFrame(menu);
 		
 		setupCodeLists();
+		
 		setupButtons();
+		// In Puzzlemodus 3 ist eine Sortierung der Reihenfolgen nicht sinnvoll
+		if(Puzzlemode==3)
+			testButton.setVisible(false);		
 		
 		mainPanel.revalidate();
 	}
@@ -133,7 +136,10 @@ public class CodeSortView extends JView {
 		JScrollPane scrollPanel_sDL = new JScrollPane(saveDropList);
 		scrollPanel_sDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_sDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPanel_sDL.setPreferredSize(new Dimension(360,300));
+		if(Puzzlemode==0)
+			scrollPanel_sDL.setPreferredSize(new Dimension(650, 260));
+		else
+			scrollPanel_sDL.setPreferredSize(new Dimension(360,260));
 		mainPanel.add(scrollPanel_sDL, BorderLayout.LINE_START);
 		
 		// Rechte Liste (Drag)
@@ -144,7 +150,7 @@ public class CodeSortView extends JView {
 		JScrollPane scrollPanel_dDL = new JScrollPane(dragList);
 		scrollPanel_dDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_dDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPanel_dDL.setPreferredSize(new Dimension(360,300));
+		scrollPanel_dDL.setPreferredSize(new Dimension(360,260));
 		if(Puzzlemode!=0)
 			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
 		
@@ -168,6 +174,7 @@ public class CodeSortView extends JView {
 	 */
 	private void setupButtons(){
 		compileButton=new JButton("Kompilieren");
+		
 		testButton = new JButton("Testen");
 		unitTestButton = new JButton("Starten");
 		
@@ -231,9 +238,18 @@ public class CodeSortView extends JView {
 			unitTestButton.setEnabled(false);
 			testButton.setBackground(DEFAULTBUTTONCOLOR);
 			gameModel.reset();
+			if(model.getProjectDescription()==null || model.getProjectDescription().isEmpty())
+				messageBox.setText(defaultDescription);
+			else 
+				messageBox.setText(model.getProjectDescription());
+			messageBox.revalidate();
+			smiley.setIcon(gameModel.getScoreImage());
 		}
 		else if(arg1!= null && arg1.equals("score"))
-			smiley.setIcon(gameModel.getScoreImage());
+			if(model.getSollution().isEmpty())
+				smiley.setIcon(new ImageIcon("rsc/icon/Smiley/face-wink.png"));
+			else
+				smiley.setIcon(gameModel.getScoreImage());
 		else if(arg1==DCCommand.Compile){
 			// Fehlerbericht oder Erfolg ausgeben
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
@@ -252,8 +268,6 @@ public class CodeSortView extends JView {
 				compileButton.setBackground(Color.RED);
 				gameModel.loose("compile");
 			}
-//			dragList.setEnabled(false);
-//			saveDropList.setEnabled(false);
 		}
 		else if(arg1==DCCommand.TestCode){
 			
@@ -279,8 +293,8 @@ public class CodeSortView extends JView {
 					failureText=failureText+"<div class=\"unitFailure\">"+failure+"</div>";
 				}
 				messageBox.setText(failureText+"</body></html>");
-				
-				update();
+//				dragList.setEnabled(false);
+//				saveDropList.setEnabled(false);
 		}
 		else if(arg1==DCCommand.Test){
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
@@ -311,7 +325,7 @@ public class CodeSortView extends JView {
 			}
 			messageBox.setText(failureText+"</body></html>");
 			System.out.println(failureText);
-		}
+		}			
 		//update();
 	}
 

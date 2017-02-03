@@ -216,6 +216,7 @@ public class PreViewEditor extends JView{
 		}
 		return listModel;
 	}
+	
 	private void setupButtons(){
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -263,7 +264,7 @@ public class PreViewEditor extends JView{
 	public void update(Observable o, Object arg) {
 		if(arg!=null && arg.equals(Allert.code_not_fully_sorted))
 			this.showDialog(Allert.code_not_fully_sorted);
-		else
+		else if(arg != null && arg.equals("dropMode"))
 			update();
 	}
 

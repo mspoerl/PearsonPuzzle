@@ -1,14 +1,9 @@
 package visitor;
 
 import java.awt.FlowLayout;
-import java.util.Properties;
-
 import jUnitUmgebung.UnitRunner;
 
 import javax.swing.JFrame;
-import javax.swing.UIManager;
-
-
 import org.syntax.jedit.JEditTextArea;
 import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 
@@ -41,6 +36,8 @@ public class user {
 		Model model = new Model();
 		LoginView startView = new LoginView(model);
 		controller = new DefaultController(model, startView);
+		startView.addController(controller);
+		startView.setController(controller);
 		startView.drawFrame();
 	}
 	public static void setupExceptionGUI(){

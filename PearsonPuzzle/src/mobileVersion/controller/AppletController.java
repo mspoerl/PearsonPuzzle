@@ -5,6 +5,7 @@ import jUnitUmgebung.UnitRunner;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 
+
 import javax.swing.JRootPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -16,6 +17,7 @@ import compiler.TestCompiler;
 import controller.Controller;
 import controller.DCCommand;
 
+import mobileVersion.view.AppletMenu;
 import mobileVersion.view.AppletView;
 import mobileVersion.view.CodeSortAView;
 import mobileVersion.view.ProjectListAView;
@@ -50,6 +52,7 @@ public class AppletController implements Controller{
 			if(model.getAccessGroup()==AccessGroup.UNAUTHORIZED) 
 				return;
 		case ProjectList:
+				model.deleteObserver(view);
 				setView( new ProjectListAView(model));
 			break;
 		case OpenProject:
@@ -111,10 +114,10 @@ public class AppletController implements Controller{
 			model.addObserver(view);
 			JRootPane frame = this.view.getRootPane();
 			frame.setContentPane(view);
-			view.draw();
 			view.addController(this);
 			this.view=view;
-			frame.validate();
+			((AppletMenu) (frame).getJMenuBar()).setView(view);
+			frame.revalidate();
 		}
 	}
 
@@ -127,7 +130,6 @@ public class AppletController implements Controller{
 	 * @param <ListSelectionModel>
 	 */
 	public void valueChanged(ListSelectionEvent e) {
-		System.out.println("asd"+view.getClass());
 		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
         if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
         } 
@@ -137,7 +139,6 @@ public class AppletController implements Controller{
             int maxIndex = lsm.getMaxSelectionIndex();
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
-                	
                 		model.selectProject(i);
                 }
              }
