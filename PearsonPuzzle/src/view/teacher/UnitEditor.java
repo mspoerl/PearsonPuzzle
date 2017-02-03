@@ -13,8 +13,6 @@ import javax.swing.border.Border;
 
 
 import org.junit.runner.notification.Failure;
-import org.syntax.jedit.JEditTextArea;
-import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 
 import model.Model;
 
@@ -26,16 +24,20 @@ import view.JView;
 public class UnitEditor extends JView{
 	
 	public static String DEFAULT_UNIT_CODE;
-	public final static String DEFAULT_IMPORT_TEXT="Hier können imports in der Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.";
+	public final static String DEFAULT_IMPORT_TEXT="Hier können Imports <b>für die zu testende Klasse</b> in der typischen Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.";
 	private JTextArea textArea;
 	//private JEditTextArea textArea; 
 	private JTextArea messageBox;
 	private JTextArea imports;
 	private JButton addClasses;
 	private JButton addMethods;
+	private JButton showHelp;
 	private JButton save;
 	private JButton test;
 	private JButton compile;
+	private Color WHITE = Color.decode("#FFFFFF");
+	private Color RED = Color.decode("#AF002A");
+	private Color GREEN = Color.decode("#008000");
 
 	public UnitEditor(Model model) {
 		super(model);
@@ -109,6 +111,7 @@ public class UnitEditor extends JView{
 		else 
 			addClasses = new JButton("<html><body>Zum Ausführen nötige <b>Klassen bearbeiten</b></body></html>");
 		addClasses.setAlignmentX(Component.CENTER_ALIGNMENT);
+		addClasses.setIcon(new ImageIcon("rsc/icon/file/class.png"));
 		
 		if(model.getImport("methods") == null || model.getImport("methods").isEmpty())
 			addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden hinzufügen</b></body></html>");
@@ -121,13 +124,20 @@ public class UnitEditor extends JView{
 		leftPanel.add(messageSP);
 		
 		JPanel buttonPanel = new JPanel();
-		compile = new JButton("Test Kompilieren");
+		compile = new JButton("Test kompilieren");
+		compile.setIcon(new ImageIcon("rsc/icon/file/compute.png"));
 		save = new JButton("Speichern");
+		save.setIcon(new ImageIcon("rsc/icon/file/save_blue.png"));
 		test = new JButton("Run Test");
+		test.setIcon(new ImageIcon("rsc/icon/file/circle.png"));
 		test.setEnabled(false);
+		
+		showHelp = new JButton("<html><body style=\"text-align:center;\">Hilfe</body></html>");
+		showHelp.setIcon(new ImageIcon("rsc/icon/file/help_small.png"));
 		buttonPanel.add(compile);
 		buttonPanel.add(test);
 		buttonPanel.add(save);
+		buttonPanel.add(showHelp);
 		
 //		mainPanel.add(textScrollPane);
 		mainPanel.add(textArea);
@@ -154,6 +164,8 @@ public class UnitEditor extends JView{
 		save.addActionListener(controller);
 		test.setActionCommand(DCCommand.TestCode.toString());
 		test.addActionListener(controller);
+		showHelp.addActionListener(controller);
+		showHelp.setActionCommand(DCCommand.ShowHelp.toString());
 	}
 
 	@Override
@@ -168,8 +180,8 @@ public class UnitEditor extends JView{
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
 			if(failures.isEmpty()){
 				messageBox.setText("Kompilieren war erfolgreich!");
-				compile.setBackground(Color.decode("#008000"));
-				compile.setForeground(Color.decode("#FFFFFF"));
+				compile.setBackground(GREEN);
+				compile.setForeground(WHITE);
 				test.setEnabled(true);
 			}
 			else{
@@ -177,8 +189,8 @@ public class UnitEditor extends JView{
 				for(HashMap<String, String> failure : failures){
 					failureText = failureText+"\n  "+failure.get("Art")+" "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile")+" von "+failure.get("Klasse");
 				}
-				compile.setBackground(Color.decode("#AF002A"));
-				compile.setForeground(Color.decode("#FFFFFF"));
+				compile.setBackground(RED);
+				compile.setForeground(WHITE);
 				messageBox.setText(failureText);
 			}
 		}
@@ -189,12 +201,12 @@ public class UnitEditor extends JView{
 				failureText=failureText+"\n\t"+failure.getTestHeader();
 			}
 			if(model.getjUnitFailures().size()==0){
-				test.setBackground(Color.decode("#008000"));
-				test.setForeground(Color.decode("#FFFFFF"));
+				test.setBackground(GREEN);
+				test.setForeground(WHITE);
 			}
 			else{
-				test.setBackground(Color.decode("#AF002A"));
-				test.setForeground(Color.decode("#FFFFFF"));
+				test.setBackground(RED);
+				test.setForeground(WHITE);
 			}
 			messageBox.setText(failureText);
 		}

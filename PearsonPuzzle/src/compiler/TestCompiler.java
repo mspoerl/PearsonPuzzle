@@ -1,9 +1,7 @@
 package compiler;
 
 import jUnitUmgebung.MemClassLoader;
-import jUnitUmgebung.MemClassLoader_JUnit;
 import jUnitUmgebung.MemJavaFileManager;
-import jUnitUmgebung.MemJavaFileManager_JUnit;
 
 import java.io.File;
 import java.io.IOException;

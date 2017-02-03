@@ -45,6 +45,9 @@ public class CodeSortAView extends AppletView{
 	private AbstractButton unitTestButton;
 	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
 	private GameModel gameModel;
+	private Color WHITE = Color.decode("#FFFFFF");
+	private Color RED = Color.decode("#AF002A");
+	private Color GREEN = Color.decode("#008000");
 	
 	
 	public CodeSortAView(Model model) {
@@ -167,9 +170,12 @@ public class CodeSortAView extends AppletView{
 	public void update(Observable arg0, Object arg1) {
 		if(arg1==null && compileButton!=null && unitTestButton!=null && testButton!=null){
 			compileButton.setBackground(DEFAULTBUTTONCOLOR);
+			compileButton.setForeground(Color.BLACK);
 			unitTestButton.setBackground(DEFAULTBUTTONCOLOR);
+			unitTestButton.setForeground(Color.BLACK);
 			unitTestButton.setEnabled(false);
 			testButton.setBackground(DEFAULTBUTTONCOLOR);
+			testButton.setForeground(Color.BLACK);
 			gameModel.reset();
 		}
 		else if(arg1==DCCommand.Compile){
@@ -177,7 +183,8 @@ public class CodeSortAView extends AppletView{
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
 			if(failures.isEmpty()){
 				messageBox.setText("Kompilieren war erfolgreich!");
-				compileButton.setBackground(Color.GREEN);
+				compileButton.setBackground(GREEN);
+				compileButton.setForeground(WHITE);
 				gameModel.score("compile");
 				unitTestButton.setEnabled(true);
 			}
@@ -187,7 +194,8 @@ public class CodeSortAView extends AppletView{
 					failureText = failureText+"<br> "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
 				}
 				messageBox.setText(failureText+"</body></html>");
-				compileButton.setBackground(Color.RED);
+				compileButton.setBackground(RED);
+				compileButton.setForeground(WHITE);
 				gameModel.loose("compile");
 			}
 		}
@@ -200,12 +208,14 @@ public class CodeSortAView extends AppletView{
 						//&& model.getCompileFailures().isEmpty()
 						){
 					cssClass = " class=\"success\" ";
-					unitTestButton.setBackground(Color.GREEN);
+					unitTestButton.setBackground(GREEN);
+					unitTestButton.setForeground(WHITE);
 					gameModel.score("unitTest");
 				}
 				else{
 					cssClass = " class=\"failure\" ";
-					unitTestButton.setBackground(Color.RED);
+					unitTestButton.setBackground(RED);
+					unitTestButton.setForeground(WHITE);
 					gameModel.loose("unitTest");
 				}
 				failureText+="<span class=\"heading\">Ergebnis des Unit-Testlaufs:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
@@ -223,11 +233,13 @@ public class CodeSortAView extends AppletView{
 				if(key.equals("Gruppentests") || key.contains("Reihenfolge")){
 					failureText+="<div><span class=\"heading\">"+key+": </span>";
 					if(model.getSuccessMap().get(key)){
-						testButton.setBackground(Color.GREEN);
+						testButton.setBackground(GREEN);
+						testButton.setForeground(WHITE);
 						gameModel.score("orderTest");
 					}
 					else{
-						testButton.setBackground(Color.RED);
+						testButton.setBackground(RED);
+						testButton.setForeground(WHITE);
 						gameModel.loose("orderTest");
 					}
 				}
@@ -244,7 +256,6 @@ public class CodeSortAView extends AppletView{
 				failureText += "</span></div>";
 			}
 			messageBox.setText(failureText+"</body></html>");
-			System.out.println(failureText);
 		}	
 		messageBox.revalidate();
 	}

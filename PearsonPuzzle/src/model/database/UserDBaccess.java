@@ -695,12 +695,8 @@ public class UserDBaccess {
 		   
 		   catch(SQLException e){
 			   if(e.getSQLState().equals("XCL16")) // while-Schleife wurde verlassen ( Error: ResultSet not open. Operation '<operation>' not permitted. Verify that autocommit is OFF.)
-			   {}
-			   else if(e.getSQLState().equals("42X05")) //Table/View 'PROJECTS' does not exist.
-			   {}
-			   else
-			   e.printStackTrace();
-			  }
+			   { }
+			   else e.printStackTrace();}
 		   
 		   try{
 			   //löschen der Tabelle Projects

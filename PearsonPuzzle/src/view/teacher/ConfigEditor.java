@@ -3,6 +3,7 @@ package view.teacher;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.Observable;
 
 import javax.swing.*;
@@ -51,36 +52,32 @@ public class ConfigEditor extends JView{
 		editGroup_Buttons.setLayout(new BoxLayout(editGroup_Buttons, BoxLayout.Y_AXIS));
 		
 		newGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>hinzufügen</body></html>");
+		newGroup.setIcon(new ImageIcon("rsc/icon/file/data_add.png"));
 		deleteGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>löschen</body></html>");
+		deleteGroup.setIcon(new ImageIcon("rsc/icon/file/data_delete.png"));
 		editGroup = new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>explizieren</body></html>");
-
-//		saveGroup= new JButton("<html><body style=\"text-align:center;\">Gruppe<BR>speichern</body></html>");
-//		saveGroup.setActionCommand(DCCommand.Save.toString());
-//		saveGroup.setEnabled(false);
-//		
+		editGroup.setIcon(new ImageIcon("rsc/icon/file/data_edit.png"));		
 				
 		editGroup_Buttons.add(newGroup);
-		editGroup_Buttons.add(new JLabel(" "));
-		//editGroup_Buttons.add(saveGroup);
-		editGroup_Buttons.add(deleteGroup);
 		editGroup_Buttons.add(editGroup);
+		editGroup_Buttons.add(deleteGroup);
+		
 		
 		JPanel testPhrase_Buttons = new JPanel();
 		testPhrase_Buttons.setLayout(new BoxLayout(testPhrase_Buttons, BoxLayout.Y_AXIS));
 		showHelp = new JButton("<html><body style=\"text-align:center;\">Hilfe<BR>anzeigen</body></html>");
-		JLabel helpField = new JLabel("<html><body><p>Der Testausdruck <br>sollte folgendermaßen<br> aufgebaut sein:</p></body></html>");
+		showHelp.setIcon(new ImageIcon("rsc/icon/file/help.png"));
 		editGroup_Buttons.add(new JLabel(" "));
 		editGroup_Buttons.add(showHelp);
-		//testPhrase_Buttons.add(showHelp);
-		//testPhrase_Buttons.add(helpField);
 		
 		JPanel save_Button = new JPanel();
-		save= new JButton("Änderungen Speichern");
+		save= new JButton();
+		save.setText("Speichern");
+		save.setIcon(new ImageIcon("rsc/icon/file/save_blue.png"));
 		save_Button.add(save);
 
 		mainPanel.add(editGroup_Buttons, BorderLayout.WEST);
 		mainPanel.add(projectTable_SP, BorderLayout.CENTER);
-		//mainPanel.add(testPhrase_Buttons, BorderLayout.EAST);
 		mainPanel.add(save_Button, BorderLayout.SOUTH);
 	}
 	

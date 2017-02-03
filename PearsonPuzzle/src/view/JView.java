@@ -13,10 +13,9 @@ import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
+import view.teacher.ConfigEditor;
+import view.teacher.UnitEditor;
 
-import mobileVersion.controller.AppletController;
-import mobileVersion.view.AppletMenu;
-import mobileVersion.view.AppletView;
 import model.Model;
 import controller.Controller;
 import controller.DCCommand;
@@ -202,7 +201,10 @@ public abstract class JView implements Observer {
 					dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
 					break;
 				case ShowHelp:
-					showDialog(Allert.help_Orders);
+					if(this.getClass().equals(ConfigEditor.class))
+						showDialog(Allert.help_Orders);
+					else if(this.getClass().equals(UnitEditor.class))
+						showDialog(Allert.help_UnitTest);
 					dialog = null;
 					break;
 				case EditOrderGroup:

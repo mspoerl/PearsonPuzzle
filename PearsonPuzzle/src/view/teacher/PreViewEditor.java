@@ -222,6 +222,7 @@ public class PreViewEditor extends JView{
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		randomize = new JButton("<html><body><p align=\"center\">Liste neu<br>randomisieren</p></body></html>.");
 		randomize.setAlignmentX(Component.CENTER_ALIGNMENT);
+		randomize.setIcon(new ImageIcon("rsc/icon/file/dice_white.png"));
 		buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		buttonPanel.add(randomize);
