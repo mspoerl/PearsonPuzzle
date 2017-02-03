@@ -1,8 +1,11 @@
 package mobileVersion;
 
 import java.awt.Dimension;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import controller.Controller;
 
@@ -45,6 +48,16 @@ public class Applet extends JFrame{
 	}
 	
 	public void createGUI(Model model) {
+		if(model.getProjectVector().isEmpty()){
+			JFileChooser fc_imp = new JFileChooser();
+			int returnVal_imp = fc_imp.showOpenDialog(new JPanel());
+			
+			if (returnVal_imp == JFileChooser.APPROVE_OPTION) {
+				File file = fc_imp.getSelectedFile();
+				model.replaceDatabase(file.getName(), file.getParentFile().getAbsolutePath());
+				//This is where a real application would open the file.
+			}
+		}
 		AppletView startPanel = new ProjectListAView(model);		
 		startPanel.setOpaque(true);
 		setContentPane(startPanel);

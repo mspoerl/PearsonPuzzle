@@ -5,7 +5,6 @@ import jUnitUmgebung.UnitRunner;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 
-
 import javax.swing.JRootPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -86,24 +85,6 @@ public class AppletController implements Controller{
 					}
 				}
 			break;
-		
-//		case TestCode:
-//			Result result;
-//			model.testOrderOfSollution();
-//				if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
-//					UnitRunner unitRunner;
-//					try {
-//						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
-//						result = unitRunner.run();
-//						System.out.println(result.getFailures());
-//						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
-//						model.setJunitFailures(result);
-//					} catch (PPException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//				}
-//			break;
 		default:
 			return;
 		}
@@ -122,7 +103,7 @@ public class AppletController implements Controller{
 	}
 
 	public AppletView getView() {
-		return null;
+		return view;
 	}
 
 	/**
