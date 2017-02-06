@@ -1,9 +1,7 @@
 package compiler;
 
 import jUnitUmgebung.MemClassLoader;
-import jUnitUmgebung.MemClassLoader_JUnit;
 import jUnitUmgebung.MemJavaFileManager;
-import jUnitUmgebung.MemJavaFileManager_JUnit;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +46,7 @@ public class TestCompiler {
 	}
 	
 	public MemClassLoader compile(){
-		System.out.println(srcCodeMap);
+		//System.out.println(srcCodeMap);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		MemClassLoader normalClassLoader = new MemClassLoader();
 	
@@ -68,7 +66,7 @@ public class TestCompiler {
 		CompilationTask task = compiler.getTask( null, classFileManager,diagnostics, options, null, units );
 		task.call();
 		makeDiagnose(diagnostics);
-		System.out.println(srcCodeMap);
+		System.out.println("Kompilierte:"+srcCodeMap);
 		
 		try {
 			classFileManager.close();

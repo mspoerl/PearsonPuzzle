@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 
@@ -48,7 +47,6 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
 	private final int Puzzlemode;
 	private static final String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
-	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
 	
 	private JList<String> dragList;
 	private JList<String> saveDropList;
@@ -64,17 +62,21 @@ public class CodeSortView extends JView {
 	
 	public CodeSortView(Model model) {
 		super(model);
-		// TODO: Arbeitsanweisungen für Schüler definieren und einfügen
 		menu=new MenuPupil();
 		
 		if(model.getPuzzlemode()==null)
 			Puzzlemode = 0;
 		else 
 			Puzzlemode = model.getPuzzlemode();
+
 		this.addMenuToFrame(menu);
 		
 		setupCodeLists();
+		
 		setupButtons();
+		// In Puzzlemodus 3 ist eine Sortierung der Reihenfolgen nicht sinnvoll
+		if(Puzzlemode==3)
+			testButton.setVisible(false);		
 		
 		mainPanel.revalidate();
 	}
@@ -133,7 +135,10 @@ public class CodeSortView extends JView {
 		JScrollPane scrollPanel_sDL = new JScrollPane(saveDropList);
 		scrollPanel_sDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_sDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPanel_sDL.setPreferredSize(new Dimension(360,300));
+		if(Puzzlemode==0)
+			scrollPanel_sDL.setPreferredSize(new Dimension(650, 260));
+		else
+			scrollPanel_sDL.setPreferredSize(new Dimension(360,260));
 		mainPanel.add(scrollPanel_sDL, BorderLayout.LINE_START);
 		
 		// Rechte Liste (Drag)
@@ -144,7 +149,7 @@ public class CodeSortView extends JView {
 		JScrollPane scrollPanel_dDL = new JScrollPane(dragList);
 		scrollPanel_dDL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPanel_dDL.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPanel_dDL.setPreferredSize(new Dimension(360,300));
+		scrollPanel_dDL.setPreferredSize(new Dimension(360,260));
 		if(Puzzlemode!=0)
 			mainPanel.add(scrollPanel_dDL, BorderLayout.LINE_END);
 		
@@ -168,6 +173,7 @@ public class CodeSortView extends JView {
 	 */
 	private void setupButtons(){
 		compileButton=new JButton("Kompilieren");
+		
 		testButton = new JButton("Testen");
 		unitTestButton = new JButton("Starten");
 		
@@ -227,19 +233,32 @@ public class CodeSortView extends JView {
 	public void update(Observable arg0, Object arg1) {
 		if(arg1==null && compileButton!=null && unitTestButton!=null && testButton!=null){
 			compileButton.setBackground(DEFAULTBUTTONCOLOR);
+			compileButton.setForeground(Color.BLACK);
 			unitTestButton.setBackground(DEFAULTBUTTONCOLOR);
+			unitTestButton.setForeground(Color.BLACK);
 			unitTestButton.setEnabled(false);
 			testButton.setBackground(DEFAULTBUTTONCOLOR);
+			testButton.setForeground(Color.BLACK);
 			gameModel.reset();
+			if(model.getProjectDescription()==null || model.getProjectDescription().isEmpty())
+				messageBox.setText(defaultDescription);
+			else 
+				messageBox.setText(model.getProjectDescription());
+			messageBox.revalidate();
+			smiley.setIcon(gameModel.getScoreImage());
 		}
 		else if(arg1!= null && arg1.equals("score"))
-			smiley.setIcon(gameModel.getScoreImage());
+			if(model.getSollution().isEmpty())
+				smiley.setIcon(new ImageIcon("rsc/icon/Smiley/face-wink.png"));
+			else
+				smiley.setIcon(gameModel.getScoreImage());
 		else if(arg1==DCCommand.Compile){
 			// Fehlerbericht oder Erfolg ausgeben
 			Vector<HashMap<String, String>> failures = model.getCompileFailures();
 			if(failures.isEmpty()){
 				messageBox.setText("Kompilieren war erfolgreich!");
-				compileButton.setBackground(Color.GREEN);
+				compileButton.setBackground(GREEN);
+				compileButton.setForeground(WHITE);
 				gameModel.score("compile");
 				unitTestButton.setEnabled(true);
 			}
@@ -249,11 +268,10 @@ public class CodeSortView extends JView {
 					failureText = failureText+"<br> "+failure.get("Nachricht")+" in Zeile "+failure.get("Zeile");
 				}
 				messageBox.setText(failureText+"</body></html>");
-				compileButton.setBackground(Color.RED);
+				compileButton.setBackground(RED);
+				compileButton.setForeground(WHITE);
 				gameModel.loose("compile");
 			}
-//			dragList.setEnabled(false);
-//			saveDropList.setEnabled(false);
 		}
 		else if(arg1==DCCommand.TestCode){
 			
@@ -264,12 +282,14 @@ public class CodeSortView extends JView {
 						//&& model.getCompileFailures().isEmpty()
 						){
 					cssClass = " class=\"success\" ";
-					unitTestButton.setBackground(Color.GREEN);
+					unitTestButton.setBackground(GREEN);
+					unitTestButton.setForeground(WHITE);
 					gameModel.score("unitTest");
 				}
 				else{
 					cssClass = " class=\"failure\" ";
-					unitTestButton.setBackground(Color.RED);
+					unitTestButton.setBackground(RED);
+					unitTestButton.setForeground(WHITE);
 					gameModel.loose("unitTest");
 				}
 				failureText+="<span class=\"heading\">Ergebnis des Unit-Testlaufs:</u><span"+cssClass+">"+model.getjUnitFailures().size()+" Fehler</span>";
@@ -279,8 +299,8 @@ public class CodeSortView extends JView {
 					failureText=failureText+"<div class=\"unitFailure\">"+failure+"</div>";
 				}
 				messageBox.setText(failureText+"</body></html>");
-				
-				update();
+//				dragList.setEnabled(false);
+//				saveDropList.setEnabled(false);
 		}
 		else if(arg1==DCCommand.Test){
 			String failureText = new String("<html><head><style type=\"text/css\"> .success {color:green;} .failure{color:red;} .unitFailure{color:red; margin-left:20px;} .increment {margin-left:24px;} .comment {font-style:italic;} .heading{font-style: oblique;}</style> </head><body>");
@@ -289,11 +309,13 @@ public class CodeSortView extends JView {
 				if(key.equals("Gruppentests") || key.contains("Reihenfolge")){
 					failureText+="<div><span class=\"heading\">"+key+": </span>";
 					if(model.getSuccessMap().get(key)){
-						testButton.setBackground(Color.GREEN);
+						testButton.setBackground(GREEN);
+						testButton.setForeground(WHITE);
 						gameModel.score("orderTest");
 					}
 					else{
-						testButton.setBackground(Color.RED);
+						testButton.setBackground(RED);
+						testButton.setForeground(WHITE);
 						gameModel.loose("orderTest");
 					}
 				}
@@ -311,7 +333,7 @@ public class CodeSortView extends JView {
 			}
 			messageBox.setText(failureText+"</body></html>");
 			System.out.println(failureText);
-		}
+		}			
 		//update();
 	}
 

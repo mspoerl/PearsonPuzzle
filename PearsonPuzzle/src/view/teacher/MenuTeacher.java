@@ -106,12 +106,6 @@ public class MenuTeacher extends Menu{
 		        java.awt.Event.CTRL_MASK));
 		menuItems.add(itemBuffer);
 		
-		itemBuffer = new JMenuItem("Datenbank importieren");
-		itemBuffer.setActionCommand(DCCommand.DB_Import.toString());
-		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
-		        java.awt.event.KeyEvent.VK_I, 
-		        java.awt.Event.CTRL_MASK));
-		menuItems.add(itemBuffer);
 		
 		itemBuffer = new JMenuItem("Datenbank exportieren");
 		itemBuffer.setActionCommand(DCCommand.DB_Export.toString());
@@ -120,7 +114,7 @@ public class MenuTeacher extends Menu{
 		        java.awt.Event.CTRL_MASK));
 		menuItems.add(itemBuffer);
 		
-		itemBuffer = new JMenuItem("Nutzer löschen");
+		itemBuffer = new JMenuItem("Nutzer verwalten");
 		itemBuffer.setActionCommand(DCCommand.EditUsers.toString());
 		itemBuffer.setAccelerator(KeyStroke.getKeyStroke(
 		        java.awt.event.KeyEvent.VK_MINUS, 
@@ -144,10 +138,10 @@ public class MenuTeacher extends Menu{
 		this.add(configMenu, JMenuBar.RIGHT_ALIGNMENT);
 		int seperator=0;
 		for(JMenuItem menuItem: menuItems){
-			if(seperator<4){
+			if(seperator<3){
 				mainMenu.add(menuItem);
 			}
-			else if(seperator<6){
+			else if(seperator<5){
 				classMenu.add(menuItem);
 			}
 			else{

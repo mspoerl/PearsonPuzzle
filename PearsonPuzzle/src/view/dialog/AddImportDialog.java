@@ -12,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
@@ -33,6 +34,12 @@ public class AddImportDialog extends JDialog{
 
 	public AddImportDialog(Frame frame, Model model, String title) {
 		super(frame, model, title);
+		this.model = model;
+    	setupContentPane();
+    	setContentPane(optionPane);
+	}
+	public AddImportDialog(JDialog dialog, Model model, String title) {
+		super(dialog, model, title);
 		this.model = model;
     	setupContentPane();
     	setContentPane(optionPane);
@@ -116,11 +123,6 @@ public class AddImportDialog extends JDialog{
 	@Override
 	public void clearAndHide() {
 		clear();
-	}
-
-	@Override
-	public void clear() {
-		setVisible(false);			
 	}
 
 	@Override

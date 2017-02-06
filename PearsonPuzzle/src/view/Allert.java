@@ -11,7 +11,7 @@ import model.access.AccessGroup;
  * @author workspace
  */
 public enum Allert {
-	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser, help_Orders, code_not_fully_sorted;
+	noProjectSelected, noContentInput, projectSaved, projectDeleted, projectExists, notSaved, reset, Failure, chooseAccessGroup, deleteUser, help_Orders, code_not_fully_sorted, help_UnitTest;
 	
 	public Integer allert(Model model){
 		Integer n;
@@ -23,13 +23,24 @@ public enum Allert {
 						"Dabei werden Codezeilen, die nach anderen Codezeilen kommen sollen, mit höheren Zahlen markiert und die Codezeilen, die vorher kommen sollen, " +
 						"mit niedrigeren Zahlen. Codezeilen, die austauschbar sind, werden mit gleichen Zahlen markiert." +
 						" Die Zahl '0' wird beim Testen der Reihenfolgen nicht beachtet. Die Zahlen einer Reihenfolge müssen stets aufsteigend sein und sollten aufeinander folgen. " +
-						"Über die Schaltfläche 'Gruppe hinzufügen' können weitere Reihenfolgen festgelegt werden.</p></body></html>");
+						"Über die Schaltfläche 'Gruppe hinzufügen' können weitere Reihenfolgen festgelegt werden.</p></body></html>", "Hilfetext", JOptionPane.INFORMATION_MESSAGE);
+				return null;
+			case help_UnitTest:
+				JOptionPane.showMessageDialog(null, "<html><body style=\"width:700px; text-align: center;\"><p style=\"text-align:justify;\">Hier kann ein JUnit Test verfasst werden, der den zusammengepuzzelten Code testet (falls dieser kompilierbar ist). " +
+						"Die hier zu Beginn hinterlegte Unit Testklasse dient nur als Beispiel und wird, solange sie unverändert (oder leer) bleibt, nicht ausgeführt. Ob ein JUnit Test hinterlegt ist oder nicht, ist über den Reiter \"JUnit\" ersichtlich. " +
+						"Ist dieser blau eingefärbt, so ist ein Unit Test hinterlegt. Ist dieser hingegen schwarz, so ist kein Unit Test hinterlegt.<br><br>" +
+						"" +
+						"Unabhängig davon, ob ein Unit Test eingebunden wird, können:</p>" +
+						"<ul style=\"text-align:left;\"><li>zusätzlich üben das Textfeld links oben noch etwaige nötige Imports angegeben werden. </li>" +
+						"<li>zusätzliche spezielle oder eigene Klasse(n) angegeben werden, falls diese nötig sind, um den Puzzlecode auszuführen/zu kompilieren. Diese sollten in Textform über den entsprechenden Button angehängt werden.</li>" +
+						"<li>zusätzliche Methode(n) angegeben werden, falss diese nötig sind, um den Puzzlecode ausführen/compilieren zu können. Diese werden dann dem Puzzlecode angehängt, sind aber im Puzzlemodus nicht sichtbar.</li>" +
+						"</ul></body></html>", "Hilfetext", JOptionPane.INFORMATION_MESSAGE);
 				return null;
 			case noProjectSelected:
 				JOptionPane.showMessageDialog(null, "Bitte Projekt auswählen");
 				return null;
 			case code_not_fully_sorted:
-				JOptionPane.showMessageDialog(null, "Code nicht vollstädnig sortiert, bitte sortieren Sie den Code fertig.<br> Erst dann ist diese Aktion möglich.");
+				JOptionPane.showMessageDialog(null, "<html><body>Code nicht vollstädnig sortiert, bitte sortieren Sie den Code fertig.<br> Erst dann ist diese Aktion möglich.</body></html>");
 				return null;
 			case noContentInput:
 				JOptionPane.showMessageDialog(null,"Bitte Titel und Inhalt des Projekts angeben");

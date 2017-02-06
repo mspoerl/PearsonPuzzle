@@ -25,13 +25,11 @@ import mobileVersion.Applet;
 import model.Model;
 import model.access.AccessGroup;
 import view.*;
-import view.dialog.FileChooserDialog;
 import view.pupil.*;
 import view.teacher.*;
 
 /**
- * Klasse dient dazu, die standardmäßige Benutzeroberfläche aufzurufen und 
- * mit dem Controller zu verknüpfen.
+ *Śtandard-Controller der PearsonPuzzle Anwendung.
  * @author workspace
  */
 public class DefaultController implements Controller, TableModelListener, FocusListener{
@@ -42,8 +40,6 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 	public DefaultController(Model model, JView view){
 		this.model=model;
 		this.view=view;
-		view.addController(this);
-		view.setController(this);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -97,9 +93,14 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 		}
 		switch(cmd){
 			case Applet:
-				view.hide();
+				model.deleteObservers();
+				view.exit();
 				Applet app = new Applet();
 				app.createGUI(model);
+//				AppletView aplView = new ProjectListAView(model);
+//				AppletMenu menu = new AppletMenu();
+//				view.initializeAppletView(aplView, menu);
+//				model.addObserver(aplView);
 				break;
 			case Login:
 				if(view.getClass().equals(LoginView.class))
@@ -241,10 +242,12 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						model.saveProject(true);
 						//view.update(null, DCCommand.Save);
 					}
-					else{
+					else if(((Component) e.getSource()).getName()!=null && ((Component) e.getSource()).getName().equals("sort")){
 						model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
 						model.saveRandomisation();
-						//model.saveProject(false);
+					}
+					else if(((Component) e.getSource()).getName()!=null && ((Component) e.getSource()).getName().equals("save")){
+						model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
 					}
 				}
 				break;
@@ -327,13 +330,28 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						unitRunner.compile();
 						model.setCompilerFailures(unitRunner.getFailures());
 					}
+					else{
+						TestCompiler testCompiler = new TestCompiler(model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+						testCompiler.compile();
+						model.setCompilerFailures(testCompiler.getFailures());
+						view.showDialog(DCCommand.Compile, false);
+					}
 				break;
 			case Test:
 					model.testOrderOfSollution();
 				break;
 			case TestCode:
 				Result result;
-				if(model.getAccessGroup()==AccessGroup.STUDENT){
+				if(model.getAccessGroup()==AccessGroup.TEACHER){
+					UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+//					unitRunner.addOnlineImport(model.getImport("online"));
+//					unitRunner.addClasses(model.getImport("classes"));
+					result = unitRunner.run();
+					//System.out.println(result.getFailures());
+					//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+					model.setJunitFailures(result);
+				}
+				else{
 					//System.out.println(model.getSollution());
 					
 					//model.testSolution();
@@ -349,15 +367,6 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 						model.setJunitFailures(result);
 					}
-				}
-				else{
-					UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
-//					unitRunner.addOnlineImport(model.getImport("online"));
-//					unitRunner.addClasses(model.getImport("classes"));
-					result = unitRunner.run();
-					//System.out.println(result.getFailures());
-					//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
-					model.setJunitFailures(result);
 				}
 				break;
 			case DB_Export:
@@ -522,6 +531,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 			else if(e.getSource().getClass().equals(JComboBox.class))
 			{
 				if(compName.equals("AccessGroup")) {
+					@SuppressWarnings("unchecked")
 					JComboBox<String> jComboBox = (JComboBox<String>) e.getSource();
 					model.setStudentGroup((String) jComboBox.getSelectedItem());
 				}
@@ -569,42 +579,4 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 	public JView getView() {
 		return view;
 	}
-	
-	
-//	public void mouseClicked(MouseEvent e) {
-//		if(e.getButton()==MouseEvent.BUTTON3){
-//			if(e.getComponent().getName().equals("dropList")){
-//				//ListSelectionModel lsm= ((JList<String>) (e.getComponent())).getSelectionModel();
-//				//System.out.println(e.getComponent().getComponentAt(e.getLocationOnScreen()).getName());
-//				//System.out.println(e.getComponent().getComponentAt(e.getPoint()));
-//			}
-//		}
-//			
-//	}
-
-//	@Override
-//	public void propertyChange(PropertyChangeEvent evt) {
-//		if(view.getClass()==TextEditor.class){
-//			String componentName = ((Component) evt.getSource()).getName();
-//			String componentText = ((JTextComponent) evt.getSource()).getText();
-//			if(componentName!=null)
-//			{
-//				if(componentName.equals("ProjectName") 
-//						&& !componentText.equals(model.getProjectName()))
-//					unsavedChanges = true;
-//				else if(componentName.equals("ProjectCode")
-//						&& !componentText.equals(model.getProjectCode())
-//						&& !componentText.equals(TextEditor.defaultCode))
-//					unsavedChanges = true;
-//				else if(componentName.equals("TabSize")
-//						&& !componentText.equals(Integer.toString(model.getTabSize()))){
-//					unsavedChanges = true;
-//				}
-//				else if(componentName.equals("ProjectDescription")
-//						&& !componentText.equals(model.getProjectDescription()))
-//					unsavedChanges = true;
-//			System.out.println(componentName);
-//			}
-//		}	
-//	}
 }

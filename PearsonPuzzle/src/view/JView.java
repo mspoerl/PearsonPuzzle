@@ -1,8 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.util.Observable;
@@ -12,9 +12,11 @@ import javax.swing.*;
 
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
+import view.dialog.CompileDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
-import view.dialog.FileChooserDialog;
+import view.teacher.ConfigEditor;
+import view.teacher.UnitEditor;
 
 import model.Model;
 import controller.Controller;
@@ -31,7 +33,14 @@ import controller.DialogController;
  */
 
 public abstract class JView implements Observer {
+	
 	private static JFrame frame = new JFrame("PearsonPuzzle");
+	protected static final Color WHITE = Color.decode("#FFFFFF");
+	protected static final Color RED = Color.decode("#AF002A");
+	protected static final Color GREEN = Color.decode("#008000");
+	protected static final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
+	protected static final ImageIcon saveIcon = new ImageIcon("rsc/icon/file/save_blue.png");
+	
 	// BorderLayout mit 5 horizontalem und 1 vertikalem Versatz zwischen den Komponenten
 	// mainPanel = new JPanel(new BorderLayout(5,1));
 	protected static JPanel mainPanel = new JPanel(new BorderLayout(5,1));
@@ -71,6 +80,7 @@ public abstract class JView implements Observer {
 			frame.setSize(800,500);
 			frame.setLocationRelativeTo(null);
 		}
+		
 		
 		/**
 		 * Frame wird um Menü ergänzt.
@@ -177,6 +187,7 @@ public abstract class JView implements Observer {
 			else 
 				dialog=null;
 			dialogController = new DialogController(model, dialog);
+			dialog.addController(dialogController);
 			dialog.pack();
 			dialog.setVisible(true);
 			dialog.repaint();
@@ -198,11 +209,17 @@ public abstract class JView implements Observer {
 					dialog = new DeleteOrderDialog(frame, model, "Gruppe löschen");
 					break;
 				case ShowHelp:
-					showDialog(Allert.help_Orders);
+					if(this.getClass().equals(ConfigEditor.class))
+						showDialog(Allert.help_Orders);
+					else if(this.getClass().equals(UnitEditor.class))
+						showDialog(Allert.help_UnitTest);
 					dialog = null;
 					break;
 				case EditOrderGroup:
 					dialog = new EditOrderDialog(frame, model, "Gruppe expliziter beschreiben");
+					break;
+				case Compile:
+					dialog = new CompileDialog(frame, model, "Ergebnis des Kompiliervorgangs");
 					break;
 				default:
 					dialog = null;
@@ -210,17 +227,14 @@ public abstract class JView implements Observer {
 			}			
 			if(dialog!=null){
 				dialogController = new DialogController(model, dialog);
+				dialog.addController(dialogController);
 				dialog.pack();
 				dialog.setVisible(true);
 				dialog.repaint();
 			}
 			return null;
 		}
-		public void closeAllert(){
-			
-			//optionPane.setVisible(false);
-			//frame.remove(optionPane);
-		}
+
 		public Object get(String variable){
 			return null;
 		}

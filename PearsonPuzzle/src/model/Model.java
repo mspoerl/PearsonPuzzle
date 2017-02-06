@@ -240,6 +240,8 @@ public class Model extends Observable {
 		this.projectID = projectID;
 		this.fetchProjectCode();
 		this.fetchProjectSettings();
+		if(projectID!=null)
+		setChanged();
 		notifyObservers();
 	}
 	
@@ -342,20 +344,33 @@ public class Model extends Observable {
 		}
 		
 		public void saveRandomisation(){
-			if(sortedCode.isEmpty() || sortedCode.size()<codeVector_normal.size()){
+			if(sortedCode.isEmpty() && sortedCode.size()==codeVector_normal.size())
+				normalizeSortedCode();
+			if(ValueValidation.isValidRandomization(sortedCode, codeVector_normal)){
+				dataBase.setRandomKeys(getProjectName(), getSollutionOrder());
+				fetchProjectCode();
 				setChanged();
-				notifyObservers(Allert.code_not_fully_sorted);
+				notifyObservers(DCCommand.Save);
 			}
 			else{
 				setChanged();
-				System.out.println(getSollutionOrder());
-				normalizeSortedCode();
-				System.out.println(getSollutionOrder());
-				dataBase.setRandomKeys(getProjectName(), getSollutionOrder());
-				fetchProjectCode();
-				System.out.println(dataBase.getRandomKeys(getProjectName()));
+				notifyObservers(Allert.code_not_fully_sorted);
 			}
-			notifyObservers();
+				
+//			if(sortedCode.isEmpty() || sortedCode.size()<codeVector_normal.size()){
+//				setChanged();
+//				notifyObservers(Allert.code_not_fully_sorted);
+//			}
+//			else{
+//				setChanged();
+//				System.out.println(getSollutionOrder());
+//				normalizeSortedCode();
+//				System.out.println(getSollutionOrder());
+//				dataBase.setRandomKeys(getProjectName(), getSollutionOrder());
+//				fetchProjectCode();
+//				System.out.println(dataBase.getRandomKeys(getProjectName()));
+//				notifyObservers(DCCommand.Save);
+//			}
 		}
 		
 	// ---------------- Asserts können in der Zeile ergänzt werden (nicht vollständig implementier)
@@ -570,8 +585,14 @@ public class Model extends Observable {
 	 * @param jUnitCode JUnit Sourcecode in Textform
 	 */
 	public void setJUnitCode(String jUnitCode) {
-		setChanged(this.jUnitCode, jUnitCode);
-		this.jUnitCode = jUnitCode;
+		if(jUnitCode==null || jUnitCode.equals(UnitEditor.DEFAULT_UNIT_CODE)){
+			setChanged(this.jUnitCode, "");
+			this.jUnitCode = "";
+		}
+		else{ 
+			setChanged(this.jUnitCode, jUnitCode);
+			this.jUnitCode = jUnitCode;
+		}
 	}
 
 	/**
@@ -613,8 +634,10 @@ public class Model extends Observable {
 	 * Die "groben Eckdaten" sind: Projektname, Projektcode, Beschreibung/Arbeitsanweisung.
 	 */
 	public void saveProject(boolean randomize){
-		if(randomize)
+		if(randomize){
 			saveProject(getProjectCode(), getProjectName(), getProjectDescription(), null);
+			setChanged();
+		}
 		else if(sortedCode.isEmpty() || sortedCode.size()<codeVector_normal.size()){
 			setChanged();
 			notifyObservers(Allert.code_not_fully_sorted);
@@ -848,6 +871,8 @@ public class Model extends Observable {
 			
 			if(accessGroup==null)
 				notifyObservers("accessgroup_unset");
+			else if(accessGroup==AccessGroup.UNAUTHORIZED)
+				notifyObservers("username_noTable");
 			else if(userName == null 
 					|| userName.equals(""))
 				notifyObservers("username_unset");

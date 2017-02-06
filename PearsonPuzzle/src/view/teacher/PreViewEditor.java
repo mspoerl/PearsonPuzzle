@@ -55,6 +55,7 @@ public class PreViewEditor extends JView{
 		private LinkedList<JRadioButton> puzzleModeButtons;
 		private JPanel studentPanel;
 		private JTextArea messagePanel;
+		private JButton sort;
 		
 	public PreViewEditor(Model model) {
 		super(model);
@@ -198,9 +199,8 @@ public class PreViewEditor extends JView{
 			selectDragAndDrop.add(radioButton);
 		}
 		selectDragAndDrop.add(Box.createRigidArea(new Dimension(0,10)));
-		save = new JButton("<html><body text-align=\"center\"><p align=\"center\">Drag&Drop Modus<br>Speichern</p></body></html>");
-		save.setAlignmentX(Component.LEFT_ALIGNMENT);
-		selectDragAndDrop.add(save);
+		
+		//selectDragAndDrop.add(save);
 		mainPanel.add(selectDragAndDrop, BorderLayout.LINE_START);
 		mainPanel.add(messagePanel, BorderLayout.SOUTH);
 	}
@@ -216,15 +216,26 @@ public class PreViewEditor extends JView{
 		}
 		return listModel;
 	}
+	
 	private void setupButtons(){
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		randomize = new JButton("<html><body><p align=\"center\">Liste neu<br>randomisieren</p></body></html>.");
 		randomize.setAlignmentX(Component.CENTER_ALIGNMENT);
+		randomize.setIcon(new ImageIcon("rsc/icon/file/dice_white.png"));
+		save = new JButton("<html><body text-align=\"center\"><p align=\"center\">D&D Modus<br>Speichern</p></body></html>");
+		save.setIcon(saveIcon);
+		save.setAlignmentX(Component.CENTER_ALIGNMENT);
+		sort = new JButton("<html><body text-align=\"center\"><p align=\"center\">Sortierung<br>Speichern</p></body></html>");
+		sort.setIcon(new ImageIcon("rsc/icon/file/puzzle.png"));
+		sort.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		buttonPanel.add(randomize);
 		buttonPanel.add(Box.createRigidArea(new Dimension(0,10)));
+		buttonPanel.add(sort);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0,10)));
+		buttonPanel.add(save);
 		mainPanel.add(buttonPanel, BorderLayout.LINE_END);
 		
 	}
@@ -245,6 +256,9 @@ public class PreViewEditor extends JView{
 		save.setName("save");
 		save.setActionCommand(DCCommand.Save.toString());
 		save.addActionListener(controller);
+		sort.setName("sort");
+		sort.setActionCommand(DCCommand.Save.toString());
+		sort.addActionListener(controller);
 		
 		menu.addActionListener(controller);
 	}
@@ -263,7 +277,9 @@ public class PreViewEditor extends JView{
 	public void update(Observable o, Object arg) {
 		if(arg!=null && arg.equals(Allert.code_not_fully_sorted))
 			this.showDialog(Allert.code_not_fully_sorted);
-		else
+		else if(arg != null && arg.equals("dropMode"))
+			update();
+		else if(arg!=null && arg.equals(DCCommand.Save))
 			update();
 	}
 

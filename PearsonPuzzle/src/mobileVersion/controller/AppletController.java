@@ -16,6 +16,7 @@ import compiler.TestCompiler;
 import controller.Controller;
 import controller.DCCommand;
 
+import mobileVersion.view.AppletMenu;
 import mobileVersion.view.AppletView;
 import mobileVersion.view.CodeSortAView;
 import mobileVersion.view.ProjectListAView;
@@ -26,6 +27,12 @@ import view.Allert;
 import view.PPException;
 import view.teacher.UnitEditor;
 
+/**
+ * Schlanker und performanter Controller für die Applet-Views.
+ * Entspricht von den Implementierten Methoden i.A. dem Default Controller.
+ * 
+ * @author workspace
+ */
 public class AppletController implements Controller{
 	
 	private Model model;
@@ -38,29 +45,34 @@ public class AppletController implements Controller{
 	}
 
 	public void itemStateChanged(ItemEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// Wird aktuell nicht benötigt
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		DCCommand cmd = DCCommand.valueOf(e.getActionCommand());
 		switch(cmd){
-		case Login:
+		
+		// ---------------------- View Wechsel-----------------------------------
+		case Login: 
 			model.login((String)view.get("username"), (char[])view.get("password"));
-			if(model.getAccessGroup()==AccessGroup.UNAUTHORIZED) 
+			if(model.getAccessGroup()==AccessGroup.UNAUTHORIZED)
 				return;
-		case ProjectList:
+			// !!!Position ist wichtig:
+			// Hier entscheidet sich, welche View nach dem Login erscheint.
+		case ProjectList: 
+				removeView();
 				setView( new ProjectListAView(model));
 			break;
 		case OpenProject:
 			if(model.getProjectListID()==null)
 				view.showDialog(Allert.noProjectSelected);
 			else{
-				view.removeController(this);
-				CodeSortAView view = new CodeSortAView(model);
-				setView(view);
+				removeView();
+				setView(new CodeSortAView(model));
 			}
 			break;
+			
+		// -----------------------View Anpassung -----------------------------------
 		case Compile:		
 				TestCompiler testCompiler = new TestCompiler(model.getSollution(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
 				testCompiler.compile();
@@ -83,43 +95,53 @@ public class AppletController implements Controller{
 					}
 				}
 			break;
-		
-//		case TestCode:
-//			Result result;
-//			model.testOrderOfSollution();
-//				if(model.getJUnitCode()!=null){ // FIXME: diese if-Abfrage gehört in den UnitRunner
-//					UnitRunner unitRunner;
-//					try {
-//						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
-//						result = unitRunner.run();
-//						System.out.println(result.getFailures());
-//						System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
-//						model.setJunitFailures(result);
-//					} catch (PPException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//				}
-//			break;
 		default:
 			return;
 		}
 	}
 
+	/**
+	 * Methode instanziert neue Views. Etwaige vorher vorhandene Views werden nicht entfernt. (Model hat weiterhin die alte View als Observer, View diesen Controller als Controller). 
+	 * Ist gewünscht, dass alte Views komplett verworfen werden, ist dies über dei Methode removeView() zu tun. 
+	 * 
+	 * <ul><li>Übergebene View wird beim Model als Observer registriert</li>
+	 * <li>Das aktuelle RootPane erhält die übergebene View als Inhalt</li>
+	 * <li>View und Controller werden verknüpft</li>
+	 * <li>Die Menü Bar erhält die View, um sich eventuell anzupassen. (Navigation etc.)</li>
+	 * <li>Das RootPane wird neu gezeichnet</li></ul>
+	 * @param view
+	 */
 	private void setView(AppletView view) {
+		
 		if(view!=null){
+			
 			model.addObserver(view);
+			
 			JRootPane frame = this.view.getRootPane();
 			frame.setContentPane(view);
-			view.draw();
+			
 			view.addController(this);
 			this.view=view;
-			frame.validate();
+			
+			((AppletMenu) (frame).getJMenuBar()).setView(view);
+			frame.revalidate();
 		}
 	}
+	
+	/**
+	 * Entfernt die Bindung der Komponenten der aktuell gehaltenen View, sowie die Bindung dieser View an das Model.
+	 * ACHTUNG: Entfernt nicht die View als Feld von Controller! (Um keine Null-Pointer-Exception zu riskieren)
+	 */
+	private void removeView(){
+		model.deleteObserver(view);
+		view.removeController(this);
+	}
 
+	/**
+	 * Gibt die aktuelle View zurück.
+	 */
 	public AppletView getView() {
-		return null;
+		return view;
 	}
 
 	/**
@@ -127,7 +149,6 @@ public class AppletController implements Controller{
 	 * @param <ListSelectionModel>
 	 */
 	public void valueChanged(ListSelectionEvent e) {
-		System.out.println("asd"+view.getClass());
 		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
         if (((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
         } 
@@ -137,7 +158,6 @@ public class AppletController implements Controller{
             int maxIndex = lsm.getMaxSelectionIndex();
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
-                	
                 		model.selectProject(i);
                 }
              }

@@ -170,7 +170,7 @@ public class ToSaveTransferHandler extends TransferHandler {
         }
         int ocNumber=0;
         for(int i = 0; i<listModel.size();i++){
-        	if(listModel.get(i).trim().equals(data))
+        	if(listModel.get(i).equals(data))
         		ocNumber++;
         }
         

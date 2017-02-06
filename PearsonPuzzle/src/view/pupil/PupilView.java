@@ -45,6 +45,8 @@ public class PupilView extends JView{
 		projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		new JScrollPane(projectList);
 		listSelectionModel = projectList.getSelectionModel();
+		if(model.getProjectListID()!=null)
+			listSelectionModel.setSelectionInterval(model.getProjectListID(), model.getProjectListID());
 		// Liste wird nicht umgebrochen, sondern vertikal weitergeführt
 		projectList.setLayoutOrientation(JList.VERTICAL);
 		projectList.setFixedCellHeight(20);

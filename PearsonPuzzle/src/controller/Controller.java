@@ -1,14 +1,9 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import view.JView;
 /**
  * Oberklasse der verschiedenen Controller, die alle dafür zuständig sind, <br>
  * Daten vom Model an den jeweiligen darstellenden View weiterzureichen und <br>
