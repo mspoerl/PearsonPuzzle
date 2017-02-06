@@ -157,7 +157,8 @@ public class ToSaveTransferHandler extends TransferHandler {
         		return false;
         }
         
-        JList<String> list = (JList<String>)support.getComponent();
+        @SuppressWarnings("unchecked")
+		JList<String> list = (JList<String>)support.getComponent();
         
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
         

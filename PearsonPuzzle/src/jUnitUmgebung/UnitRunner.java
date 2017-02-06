@@ -32,7 +32,7 @@ import org.junit.runner.Result;
 import view.PPException;
 
 import compiler.CodeCompletion;
-import compiler.CodeModel;
+import compiler.ClassModel;
 import compiler.StringJavaFileObject;
 
 /**
@@ -47,8 +47,7 @@ import compiler.StringJavaFileObject;
  * @author workspace
  */
 public class UnitRunner {
-	private final static String DEFAULT_CLASS_NAME= "TestClass";
-	private final static String DEFAULT_METHOD_NAME = "testMehtod";
+	
 	private HashMap<String, String> srcCodeMap;
 	private String unitClassName;
 	private String unitSourceCode;
@@ -67,7 +66,7 @@ public class UnitRunner {
 			extractClassName(unitSourceCode);
 		compileFailures = new Vector<HashMap<String, String>>();
 		fillNeccessaryImports();
-		CodeModel model = new CodeModel(sourceCode_ToBeTested, methodImports, onlineImports, classImports);
+		ClassModel model = new ClassModel(sourceCode_ToBeTested, methodImports, onlineImports, classImports);
 		srcCodeMap = model.getCodeMap();
 	}
 	

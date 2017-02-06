@@ -37,7 +37,7 @@ public class TestCompiler {
 		packageString = new String();
 		importStrings = new LinkedList<String>();
 		compileFailures = new Vector<HashMap<String, String>>();
-		CodeModel model = new CodeModel(sourceCode_ToBeTested, methodImports, onlineImports, classImports);
+		ClassModel model = new ClassModel(sourceCode_ToBeTested, methodImports, onlineImports, classImports);
 		srcCodeMap = model.getCodeMap();
 	}
 	

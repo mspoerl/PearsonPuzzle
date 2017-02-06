@@ -90,6 +90,7 @@ public class FromTransferHandler extends TransferHandler {
             return false;
         }
         
+		@SuppressWarnings("unchecked")
 		JList<String> list = (JList<String>)support.getComponent();
         DefaultListModel<String> listModel = (DefaultListModel<String>)list.getModel();
         
