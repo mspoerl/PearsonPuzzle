@@ -47,10 +47,6 @@ public class CodeSortView extends JView {
 	// Puzzlemodus 3: Elemente bleiben rechts vorhanden, mehrfach-Drag ist möglich
 	private final int Puzzlemode;
 	private static final String defaultDescription="Puzzle den Code in die richtige Reihenfolge!\n \nViel Spaß ;-)";
-	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
-	private Color WHITE = Color.decode("#FFFFFF");
-	private Color RED = Color.decode("#AF002A");
-	private Color GREEN = Color.decode("#008000");
 	
 	private JList<String> dragList;
 	private JList<String> saveDropList;

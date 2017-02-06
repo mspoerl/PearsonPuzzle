@@ -242,10 +242,12 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						model.saveProject(true);
 						//view.update(null, DCCommand.Save);
 					}
-					else{
+					else if(((Component) e.getSource()).getName()!=null && ((Component) e.getSource()).getName().equals("sort")){
 						model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
-						//model.saveRandomisation();
-						//model.saveProject(false);
+						model.saveRandomisation();
+					}
+					else if(((Component) e.getSource()).getName()!=null && ((Component) e.getSource()).getName().equals("save")){
+						model.savePuzzlemode(((PreViewEditor) view).getPuzzleModus());
 					}
 				}
 				break;
@@ -328,13 +330,28 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						unitRunner.compile();
 						model.setCompilerFailures(unitRunner.getFailures());
 					}
+					else{
+						TestCompiler testCompiler = new TestCompiler(model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+						testCompiler.compile();
+						model.setCompilerFailures(testCompiler.getFailures());
+						view.showDialog(DCCommand.Compile, false);
+					}
 				break;
 			case Test:
 					model.testOrderOfSollution();
 				break;
 			case TestCode:
 				Result result;
-				if(model.getAccessGroup()==AccessGroup.STUDENT){
+				if(model.getAccessGroup()==AccessGroup.TEACHER){
+					UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+//					unitRunner.addOnlineImport(model.getImport("online"));
+//					unitRunner.addClasses(model.getImport("classes"));
+					result = unitRunner.run();
+					//System.out.println(result.getFailures());
+					//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
+					model.setJunitFailures(result);
+				}
+				else{
 					//System.out.println(model.getSollution());
 					
 					//model.testSolution();
@@ -350,15 +367,6 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 						//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
 						model.setJunitFailures(result);
 					}
-				}
-				else{
-					UnitRunner unitRunner = new UnitRunner(((UnitEditor) view).getContent(), model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
-//					unitRunner.addOnlineImport(model.getImport("online"));
-//					unitRunner.addClasses(model.getImport("classes"));
-					result = unitRunner.run();
-					//System.out.println(result.getFailures());
-					//System.out.println("Anzahl der Fehler im Junit Testlauf:"+result.getFailureCount());;
-					model.setJunitFailures(result);
 				}
 				break;
 			case DB_Export:

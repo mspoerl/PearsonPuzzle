@@ -1,7 +1,6 @@
 package view.teacher;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
@@ -23,8 +22,9 @@ import view.JView;
 
 public class UnitEditor extends JView{
 	
-	public static String DEFAULT_UNIT_CODE;
 	public final static String DEFAULT_IMPORT_TEXT="Hier können Imports <b>für die zu testende Klasse</b> in der typischen Form \"import paketname;\" angegeben werden. Zusätzliche nötige Methoden und Klassen bitte über den Button unterhalb angeben.";
+	
+	public static String DEFAULT_UNIT_CODE;
 	private JTextArea textArea;
 	//private JEditTextArea textArea; 
 	private JTextArea messageBox;
@@ -35,9 +35,6 @@ public class UnitEditor extends JView{
 	private JButton save;
 	private JButton test;
 	private JButton compile;
-	private Color WHITE = Color.decode("#FFFFFF");
-	private Color RED = Color.decode("#AF002A");
-	private Color GREEN = Color.decode("#008000");
 
 	public UnitEditor(Model model) {
 		super(model);
@@ -65,14 +62,14 @@ public class UnitEditor extends JView{
 		Border border = BorderFactory.createEmptyBorder();
 		textArea.setBorder(BorderFactory.createCompoundBorder(border, 
 	            BorderFactory.createEmptyBorder(4, 4, 4, 4)));
-		if(textArea.getText().equals(""))
+		if(textArea.getText().trim().isEmpty())
 			textArea.setText(DEFAULT_UNIT_CODE);
-//		JScrollPane textScrollPane = new JScrollPane(textArea);
-//		textScrollPane.setVerticalScrollBarPolicy(
-//		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//		textScrollPane.setPreferredSize(new Dimension(400,350));
-//		textScrollPane.setMinimumSize(new Dimension(400,100));
+		JScrollPane textScrollPane = new JScrollPane(textArea);
+		textScrollPane.setVerticalScrollBarPolicy(
+		                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		textScrollPane.setPreferredSize(new Dimension(400,350));
+		textScrollPane.setMinimumSize(new Dimension(400,100));
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
@@ -127,7 +124,7 @@ public class UnitEditor extends JView{
 		compile = new JButton("Test kompilieren");
 		compile.setIcon(new ImageIcon("rsc/icon/file/compute.png"));
 		save = new JButton("Speichern");
-		save.setIcon(new ImageIcon("rsc/icon/file/save_blue.png"));
+		save.setIcon(saveIcon);
 		test = new JButton("Run Test");
 		test.setIcon(new ImageIcon("rsc/icon/file/circle.png"));
 		test.setEnabled(false);
@@ -140,7 +137,7 @@ public class UnitEditor extends JView{
 		buttonPanel.add(showHelp);
 		
 //		mainPanel.add(textScrollPane);
-		mainPanel.add(textArea);
+		mainPanel.add(textScrollPane);
 		mainPanel.add(leftPanel, BorderLayout.EAST);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 	}

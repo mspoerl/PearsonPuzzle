@@ -1,5 +1,8 @@
 package model;
 
+import java.util.LinkedList;
+import java.util.Vector;
+
 /**
  * Klasse ist dafür zuständig, die Daten, die das Model erhält zu validieren und nötige Casts durchzuführen.<br>
  * 
@@ -96,5 +99,19 @@ public class ValueValidation {
 		if(projectName.contains("_Test"))
 			return false;
 		return false;
+	}
+	
+	public static boolean isValidRandomization(LinkedList<Integer> randomization, Vector<String> codeVector){
+		if(randomization==null)
+			return false;
+		else if(randomization.isEmpty())
+			return false;
+		else if(randomization.size()!=codeVector.size())
+			return false;
+		for(Integer i=0; i<randomization.size(); i++){
+			if(!randomization.contains(i))
+				return false;
+		}
+		return true;
 	}
 }

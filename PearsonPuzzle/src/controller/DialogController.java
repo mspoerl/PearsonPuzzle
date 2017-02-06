@@ -11,11 +11,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 
+import compiler.TestCompiler;
+
 import model.Model;
 
 import view.JView;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
+import view.dialog.CompileDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
 import view.dialog.JDialog;
@@ -27,8 +30,8 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 
 	public DialogController(Model model, JDialog dialog){
 		this.dialog = dialog;
-		this.dialog.addController(this);
 		this.model = model;
+		model.addObserver(dialog);
 	}
 
 	public void itemStateChanged(ItemEvent arg0) {
@@ -38,6 +41,27 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 
 	/** This method handles events for the text field. */
     public void actionPerformed(ActionEvent e) {
+    	if(dialog.getClass().equals(CompileDialog.class)){
+    		if(e.getActionCommand().equals(DCCommand.Compile.toString())){
+    			TestCompiler testCompiler = new TestCompiler(model.getProjectCode(), model.getImport("methods"), model.getImport("online"), model.getImport("classes"));
+				testCompiler.compile();
+				model.setCompilerFailures(testCompiler.getFailures());
+    		}
+    		else if(e.getActionCommand().equals(DCCommand.AddMethods.toString())){
+    			JDialog dialog = new AddImportDialog(this.dialog, model, "Nötige Methoden");
+    			dialog.addController(new DialogController(model, dialog));
+				dialog.pack();
+				dialog.setVisible(true);
+				dialog.revalidate();
+    		}
+    		else if(e.getActionCommand().equals(DCCommand.AddClasses.toString())){
+    			JDialog dialog = new AddImportDialog(this.dialog, model, "Nötige Klassen");
+				dialog.addController(new DialogController(model, dialog));
+				dialog.pack();
+				dialog.setVisible(true);
+				dialog.revalidate();
+    		}
+    	}
         //view.getOptionPane().setValue(btnString1);
     }
 
@@ -117,7 +141,6 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 	            		dialog.clearAndHide();
 	            }
 	            else if(dialog.getClass().equals(EditOrderDialog.class)){
-	            	System.out.println(value);
 	            	if(value.equals(JOptionPane.OK_OPTION)){
 	            		model.saveOrderFailures();
 	            		dialog.clearAndHide();
@@ -132,6 +155,9 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 //	            		else 
 //	            			dialog.clearAndHide();
 	            	}
+	            }
+	            else if(dialog.getClass().equals(CompileDialog.class)){
+	            	dialog.clear();
 	            }
 			}
 		}

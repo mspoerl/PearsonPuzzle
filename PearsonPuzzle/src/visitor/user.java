@@ -4,6 +4,8 @@ import java.awt.FlowLayout;
 import jUnitUmgebung.UnitRunner;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+
 import org.syntax.jedit.JEditTextArea;
 import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 
@@ -26,9 +28,10 @@ import view.dialog.InitializeAccess;
 public class user {
 	private static Controller controller;
 	public static void main (String args[]){
-//		try {
-//			  UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-//		} catch( Exception e ) { e.printStackTrace(); }
+		try {
+			  //UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
+			  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch( Exception e ) { e.printStackTrace(); }
 		setupGUI();
 		//runJEdit();
 	}

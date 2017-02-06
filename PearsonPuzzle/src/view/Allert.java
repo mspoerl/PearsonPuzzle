@@ -40,7 +40,7 @@ public enum Allert {
 				JOptionPane.showMessageDialog(null, "Bitte Projekt auswählen");
 				return null;
 			case code_not_fully_sorted:
-				JOptionPane.showMessageDialog(null, "Code nicht vollstädnig sortiert, bitte sortieren Sie den Code fertig.<br> Erst dann ist diese Aktion möglich.");
+				JOptionPane.showMessageDialog(null, "<html><body>Code nicht vollstädnig sortiert, bitte sortieren Sie den Code fertig.<br> Erst dann ist diese Aktion möglich.</body></html>");
 				return null;
 			case noContentInput:
 				JOptionPane.showMessageDialog(null,"Bitte Titel und Inhalt des Projekts angeben");

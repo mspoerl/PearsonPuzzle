@@ -29,7 +29,7 @@ import model.Model;
 import model.access.AccessGroup;
 
 /**
- * View, der dem Lehrer das grafische Bearbeiten von Proekten ermöglicht.
+ * View, der dem Lehrer das grafische Bearbeiten von Projekten ermöglicht.
  * @author workspace
  */
 public class TextEditor extends JView{
@@ -48,7 +48,7 @@ public class TextEditor extends JView{
 		super(model);
 		
 		save=new JButton("Sichern");
-		save.setIcon(new ImageIcon("rsc/icon/file/save_blue.png"));
+		save.setIcon(saveIcon);
 		configure = new JButton("Konfigurieren");
 		configure.setIcon(new ImageIcon("rsc/icon/file/config.png"));
 		configFields = new ArrayList <JTextField>();
@@ -185,7 +185,7 @@ public class TextEditor extends JView{
 		save.setActionCommand(DCCommand.Save.toString());
 
 		configure.addActionListener(controller);
-		configure.setActionCommand(DCCommand.EditConfig.toString());
+		configure.setActionCommand(DCCommand.Compile.toString());
 		
 		textArea.addFocusListener((DefaultController)controller);
 		textArea.setName("ProjectCode");

@@ -1,14 +1,11 @@
 package view.teacher;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.util.Observable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 
 import controller.Controller;
 import controller.DCCommand;
@@ -73,7 +70,7 @@ public class ConfigEditor extends JView{
 		JPanel save_Button = new JPanel();
 		save= new JButton();
 		save.setText("Speichern");
-		save.setIcon(new ImageIcon("rsc/icon/file/save_blue.png"));
+		save.setIcon(saveIcon);
 		save_Button.add(save);
 
 		mainPanel.add(editGroup_Buttons, BorderLayout.WEST);
@@ -85,14 +82,14 @@ public class ConfigEditor extends JView{
 		// Tabelle wird geleert
 		tableModel.setColumnCount(0);
 		// Tabelle wird neu aufgebaut
-		TableCellRenderer defaultRenderer = new TableCellRenderer() {
-			
-			public Component getTableCellRendererComponent(JTable arg0, Object arg1,
-					boolean arg2, boolean arg3, int arg4, int arg5) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
+		
+//		TableCellRenderer defaultRenderer = new TableCellRenderer() {	
+//			public Component getTableCellRendererComponent(JTable arg0, Object arg1,
+//					boolean arg2, boolean arg3, int arg4, int arg5) {
+//				// TODO Auto-generated method stub
+//				return null;
+//			}
+//		};
 		
 		if(model.getGroupMatrix()!=null && !model.getGroupMatrix().isEmpty())
 		{
@@ -116,8 +113,7 @@ public class ConfigEditor extends JView{
 	public void addController(Controller controller) {
 		menu.addActionListener(controller);
 //		sequenceList.getSelectionModel().addListSelectionListener(controller);
-//		codeList.getSelectionModel().addListSelectionListener(controller);	
-		
+//		codeList.getSelectionModel().addListSelectionListener(controller);		
 		newGroup.addActionListener(controller);
 		newGroup.setActionCommand(DCCommand.AddOrder.toString());
 		deleteGroup.addActionListener(controller);

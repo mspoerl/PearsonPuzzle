@@ -361,7 +361,12 @@ public class dbTransaction implements Transaction{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+		ArrayList<Integer> permutation = new ArrayList<Integer>(sortedKeys.size());
+		permutation.addAll(sortedKeys);
+		for(Integer indexInNormalCode : sortedKeys){
+			permutation.set(indexInNormalCode, sortedKeys.indexOf(indexInNormalCode));
+		}
 //		Vector<Integer> originalRandomKeys = userDBaccess.getRandomKeys(randomname);
 //		Vector<Integer> randomKeys = new Vector<Integer>(sortedKeys.size());
 //		try{
@@ -378,8 +383,9 @@ public class dbTransaction implements Transaction{
 //		}
 		
 		
-		ArrayList<Integer> newrandomKeys= new ArrayList<Integer>(sortedKeys);
-		return userDBaccess.setRandomKeys(randomname, newrandomKeys);
+		//ArrayList<Integer> newrandomKeys= new ArrayList<Integer>(sortedKeys);
+		//return userDBaccess.setRandomKeys(randomname, newrandomKeys);
+		return userDBaccess.setRandomKeys(randomname, permutation);
 	}
 	
 	private ArrayList<Integer> getRandomKeys(int number){

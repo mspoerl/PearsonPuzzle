@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.io.File;
@@ -11,6 +12,7 @@ import javax.swing.*;
 
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
+import view.dialog.CompileDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
 import view.teacher.ConfigEditor;
@@ -33,6 +35,12 @@ import controller.DialogController;
 public abstract class JView implements Observer {
 	
 	private static JFrame frame = new JFrame("PearsonPuzzle");
+	protected static final Color WHITE = Color.decode("#FFFFFF");
+	protected static final Color RED = Color.decode("#AF002A");
+	protected static final Color GREEN = Color.decode("#008000");
+	protected static final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
+	protected static final ImageIcon saveIcon = new ImageIcon("rsc/icon/file/save_blue.png");
+	
 	// BorderLayout mit 5 horizontalem und 1 vertikalem Versatz zwischen den Komponenten
 	// mainPanel = new JPanel(new BorderLayout(5,1));
 	protected static JPanel mainPanel = new JPanel(new BorderLayout(5,1));
@@ -209,6 +217,9 @@ public abstract class JView implements Observer {
 					break;
 				case EditOrderGroup:
 					dialog = new EditOrderDialog(frame, model, "Gruppe expliziter beschreiben");
+					break;
+				case Compile:
+					dialog = new CompileDialog(frame, model, "Ergebnis des Kompiliervorgangs");
 					break;
 				default:
 					dialog = null;
