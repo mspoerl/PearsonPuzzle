@@ -25,14 +25,14 @@ public class randomKlickTest {
 		randomSwingKlick(AccessGroup.STUDENT);
 		
 	}
-	@Test
-	public void randomKlicktestTeacher() {
-		randomSwingKlick(AccessGroup.TEACHER);
-	}
-	@Test
-	public void randomKlicktestUnknown(){
-		randomSwingKlick(AccessGroup.UNAUTHORIZED);
-	}
+//	@Test
+//	public void randomKlicktestTeacher() {
+//		randomSwingKlick(AccessGroup.TEACHER);
+//	}
+//	@Test
+//	public void randomKlicktestUnknown(){
+//		randomSwingKlick(AccessGroup.UNAUTHORIZED);
+//	}
 	
 	private void randomSwingKlick(final AccessGroup accessGroup){
 		final int numberOfKlicks = 20;
@@ -45,6 +45,7 @@ public class randomKlickTest {
 			int randomInt = new java.util.Random().nextInt(commandList.size());
 			Model model = new Model();
 			//model.setAccessGroup(accessGroup);
+			model.login("TOM", new char[] {'T','u','m','1','2','3','4','!'});
 			JView view = new PupilView(model);
 			Controller controller = new DefaultController(model, view); 
 			JButton testButton = new JButton();

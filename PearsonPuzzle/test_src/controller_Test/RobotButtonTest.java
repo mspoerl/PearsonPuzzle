@@ -31,13 +31,14 @@ public class RobotButtonTest {
 		}	
 		Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		bot.mouseMove((int)screenSize.width/2, (int)screenSize.height/2-110);
-		bot.mousePress(InputEvent.BUTTON1_MASK);
+		bot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 		bot.getAutoDelay();
-		bot.mouseRelease(InputEvent.BUTTON1_MASK);
+		bot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 		bot.getAutoDelay();
-		bot.mousePress(InputEvent.BUTTON1_MASK);
+		bot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 		bot.getAutoDelay();
-		bot.mouseRelease(InputEvent.BUTTON1_MASK);
+		bot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+		bot.getAutoDelay();
 		sleep(4000);
 	}
 	@Test
