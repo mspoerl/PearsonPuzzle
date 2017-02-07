@@ -75,7 +75,7 @@ public class EditOrderDialog extends JDialog implements Observer{
 		dialogPanel.add(topPanel);
 		
 		textPanel = new JTextArea();
-		String failureText = model.getOrderFailures(orderGroup.getSelectedIndex());
+		String failureText = model.getOrderFailureText(orderGroup.getSelectedIndex());
 		if(failureText==null || failureText.isEmpty()){
 			textPanel.setText(DEFAULT_CONTENT);
 		}
@@ -169,7 +169,7 @@ public class EditOrderDialog extends JDialog implements Observer{
 	}
 	
 	private void update(){
-		String failureText = model.getOrderFailures(orderGroup.getSelectedIndex());
+		String failureText = model.getOrderFailureText(orderGroup.getSelectedIndex());
 		if(failureText==null || failureText.isEmpty()){
 			textPanel.setText(DEFAULT_CONTENT);
 		}

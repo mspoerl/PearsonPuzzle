@@ -246,9 +246,9 @@ public class CodeSortAView extends AppletView{
 					failureText+="<span class=\"success\">Erfolgreich!";
 				else 
 					failureText+="<span class=\"failure\">Failed!";
-				if(model.getOrderFailures(key)!=null
-						&& !model.getOrderFailures(key).trim().isEmpty())
-					failureText+="</span><span class=\"comment\"> ( "+model.getOrderFailures(key)+")</span>";
+				if(model.getOrderFailureText(key)!=null
+						&& !model.getOrderFailureText(key).trim().isEmpty())
+					failureText+="</span><span class=\"comment\"> ( "+model.getOrderFailureText(key)+")</span>";
 				failureText += "</span></div>";
 			}
 			messageBox.setText(failureText+"</body></html>");

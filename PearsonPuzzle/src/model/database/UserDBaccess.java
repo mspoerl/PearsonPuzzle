@@ -698,7 +698,8 @@ public class UserDBaccess {
 			   { }
 			   else if(e.getSQLState().equals("42X05"))
 			   {}
-			   
+			   else if(e.getSQLState().equals("X0X95")) // Operation 'DROP TABLE' cannot be performed on object 'FZYGHSESUKYPEVN' because there is an open ResultSet dependent on that object
+			   {}
 			   else e.printStackTrace();}
 		   
 		   try{

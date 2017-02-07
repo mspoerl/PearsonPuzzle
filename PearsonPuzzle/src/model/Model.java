@@ -282,8 +282,11 @@ public class Model extends Observable {
 		if(hasChanged)
 			setChanged();
 	}
+	
+	
 	public String getProjectCode() {
-		return projectCode;
+		// XXX: Hier wurde am 7.2. trim() ergänzt Nebenwirkungen unbekannt
+		return projectCode.trim();
 	}
 	
 				// Projektvektor
@@ -698,6 +701,7 @@ public class Model extends Observable {
 	
 	/**
 	 * Kann nur ausgeführt werden, wenn Projekt selektiert wurde.
+	 * Speichert TabSize, Grade, JUnitCode, und alle Imports (Klassen, Methoden, Online). 
 	 */
 	public void saveProjectSettings(){
 		if(projectID!=null){
@@ -1034,16 +1038,16 @@ public class Model extends Observable {
 		this.orderFailureText.set(index, failureText);
 	}
 
-	public String getOrderFailures(int index) {
-		if(orderFailureText!=null)
+	public String getOrderFailureText(int index) {
+		if(orderFailureText!=null && index<orderFailureText.size())
 			return orderFailureText.get(index);
 		return null;
 	}
-	public String getOrderFailures(String gruppe) {
+	public String getOrderFailureText(String gruppe) {
 		gruppe = gruppe.replace("Test", "").trim();
 		try{
 			Integer index = Integer.parseInt(gruppe);
-			return getOrderFailures(index-1);
+			return getOrderFailureText(index-1);
 		} catch(Exception e){ return null;}
 	}
 
@@ -1059,6 +1063,13 @@ public class Model extends Observable {
 		dataBase.replaceDb(importfile, diskplace);
 		fetchAll();
 		notifyObservers();
+	}
+	
+	public void setDatabase(dbTransaction dataBaseConnection){
+		if(dataBaseConnection==null && this.dataBase!=null){
+			// TODO: Datenbankverbindung schließen implementieren;
+		}
+		this.dataBase = dataBaseConnection;
 	}
 
 }
