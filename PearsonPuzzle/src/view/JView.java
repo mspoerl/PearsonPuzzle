@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.io.File;
-import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.*;
@@ -32,12 +31,9 @@ import controller.DialogController;
  *
  */
 
-public abstract class JView implements Observer {
+public abstract class JView implements Observer, View {
 	
 	private static JFrame frame = new JFrame("PearsonPuzzle");
-	protected static final Color WHITE = Color.decode("#FFFFFF");
-	protected static final Color RED = Color.decode("#AF002A");
-	protected static final Color GREEN = Color.decode("#008000");
 	protected static final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
 	protected static final ImageIcon saveIcon = new ImageIcon("rsc/icon/file/save_blue.png");
 	
@@ -65,7 +61,6 @@ public abstract class JView implements Observer {
 		public void setController(Controller controller){
 			this.controller=controller;
 		}
-		public abstract void addController(Controller controller);
 		
 		/**
 		 * Methode, um das Fenster aufzusetzen ung grundlegende Fenstereinstellungen festzulegen. <br>
@@ -109,7 +104,6 @@ public abstract class JView implements Observer {
 		 * @return Controller dieses View 
 		 */
 		public Controller getController(){
-			// TODO: !!! Return kann noch null sein
 			return controller;
 		}
 		
@@ -127,7 +121,7 @@ public abstract class JView implements Observer {
 		 * (Methodenaufruf erfolgt durch den Controller) 
 		 */
 		abstract public void update();
-		abstract public void update(Observable o, Object arg);
+		
 		public void selectView(int i){};
 		
 		/**
@@ -143,7 +137,7 @@ public abstract class JView implements Observer {
 		 * @param message Darzustellende Nachricht
 		 */
 		public void showDialog(String message) {
-			JOptionPane.showMessageDialog(frame, message);
+			Allert.allert(frame, message);
 		}
 		
 		/**
@@ -157,7 +151,7 @@ public abstract class JView implements Observer {
 				return null;
 			}
 			else
-				return allert.allert(model);
+				return allert.allert(frame, model);
 		}
 		public void showDialog(final PPException exception, boolean modal){
 			view.dialog.JDialog dialog;
@@ -240,5 +234,13 @@ public abstract class JView implements Observer {
 		}
 		public void hide(){
 			frame.setVisible(false);
+		}
+		
+		/**
+		 * Pimär für Tests gedacht.
+		 * @return Model
+		 */
+		public Model getModel(){
+			return model;
 		}
 }

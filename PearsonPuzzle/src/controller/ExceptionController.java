@@ -39,5 +39,9 @@ public class ExceptionController implements Controller{
 	public JView getView() {
 		return view;
 	}
+	
+	public Model getModel(){
+		return model;
+	}
 
 }

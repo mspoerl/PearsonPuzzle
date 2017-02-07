@@ -63,7 +63,7 @@ public class ZipApp {
 	     * @param zipFile input zip file
 	     * @param output zip file output folder
 	     */
-	    public Vector<String> unZipIt(String zipFile, String outputFolder){
+	    public static Vector<String> unZipIt(String zipFile, String outputFolder){
 	    	
 	    	Vector<String> dataNames = new Vector<String>();
 

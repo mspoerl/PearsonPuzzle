@@ -31,7 +31,8 @@ public class OrderFailures {
 			sollutionString=sollutionString+string+"\n";
 		}
 		
-		if(sollutionString.equals(model.getProjectCode()))
+		// XXX: hier wurde am 7.2.2016 trim() ergänzt
+		if(sollutionString.trim().equals(model.getProjectCode()))
 		 	return true;
 		return false;
 	}

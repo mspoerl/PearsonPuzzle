@@ -579,4 +579,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 	public JView getView() {
 		return view;
 	}
+	public Model getModel(){
+		return model;
+	}
 }

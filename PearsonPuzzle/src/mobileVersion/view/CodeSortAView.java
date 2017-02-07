@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -45,9 +44,6 @@ public class CodeSortAView extends AppletView{
 	private AbstractButton unitTestButton;
 	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
 	private GameModel gameModel;
-	private Color WHITE = Color.decode("#FFFFFF");
-	private Color RED = Color.decode("#AF002A");
-	private Color GREEN = Color.decode("#008000");
 	
 	
 	public CodeSortAView(Model model) {
@@ -250,9 +246,9 @@ public class CodeSortAView extends AppletView{
 					failureText+="<span class=\"success\">Erfolgreich!";
 				else 
 					failureText+="<span class=\"failure\">Failed!";
-				if(model.getOrderFailures(key)!=null
-						&& !model.getOrderFailures(key).trim().isEmpty())
-					failureText+="</span><span class=\"comment\"> ( "+model.getOrderFailures(key)+")</span>";
+				if(model.getOrderFailureText(key)!=null
+						&& !model.getOrderFailureText(key).trim().isEmpty())
+					failureText+="</span><span class=\"comment\"> ( "+model.getOrderFailureText(key)+")</span>";
 				failureText += "</span></div>";
 			}
 			messageBox.setText(failureText+"</body></html>");

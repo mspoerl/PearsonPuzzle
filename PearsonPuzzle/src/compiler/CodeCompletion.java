@@ -23,7 +23,6 @@ public class CodeCompletion {
 	 * @return Klassenname (erster vorkommender)
 	 */
 	public static String extractClassName(String sourceCode){
-		System.out.println("TOEXTRACT"+sourceCode);
 		if(sourceCode==null)
 			return null;
 		String className = null;
@@ -31,12 +30,12 @@ public class CodeCompletion {
 		Pattern pattern = Pattern.compile("(\\s+class+\\s)");
 		Matcher matcher = pattern.matcher(sourceCode);
 		if(matcher.find()){
-			Integer indexOfClass = matcher.start();
-			Integer endIndex = sourceCode.indexOf("{",indexOfClass+6);
+			//Integer indexOfClass = matcher.start();
+			Integer endIndex = sourceCode.indexOf("{",matcher.end());
 			if(endIndex == -1)
-				substring = sourceCode.substring(indexOfClass+6).trim();
+				substring = sourceCode.substring(matcher.end()).trim();
 			else
-				substring = sourceCode.substring(indexOfClass+6, endIndex).trim();
+				substring = sourceCode.substring(matcher.end(), endIndex).trim();
 			pattern = Pattern.compile("\\s");
 			matcher = pattern.matcher(substring);
 			if(matcher.find())
@@ -46,6 +45,7 @@ public class CodeCompletion {
 		}
 		return className;
 	}
+	
 
 	/**
 	 * Estrahiert aus den beiden Codezeilen line1 und line2 den auf expression folgenden zusammenhängenden String. 
@@ -57,6 +57,9 @@ public class CodeCompletion {
 	 * @return	Paket- bzw. Import-Name
 	 */
 	public static String extractDeclarationName(String line1, String line2, String expression) {
+		if(expression == null || line1 ==null )
+			return null;
+		System.out.println("finde "+expression+" in: \t"+line1+line2);
 		if(line2==null)
 			line2="";
 		String declarationName=null;
@@ -103,6 +106,7 @@ public class CodeCompletion {
 			declarationName = declarationName.substring(0, declarationName.indexOf(";"));
 		if(declarationName!=null && declarationName.isEmpty())
 			return null;
+		System.out.println(declarationName);
 		return declarationName;				
 	}
 

@@ -31,7 +31,7 @@ import model.Model;
  * 
  * @author workspace
  */
-public class Applet extends JFrame{
+public class Applet extends JFrame {
 	private static final long serialVersionUID = -6156615178571385705L;
 
 	private Model model;

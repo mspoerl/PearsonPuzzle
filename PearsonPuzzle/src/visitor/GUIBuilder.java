@@ -13,6 +13,8 @@ import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 import controller.Controller;
 import controller.DefaultController;
 import controller.ExceptionController;
+import mobileVersion.controller.AppletController;
+import mobileVersion.view.AppletView;
 import model.Model;
 import view.JView;
 import view.LoginView;
@@ -25,30 +27,55 @@ import view.dialog.InitializeAccess;
  * 
  * @author workspace
  */
-public class user {
-	private static Controller controller;
+public class GUIBuilder {
+	private Controller controller;
 	public static void main (String args[]){
 		try {
 			  //UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 			  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		} catch( Exception e ) { e.printStackTrace(); }
-		setupGUI();
+		GUIBuilder usr = new GUIBuilder();
+		usr.setupGUI();
 		//runJEdit();
 	}
-	public static void setupGUI(){
-		Model model = new Model();
-		LoginView startView = new LoginView(model);
-		controller = new DefaultController(model, startView);
-		startView.addController(controller);
-		startView.setController(controller);
-		startView.drawFrame();
+	
+
+	public GUIBuilder(){
 	}
-	public static void setupExceptionGUI(){
+
+	public GUIBuilder(Model model, AppletView view){
+		controller = new AppletController(model, view);
+		view.addController(controller);
+	}
+	public GUIBuilder(Model model, JView view){
+		controller = new DefaultController(model, view);
+		view.addController(controller);
+	}
+	public void setupGUI(){
+		if(controller==null){
+			Model model = new Model();
+			LoginView startView = new LoginView(model);
+			controller = new DefaultController(model, startView);
+			startView.addController(controller);
+			startView.setController(controller);
+			startView.drawFrame();
+		}
+		else
+			((JView) controller.getView()).drawFrame();
+	}
+	public void setupExceptionGUI(){
 		Model model = new Model();
 		JView view = new InitializeAccess(model);
 		controller = new ExceptionController(model, view);
 		view.drawFrame();
 	}
+	
+	public Controller getController(){
+		return controller;
+	}	
+	
+	
+	
 	public static void runUnitTest(){
 		
 		final String unitText = "import org.junit.Test; \nimport static org.junit.Assert.*; \n\npublic class testcase_Test{\n\t@Test\n\t"+"public void testMethode1(){ \n"+"\t\tassertTrue( true);\n\t}}\n";

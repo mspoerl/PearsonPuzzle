@@ -143,6 +143,10 @@ public class AppletController implements Controller{
 	public AppletView getView() {
 		return view;
 	}
+	
+	public Model getModel(){
+		return model;
+	}
 
 	/**
 	 * Legt fest, was beim Ändern der Selektion eines Listenelemts passiert.

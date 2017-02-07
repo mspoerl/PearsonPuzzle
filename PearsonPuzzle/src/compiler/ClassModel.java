@@ -2,7 +2,6 @@ package compiler;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -144,7 +143,7 @@ public class ClassModel {
 		 
 		 // Falls der Code " class " enthält, werden diese Klassen herausgefiltert.
 		 else{
-			 Vector<String> srcVector= new Vector<String>();
+			 LinkedList<String> srcVector= new LinkedList<String>();
 			 for(String line: src.split("\n")){
 				 srcVector.add(line);
 			 }
@@ -158,7 +157,7 @@ public class ClassModel {
 	 * 
 	 * @param codeLines
 	 */
-	private void fillSrcCodeMap(Vector<String> codeLines){
+	private void fillSrcCodeMap(LinkedList<String> codeLines){
 		String className=new String();
 		String packageString = new String();
 		LinkedList<String> importStrings = new LinkedList<String>();
@@ -199,15 +198,18 @@ public class ClassModel {
 					}
 				}
 				if(line.contains(" class ")){
+					if(line.indexOf(" class ")!=line.lastIndexOf(" class ")){
+						// FIXME: zwei Klassen in einer Zeile handeln
+					}
 					if(className.isEmpty()){
 						className = CodeCompletion.extractClassName(line);
 						solutionString=solutionString+"\n"+line;
 					}
-					else{						
+					else{					
 						srcCodeMap.put(className, solutionString);
 						packageString = new String();
 						importStrings = new LinkedList<String>();
-						className = new String();
+						className = CodeCompletion.extractClassName(line);
 						solutionString=new String(line);
 					}
 				}

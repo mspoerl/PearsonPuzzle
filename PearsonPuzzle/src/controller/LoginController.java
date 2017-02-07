@@ -78,8 +78,10 @@ public class LoginController implements Controller{
 	}
 
 	public JView getView() {
-		// TODO Auto-generated method stub
-		return null;
+		return view;
+	}
+	public Model getModel(){
+		return model;
 	}
 }
 	/*

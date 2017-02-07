@@ -696,6 +696,10 @@ public class UserDBaccess {
 		   catch(SQLException e){
 			   if(e.getSQLState().equals("XCL16")) // while-Schleife wurde verlassen ( Error: ResultSet not open. Operation '<operation>' not permitted. Verify that autocommit is OFF.)
 			   { }
+			   else if(e.getSQLState().equals("42X05"))
+			   {}
+			   else if(e.getSQLState().equals("X0X95")) // Operation 'DROP TABLE' cannot be performed on object 'FZYGHSESUKYPEVN' because there is an open ResultSet dependent on that object
+			   {}
 			   else e.printStackTrace();}
 		   
 		   try{
@@ -703,7 +707,9 @@ public class UserDBaccess {
 			   stmt.executeUpdate("DROP TABLE Projects");
 		   }catch(SQLException e){
 			   if(e.getSQLState().equals("42Y55")) // Tabelle Projects existiert nicht (Error: '<value>' cannot be performed on '<value>' because it does not exist.)
-			   { }
+			   {}
+			   else if(e.getSQLState().equals("42X05")) // Table/View 'PROJECTS' does not exist.
+			   {}
 			   else e.printStackTrace();
 		   }
 		   
