@@ -5,18 +5,12 @@ import java.util.Observable;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import view.PPException;
-import view.dialog.AddUserDialog;
-import view.dialog.FileChooserDialog;
-
 import controller.Controller;
 import controller.DCCommand;
-import controller.DialogController;
 
 import model.Model;
 
@@ -66,34 +60,6 @@ public class LoginAView extends AppletView {
 			showDialog(model.getException(), true);
 	}
 	
-	private void showDialog(PPException exception, boolean b) {
-		view.dialog.JDialog dialog;
-		if(exception.getMessage()==PPException.databaseIsEmpty){
-			// Titel "Ersten Nutzer anlegen" wichtig für Dialog Controller
-			Object[] options = {"Datensatz laden", "Datensatz erstellen"};
-			int n = JOptionPane.showOptionDialog(null,
-				    "Would you like some green eggs to go "
-				    + "with that ham?",
-				    "A Silly Question",
-				    JOptionPane.OK_CANCEL_OPTION,
-				    JOptionPane.QUESTION_MESSAGE,
-				    null,
-				    options,
-				    options[0]);
-			if(n==0){
-				new FileChooserDialog();
-				return;
-			}
-			else
-				dialog = new AddUserDialog(null, model, "Ersten Nutzer anlegen");
-		}
-		else 
-			dialog=null;
-		new DialogController(model, dialog);
-		dialog.pack();
-		dialog.setVisible(true);
-		dialog.repaint();		
-	}
 	/**
 	 * Controller mit Action Listener Implementierung @param controller
 	 */
@@ -116,10 +82,7 @@ public class LoginAView extends AppletView {
 			return password.getPassword();
 	return null;
 	}
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+	
+	public void update(Observable arg0, Object arg1) {	
 	}
-	
-	
 }

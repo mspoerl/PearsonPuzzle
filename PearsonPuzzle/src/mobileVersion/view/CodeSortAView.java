@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -45,9 +44,6 @@ public class CodeSortAView extends AppletView{
 	private AbstractButton unitTestButton;
 	private final Color DEFAULTBUTTONCOLOR = (new JButton()).getBackground();
 	private GameModel gameModel;
-	private Color WHITE = Color.decode("#FFFFFF");
-	private Color RED = Color.decode("#AF002A");
-	private Color GREEN = Color.decode("#008000");
 	
 	
 	public CodeSortAView(Model model) {

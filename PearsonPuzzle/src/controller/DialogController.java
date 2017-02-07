@@ -15,7 +15,6 @@ import compiler.TestCompiler;
 
 import model.Model;
 
-import view.JView;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.CompileDialog;
@@ -70,9 +69,12 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 		
 	}
 
-	public JView getView() {
-		// TODO Auto-generated method stub
-		return null;
+	public JDialog getView() {
+		return dialog;
+	}
+	
+	public Model getModel(){
+		return model;
 	}
 
 	/** This method reacts to state changes in the option pane. */
