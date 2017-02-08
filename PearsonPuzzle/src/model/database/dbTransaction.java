@@ -27,12 +27,10 @@ public class dbTransaction implements Transaction{
 	 
 	private UserDBaccess userDBaccess;
 	private Model model;
-	private ZipApp app;
 	
 	public dbTransaction(Model model) throws PPException{
 		this.model=model;
 		try {
-			app= new ZipApp();
 			userDBaccess = new UserDBaccess();
 			//userDBaccess.resetAll();
 		} catch (SQLException e) {

@@ -14,6 +14,7 @@ import model.Model;
 import model.access.AccessGroup;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +27,6 @@ import org.junit.Test;
  * <ul><li> Dass der sollution-Vecotr nicht geprüft wird. (Da er bei jedem model.fetchAll(); neu initialisiert wird.</li>
  * <li>Vectoren in der Regel nicht auf Korrektheit, sonder nur auf "nicht Null" und "nicht Leer" geprüft werden. (Einzige Ausnahme stellt im Moment der User-Vector dar.)</li>
  * </ul> 
- * 
  * 
  * @author workspace
  *
@@ -70,8 +70,11 @@ public class dbTransaction_ExportTest {
 	public void initiailze_Test(){
 		model = new Model();
 		model.fetchAll();
-		if(!model.saveProject(projectCode, projectName, projectDescription, 150))
-			fail("es Existiert bereits ein Projekt mit Name \"projektName\"");
+		
+		// Test werden bei Bedarf abgebrochen
+		Assume.assumeFalse("Datensatz nicht initialisiert (Es ist kein Teacher in der Datenbank hinterlegt.) Bitte Legen Sie erst einen TEACHER an.", model.getUsers(AccessGroup.TEACHER).isEmpty());
+		Assume.assumeTrue("Es Existiert bereits ein Projekt mit Name \"projektName\"",model.saveProject(projectCode, projectName, projectDescription, 150));
+		
 		
 		model.setGrade(grade);
 		model.setJUnitCode(jUnitCode );
@@ -100,8 +103,9 @@ public class dbTransaction_ExportTest {
 		for(AccessGroup acGroup : AccessGroup.values()){
 			userGroup.put(acGroup, model.getUsers(acGroup));
 		}
+		
 		if(model.getProjectVector()== null || model.getProjectVector().isEmpty()){
-			fail("no Data");
+			fail("Es wurden keine Projekte in der Datenbank gefunden.");
 		}
 		
 		// Falls der Test nur prüfen soll, dass die Werte im Model richtig gesetzt wurden,
