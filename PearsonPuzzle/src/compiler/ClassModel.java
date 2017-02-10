@@ -1,5 +1,6 @@
 package compiler;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -12,16 +13,64 @@ public class ClassModel {
 	private String constructedClass_Name;
 	private String constructedMethod_Name;
 	private HashMap<String, String> srcCodeMap;
+	private HashMap<String, Collection<String>> importMap;
+	private HashMap<String, String> packageMap;
 
+	/**
+	 * HashMap sourceCodeMap wird mit Inhalt gefüllt.<br>
+	 * Falls in src keine Klasse definiert wird, wird der Code "gewrapt". Dies geschieht, in dem eine Klasse namens <DEFAULT_CLASS_NAME> erstellt wird, kommt dieser Name bereits in der srcCodeMap (als Key) oder in src vor, werden Uterstriche angefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist.<br>
+	 * Falls in src zusätzlich auch keine Methode deklariert ist, wird  auch diese "gewrapt". Dies geschieht, indem eine Methode namens <DEFAULT_METHOD_NAME> erstellt wird. Kommt dieser Name bereits in src vor, werden Unterstriche eingefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist. <br>
+	 * Falls ein return enthalten ist, wird der Methode der Rückgabewert Object gegeben.
+	 * 
+	 */
 	public ClassModel(String sourceCode, String methodImports, String onlineImports, String classImports) {
+		sourceCode = CodeCompletion.removeComment(sourceCode);
+		methodImports = CodeCompletion.removeComment(methodImports);
+		onlineImports = CodeCompletion.removeComment(onlineImports);
+		classImports = CodeCompletion.removeComment(classImports);
+		
 		fillSrcCodeMap(sourceCode);
 		addMethods(methodImports);
 		addOnlineImport(onlineImports);
 		addClasses(classImports);
 	}
 	
+	/**
+	 * Liefert eine Hash Map in der Form:
+	 * Klassenname -> Sourcecode
+	 * @return Klassenname -> Sourcecode
+	 */
 	public HashMap<String, String> getCodeMap(){
 		return srcCodeMap;
+	}
+	
+	/**
+	 * Liefert eine Liste mit imports, die die Klasse benötigt. 
+	 * Wollen diese verwendet werden, müssen die Einträge in der Collection im Stil <b>import importName;</b> verwendet werden
+	 * @param className
+	 * @return importNames
+	 */
+	public Collection<String> getImport(String className){
+		if(importMap==null)
+			return null;
+		else if(importMap.containsKey(className))
+			return importMap.get(className);
+		else
+			return null;
+	}
+	
+	/**
+	 * Liefert den Packetnamen zum Klassennamen.
+	 * @param className
+	 * @return packegeName
+	 */
+	public String getPackage(String className){
+		if(packageMap==null)
+			return null;
+		else if(packageMap.containsKey(className))
+			return packageMap.get(className);
+		else
+			return null;
 	}
 	
 	/**
@@ -43,7 +92,8 @@ public class ClassModel {
 	}
 
 	/**
-	 * FIXME: package handeln
+	 * Fügt online imports (import ...;) zu Beginn der Klasse an.
+	 * Dabei wird auf etwaige vorherige festgelegte packages geachtet.
 	 */
 	private void addOnlineImport(String onlineImports){
 		if(onlineImports == null || onlineImports.trim().isEmpty())
@@ -51,8 +101,15 @@ public class ClassModel {
 		for(String codeName : srcCodeMap.keySet()){
 			if(!srcCodeMap.get(codeName).trim().startsWith("package "))
 				srcCodeMap.put(codeName, onlineImports.trim()+"\n"+srcCodeMap.get(codeName));
-			else 
-				srcCodeMap.put(codeName, onlineImports.trim()+"\n"+srcCodeMap.get(codeName));
+			else{
+				Pattern patter = Pattern.compile("package\\s.*;");
+				Matcher matcher = patter.matcher(srcCodeMap.get(codeName));
+				matcher.find();
+				srcCodeMap.put(codeName, 
+						srcCodeMap.get(codeName).substring(0, matcher.end())
+						+"\n"+onlineImports.trim()
+						+srcCodeMap.get(codeName).substring(matcher.end()));
+			}
 		}
 	}
 	
@@ -93,8 +150,6 @@ public class ClassModel {
 		String method="";
 		if(srcCodeMap==null)
 			srcCodeMap = new HashMap<String, String>();
-		
-		// TODO: Kommentare entfernen
 		// TODO: Klasse in Klasse handeln
 		
 		 // Konflikte bezüglich des Klassennamens werden ausgeschlossen
@@ -137,7 +192,6 @@ public class ClassModel {
 				 constructedMethod_Name = methodName;
 				 src+="\n}";
 			 }
-			 
 			 srcCodeMap.put(className, src);
 		 }
 		 
@@ -153,7 +207,7 @@ public class ClassModel {
 	
 	/**
 	 * HashMap sourceCodeMap wird mit Inhalt gefüllt. Tut nicht, wenn keine codeLine mit " class " enthalten, spirch in codeLines keine Klasse definiert ist. 
-	 * Imports und packages werden herausgefiltert und Klassenspezifisch verarbeitet.
+	 * Imports und packages werden herausgefiltert und können Klassenspezifisch verarbeitet werden.
 	 * 
 	 * @param codeLines
 	 */
@@ -175,7 +229,7 @@ public class ClassModel {
 //						packageString = packageString.trim();
 					}
 					else if(!className.isEmpty()){
-						srcCodeMap.put(className, solutionString);
+						putClass(className, solutionString, packageString, importStrings);
 						packageString = new String();
 						importStrings = new LinkedList<String>();
 						className = new String();
@@ -190,7 +244,7 @@ public class ClassModel {
 						importStrings.add(importString.trim());
 					}
 					else{
-						srcCodeMap.put(className, solutionString);
+						putClass(className, solutionString, packageString, importStrings);
 						packageString = new String();
 						importStrings = new LinkedList<String>();
 						className = new String();
@@ -206,7 +260,7 @@ public class ClassModel {
 						solutionString=solutionString+"\n"+line;
 					}
 					else{					
-						srcCodeMap.put(className, solutionString);
+						putClass(className, solutionString, packageString, importStrings);
 						packageString = new String();
 						importStrings = new LinkedList<String>();
 						className = CodeCompletion.extractClassName(line);
@@ -220,7 +274,35 @@ public class ClassModel {
 		if(className.isEmpty())	
 			fillSrcCodeMap(solutionString);
 		else
-			srcCodeMap.put(className, solutionString);
+			putClass(className, solutionString, packageString, importStrings);
+	}
+
+	private void putClass(String className, String solutionString,
+			String packageString, LinkedList<String> importStrings) {
+		if(srcCodeMap.containsKey(className)){
+			// TODO: Mehrfacheinträge handeln
+		}
+		if(packageMap.containsKey(className)){
+			// TODO: Mehrfacheinträge handeln
+		}
+		if(importMap.containsKey(className)){
+			Collection<String> buffer = importMap.get(className);
+			buffer.addAll(importStrings);
+			importMap.put(className, buffer);
+		}
+			
+		srcCodeMap.put(className, solutionString);
+		
+		if(packageString!=null && !packageString.isEmpty()){
+			if(packageMap==null)
+				packageMap = new HashMap<String, String>();
+			packageMap.put(className, packageString);
+		}
+		if(importStrings!=null && !importStrings.isEmpty()){
+			if(importMap==null)
+				importMap = new HashMap<String, Collection<String>>();
+			importMap.put(className, importStrings);
+		}		
 	}
 	
 

@@ -23,7 +23,7 @@ public class CodeCompletion_Test {
 	@Parameterized.Parameters
 	   public static Collection<Object[]> primeNumbers() {
 	      return Arrays.asList(new Object[][] {
-	    		  {"classt", "classt",  	"public class classt ;"},
+	    		  {"classt", "classt;",  	"//ass \npublic /**dnnd\ndn*/class /**d\n\ndndn*/classt;"},
 	    		  {"classt", "classt",  	"public class\n classt ;"},
 	    		  {null, "classt",  	"public\n class classt {"},
 	    		  {"classt", "classt", 	"public class classt\n\t ;asdd d\t "},
@@ -34,11 +34,11 @@ public class CodeCompletion_Test {
 	    		  {null, null, null}
 	      });
 	   }
-
 	private String testString;
 	private String expectedResult_className;
 	private String expectedResult_Decalaration;
-	   public CodeCompletion_Test(String expectedResult_Declaration, String expectedResult_className, String testString) {
+	
+	public CodeCompletion_Test(String expectedResult_Declaration, String expectedResult_className, String testString) {
 		      this.testString = testString;
 		      this.expectedResult_Decalaration = expectedResult_Declaration;
 		      this.expectedResult_className = expectedResult_className;
@@ -50,7 +50,8 @@ public class CodeCompletion_Test {
 	}
 	@Test
 	public void extractDeclarationName_Test() {
-		assertEquals(expectedResult_Decalaration,CodeCompletion.extractDeclarationName(testString, "classt;", "public class"));
+		String withoutComments = CodeCompletion.removeComment(testString);
+		assertEquals(expectedResult_Decalaration,CodeCompletion.extractDeclarationName(withoutComments, "classt;", "public class"));
 	}
 	
 	

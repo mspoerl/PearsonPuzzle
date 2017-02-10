@@ -263,7 +263,7 @@ public class UnitRunner {
 //			srcCodeMap.put(className, solutionString);
 //	}
 //	
-	
+	@Deprecated
 	/**
 	 * Klassen in srcCodeMap werden in den Hauptspeicher geladen, stehen dann zwischenzeitlich zum Zugriff bereit und werden dann wieder gelöscht.
 	 */
@@ -344,7 +344,7 @@ public class UnitRunner {
 			try {
 				fileManager.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -359,7 +359,6 @@ public class UnitRunner {
 			 compileFailure.put("Art", ""+diagnostic.getKind());
 			 compileFailure.put("Quelle", ""+diagnostic.getSource());
 			 compileFailure.put("Code", ""+sourceCode);
-			 // TODO: Fehlerbericht anpassen (Nachricht)
 			 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
 			 compileFailure.put("Zeile", ""+diagnostic.getLineNumber() );
 			 compileFailure.put("Position", ""+diagnostic.getPosition());
@@ -385,7 +384,6 @@ public class UnitRunner {
 			 compileFailure.put("Art", ""+diagnostic.getKind());
 			 compileFailure.put("Quelle", ""+diagnostic.getSource().toString());
 			 compileFailure.put("Code", ""+diagnostic.getCode());
-			 // TODO: Fehlerbericht anpassen (Nachricht)
 			 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
 			 compileFailure.put("Zeile", ""+diagnostic.getLineNumber() );
 			 compileFailure.put("Position", ""+diagnostic.getPosition());

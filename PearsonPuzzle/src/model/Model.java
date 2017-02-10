@@ -154,7 +154,7 @@ public class Model extends Observable {
 			setChanged(this.grade, grade);
 			this.grade = grade;
 		} else {
-			// TODO: Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
+			// Fehlerausgabe: Diese Jahrgangsstufe ist nicht klassifiziert
 		}
 		boolean hasChanged = new Boolean(hasChanged());
 		notifyObservers();
@@ -192,7 +192,6 @@ public class Model extends Observable {
 	}
 
 	// --- Zugriffsgruppe
-	// TODO: in accessGroup auslagern
 	public void login(String username, char[] password){
 		this.accessGroup = getAccessGroup(username, password);
 		this.username = username;
@@ -347,7 +346,7 @@ public class Model extends Observable {
 		}
 		
 		public void saveRandomisation(){
-			if(sortedCode.isEmpty() && sortedCode.size()==codeVector_normal.size())
+			if(!sortedCode.isEmpty() && sortedCode.size()==codeVector_normal.size())
 				normalizeSortedCode();
 			if(ValueValidation.isValidRandomization(sortedCode, codeVector_normal)){
 				dataBase.setRandomKeys(getProjectName(), getSollutionOrder());
@@ -461,7 +460,6 @@ public class Model extends Observable {
 	 * Zustand nach der Methode: codeVector_normal: ("a","a","b") codeMap: {"a"-> 0, "b"->2} sortedCode (0,1,2)
 	 */
 	private void normalizeSortedCode(){
-		System.out.println(sortedCode);
 		for(int i=0; i<codeVector_normal.size(); i++){
 			if(!sortedCode.contains(i) && sortedCode.contains(codeMap.get(codeVector_normal.get(i)))){
 				try{
@@ -478,7 +476,6 @@ public class Model extends Observable {
 				}
 			}
 		}
-		System.out.println(sortedCode);
 	}
 	
 	/**
