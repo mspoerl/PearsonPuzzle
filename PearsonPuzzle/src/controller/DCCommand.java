@@ -12,9 +12,9 @@ public enum DCCommand {
 	// Button Commands
 		ShowHelp, Save, ResetDB, SetConfig, DeleteProject, AddOrder, Compile, TestCode, SaveProjectConfiguration,
 	// View Changes
-		EditConfig,EditProject, EditUsers, EditJUnit, EditPreview, NewProject, OpenProject, ProjectList, Login, Logout, Admin, DeleteOrder,
+		EditConfig,EditProject, EditUsers, EditJUnit, EditPreview, NewProject, OpenProject, ProjectList, Login, Logout, Admin,
 	// Dialogs
-		AddUser, AddClasses, AddMethods, EditOrderGroup, DB_Import, DB_Export, Applet, Test;
+		AddUser, AddClasses, AddMethods, EditOrderGroup, DB_Import, DB_Export, Applet, Test, DeleteOrder;
 	
 	@Override
 	public String toString(){

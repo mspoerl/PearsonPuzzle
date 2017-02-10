@@ -41,7 +41,7 @@ public class jUnitRunner_Test {
 	   }
 
 	   @Parameterized.Parameters
-	   public static Collection<Object[]> primeNumbers() {
+	   public static Collection<Object[]> codeToBeTested() {
 	      return Arrays.asList(new Object[][] {
 	    		// normale Klasse
 	         {true, "public class first{ \npublic static void main(String args[]){\nSystem.out.println(\"alles klar\");}}"},	// 	

@@ -75,7 +75,6 @@ public class OrderFailures {
 	public static LinkedList<Boolean> testOrder_groups(LinkedList<Integer> sortedCode,
 			 Vector<Vector<Integer>> codeLine_GroupMatrix, LinkedHashMap<String, Integer> codeMap, Vector<String> codeVector_normal) {
 			
-//		System.out.println("sortedCode: "+sortedCode);
 		LinkedList<Boolean> groupFailures = new LinkedList<Boolean>();
 		TreeMap<Integer, HashMap<String, Integer>>  treeMap;
 		for(Vector<Integer> groupRule : codeLine_GroupMatrix){
@@ -87,7 +86,20 @@ public class OrderFailures {
 			HashMap<String, Integer> minIndex = new HashMap<String, Integer>();
 			treeMap.clear();
 			for(Integer rule : groupRule){
-				if(rule!= null && rule !=0){
+				if(rule==null){
+					// TODO:  
+				}
+				else if(rule == 0){
+					// Dies stellt den Fall dar, dass die Sortierung dieser Zeile nicht berücksichtigt wird.
+				}
+				else if(rule == -1){
+					if(sortedCode.contains(codeMap.get(codeVector_normal.get(line)))){
+						groupFailures.add(false);			
+						break;
+					}
+				}
+				
+				else{
 					String keyString = codeVector_normal.get(line);
 					
 					// Regel nicht auf gleicher Ebene wie vorhergehende
