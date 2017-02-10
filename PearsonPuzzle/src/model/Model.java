@@ -461,12 +461,24 @@ public class Model extends Observable {
 	 * Zustand nach der Methode: codeVector_normal: ("a","a","b") codeMap: {"a"-> 0, "b"->2} sortedCode (0,1,2)
 	 */
 	private void normalizeSortedCode(){
+		System.out.println(sortedCode);
 		for(int i=0; i<codeVector_normal.size(); i++){
 			if(!sortedCode.contains(i) && sortedCode.contains(codeMap.get(codeVector_normal.get(i)))){
-				int j = sortedCode.lastIndexOf(codeMap.get(codeVector_normal.get(i)));
-				sortedCode.set(j, i);
+				try{
+				List<Integer> buffer = sortedCode.subList(sortedCode.indexOf(codeMap.get(codeVector_normal.get(i)))+1, sortedCode.size());
+				int j = buffer.indexOf(codeMap.get(codeVector_normal.get(i)));
+				
+				//int j = sortedCode.lastIndexOf(codeMap.get(codeVector_normal.get(i)));
+				if(j>=0)
+					sortedCode.set(j+sortedCode.size()-buffer.size(), i);
+					// sortedCode.set(j,i);
+				}
+				catch(Exception e){
+					//e.printStackTrace();
+				}
 			}
 		}
+		System.out.println(sortedCode);
 	}
 	
 	/**
@@ -484,12 +496,12 @@ public class Model extends Observable {
 			notifyObservers(DCCommand.Test);
 			return successMap;
 		}
-		else if(sortedCode.size()<codeVector_normal.size()){
-			successMap.put("Ausreichend viele Einträge", false);
-			setChanged();
-			notifyObservers(DCCommand.Test);
-			return successMap;
-		}
+//		else if(sortedCode.size()<codeVector_normal.size()){
+//			successMap.put("Ausreichend viele Einträge", false);
+//			setChanged();
+//			notifyObservers(DCCommand.Test);
+//			return successMap;
+//		}
 		
 		normalizeSortedCode();
 		
@@ -1070,6 +1082,10 @@ public class Model extends Observable {
 			// TODO: Datenbankverbindung schließen implementieren;
 		}
 		this.dataBase = dataBaseConnection;
+	}
+	
+	public void setAccessGroup(AccessGroup accessGroup){
+		this.accessGroup = accessGroup;
 	}
 
 }

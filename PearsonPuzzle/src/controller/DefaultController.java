@@ -169,10 +169,10 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 				view.quitView();
 				// Daten werden aus der Datenbank geladen
 				model.fetchAll();
-				if(model.getAccessGroup().equals(AccessGroup.STUDENT))
-					this.view= new PupilView(model);
-				else
+				if(model.getAccessGroup().equals(AccessGroup.TEACHER))
 					this.view= new TeacherView(model);
+				else
+					this.view= new PupilView(model);
 				view.addController(this);
 				break;
 			case Admin:

@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Mon Feb 06 12:19:24 CET 2017:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-015a-1326-576f-0000029fd3b0 
+Fri Feb 10 17:37:42 CET 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-015a-28e3-2fe0-000002a48200 
 on database directory /home/workspace/git2/PearsonPuzzle/database  with class loader sun.misc.Launcher$AppClassLoader@57364b53 
 Loaded from file:/home/workspace/.m2/repository/org/apache/derby/derby/10.8.3.0/derby-10.8.3.0.jar
 java.vendor=Oracle Corporation

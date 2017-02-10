@@ -17,7 +17,7 @@ import controller.DCCommand;
 import controller.DefaultController;
 
 
-public class randomKlickTest {
+public class RandomKlick_Test {
 	
 	
 	@Test

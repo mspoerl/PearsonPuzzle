@@ -1,9 +1,4 @@
-/**
- * 
- */
 package model_Test;
-
-import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.HashMap;
@@ -14,6 +9,7 @@ import model.Model;
 import model.access.AccessGroup;
 
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +20,14 @@ import org.junit.Test;
  * 
  * Wird wie in initiailze_Test(); kommentiert die Zeile *exportImportData();* durch *secondModel = model;* ersetzt, kann der Test genutzt werden, um zu prüfen, 
  * ob im Model die richtigen Werte gesetzt wurden. <br>Dabei ist allerdings zu beachten:
- * <ul><li> Dass der sollution-Vecotr nicht geprüft wird. (Da er bei jedem model.fetchAll(); neu initialisiert wird.</li>
+ * <ul><li> Dass der sollution-Vector nicht geprüft wird. (Da er bei jedem model.fetchAll(); neu initialisiert wird.</li>
  * <li>Vectoren in der Regel nicht auf Korrektheit, sonder nur auf "nicht Null" und "nicht Leer" geprüft werden. (Einzige Ausnahme stellt im Moment der User-Vector dar.)</li>
  * </ul> 
  * 
  * @author workspace
  *
  */
-public class dbTransaction_ExportTest {
+public class DbTransaction_Export_Test {
 
 	private final static String location = "gen_rsc/database";
 	private Model model;
@@ -74,7 +70,6 @@ public class dbTransaction_ExportTest {
 		// Test werden bei Bedarf abgebrochen
 		Assume.assumeFalse("Datensatz nicht initialisiert (Es ist kein Teacher in der Datenbank hinterlegt.) Bitte Legen Sie erst einen TEACHER an.", model.getUsers(AccessGroup.TEACHER).isEmpty());
 		Assume.assumeTrue("Es Existiert bereits ein Projekt mit Name \"projektName\"",model.saveProject(projectCode, projectName, projectDescription, 150));
-		
 		
 		model.setGrade(grade);
 		model.setJUnitCode(jUnitCode );
@@ -125,81 +120,82 @@ public class dbTransaction_ExportTest {
 	
 	@Test
 	public void testMainParameters(){
-		assertEquals(model.getCodeVector(true),secondModel.getCodeVector(true));
-		assertEquals(model.getCodeVector(false),secondModel.getCodeVector(false));
-		assertNotNull(secondModel.getCodeVector(true));
-		assertNotNull(secondModel.getCodeVector(false));
-		assertNotEquals(secondModel.getCodeVector(true), new Vector<String>());
-		assertNotEquals(secondModel.getCodeVector(false), new Vector<String>());
+		assertEquals("getCodeVector(true) liefert unterschiedliche Ergebnisse", model.getCodeVector(true),secondModel.getCodeVector(true));
+		assertEquals("getCodeVector(false) liefert unterschiedliche Ergebnisse", model.getCodeVector(false),secondModel.getCodeVector(false));
+		assertNotNull("getCodeVector(true) ist NULL", secondModel.getCodeVector(true));
+		assertNotNull("getCodeVector(false) ist NULL", secondModel.getCodeVector(false));
+		assertNotEquals("getCodeVEctor(true) ist leer",secondModel.getCodeVector(true), new Vector<String>());
+		assertNotEquals("getCodeVector(false) ist leer",secondModel.getCodeVector(false), new Vector<String>());
 		
-		assertEquals(model.getProjectName(), secondModel.getProjectName());
-		assertEquals(projectName, secondModel.getProjectName());
-		assertEquals(model.getProjectCode(), secondModel.getProjectCode());
-		assertEquals(projectCode, secondModel.getProjectCode().trim());
+		assertEquals("Problem bei Export&Import", model.getProjectName(), secondModel.getProjectName());
+		assertEquals("Problem beim Speichern der Werte", projectName, secondModel.getProjectName());
+		assertEquals("Problem bei Export&Import", model.getProjectCode(), secondModel.getProjectCode());
+		assertEquals("Problem beim Speichern der Werte", projectCode, secondModel.getProjectCode().trim());
 	}
 	
 	@Test 
 	public void testSettings(){	
 		//assertEquals(model.getGrade(), secondModel.getGrade()); // nicht vollständig implementiert
 		
-		assertEquals(model.getProjectDescription(), secondModel.getProjectDescription());
-		assertEquals(projectDescription, secondModel.getProjectDescription());
+		assertEquals("Problem bei Export&Import",model.getProjectDescription(), secondModel.getProjectDescription());
+		assertEquals("Problem beim Speichern der Werte", projectDescription, secondModel.getProjectDescription());
 		
-		assertEquals(model.getTabSize(), secondModel.getTabSize());		
-		assertEquals(Integer.parseInt(tabSize_String), secondModel.getTabSize());
+		assertEquals("Problem bei Export&Import",model.getTabSize(), secondModel.getTabSize());		
+		assertEquals("Problem beim Speichern der Werte", Integer.parseInt(tabSize_String), secondModel.getTabSize());
 		
-		assertEquals(model.getProjectVector(), secondModel.getProjectVector());
-		assertNotNull(secondModel.getProjectVector());
+		assertEquals("Problem bei Export&Import",model.getProjectVector(), secondModel.getProjectVector());
+		assertNotNull("Problem beim Speichern der Werte: getProjectVector() = NULL", secondModel.getProjectVector());
 		
 		// Die Sollution vecotren sind in der Regel beim Laden aus der Datenbank leer, 
 		// da noch kein DnD stattgefunden hat.
-		assertEquals(model.getSollution(), secondModel.getSollution());
-		assertNotNull(secondModel.getSollution());
-		assertEquals(model.getSollutionOrder(), secondModel.getSollutionOrder());
-		assertEquals(model.getSolutionStrings(), secondModel.getSolutionStrings());
-		assertNotNull(secondModel.getSolutionStrings());
+		assertEquals("Problem bei Export&Import",model.getSollution(), secondModel.getSollution());
+		assertNotNull("Problem beim Speichern der Werte: getSollution() = NULL", secondModel.getSollution());
+		assertEquals("Problem bei Export&Import",model.getSollutionOrder(), secondModel.getSollutionOrder());
+		assertEquals("Problem bei Export&Import",model.getSolutionStrings(), secondModel.getSolutionStrings());
+		assertNotNull("Problem beim Speichern der Werte: getSolutionStrings() = NULL", secondModel.getSolutionStrings());
 		
-		assertEquals(model.getTestExpressionsVector(), secondModel.getTestExpressionsVector());
-		assertNotNull(secondModel.getTestExpressionsVector());
+		assertEquals("Problem bei Export&Import",model.getTestExpressionsVector(), secondModel.getTestExpressionsVector());
+		assertNotNull("Problem beim Speichern der Werte: getTestExpressionVector() = NULL", secondModel.getTestExpressionsVector());
 		
-		assertEquals(puzzlemode, secondModel.getPuzzlemode());
+		// Puzzlemode wird direkt aus der Datenbank gezogen (Es existiert keine Instanz im Moedel)
+		assertEquals("Problem beim Export&Import", puzzlemode, secondModel.getPuzzlemode());
 	}
 	
 	@Test
 	public void testUnitCode(){
-		assertEquals(model.getJUnitCode(), secondModel.getJUnitCode());
-		assertEquals(jUnitCode, secondModel.getJUnitCode());
+		assertEquals("Problem bei Export&Import: getJUnitCode() liefert unterschiedliche Ergebnisse", model.getJUnitCode(), secondModel.getJUnitCode());
+		assertEquals("Problem beim Speichern: getJUnitCode() liefert nicht den gesetzten Wert", jUnitCode, secondModel.getJUnitCode());
 	}
 	@Test
 	public void testImports(){
-		assertEquals(model.getImport("online"), secondModel.getImport("online"));
-		assertEquals(onlineImport, secondModel.getImport("online"));
-		assertEquals(model.getImport("classes"), secondModel.getImport("classes"));
-		assertEquals(classImport, secondModel.getImport("classes"));
-		assertEquals(model.getImport("methods"), secondModel.getImport("methods"));
-		assertEquals(methodImport, secondModel.getImport("methods"));
+		assertEquals("Problem bei Export&Import", model.getImport("online"), secondModel.getImport("online"));
+		assertEquals("Problem beim Speichern der Werte", onlineImport, secondModel.getImport("online"));
+		assertEquals("Problem bei Export&Import",model.getImport("classes"), secondModel.getImport("classes"));
+		assertEquals("Problem beim Speichern der Werte", classImport, secondModel.getImport("classes"));
+		assertEquals("Problem bei Export&Import",model.getImport("methods"), secondModel.getImport("methods"));
+		assertEquals("Problem beim Speichern der Werte", methodImport, secondModel.getImport("methods"));
 	}
 	
 	@Test
 	public void testOrderSettings(){
-		assertEquals(model.getGroupMatrix(), secondModel.getGroupMatrix());
+		assertEquals("Problem bei Export&Import oder Speichervorgang", model.getGroupMatrix(), secondModel.getGroupMatrix());
 	}
 	
 	@Test
 	public void testOrderFailures(){
-		assertEquals(model.getOrderFailureText(0), secondModel.getOrderFailureText(0));
-		assertEquals(failureText, secondModel.getOrderFailureText(0));
+		assertEquals("Problem bei Export&Import",model.getOrderFailureText(0), secondModel.getOrderFailureText(0));
+		assertEquals("Problem beim Speichern der Werte", failureText, secondModel.getOrderFailureText(0));
 	}
 	
 	@Test
 	public void testUserGroups(){
 		Boolean allNull = true;
 		for(AccessGroup acGroup : AccessGroup.values()){
-			assertEquals(userGroup.get(acGroup), secondModel.getUsers(acGroup));
+			assertEquals("Problem bei Export&Import", userGroup.get(acGroup), secondModel.getUsers(acGroup));
 			if(userGroup.get(acGroup)!=null || secondModel.getUsers(acGroup)!=null)
 				allNull = false;
 		}
-		assertFalse(allNull);
+		assertFalse("Es konnte kein Nutzer in der Datenbank gefunden werden", allNull);
 	}
 	
 	@After

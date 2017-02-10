@@ -52,7 +52,8 @@ public class DBAccess {
 		}
 	}
 	
-	@Test void saveProject_Test2() throws SQLException{
+	@Test
+	public void saveProject_Test2() throws SQLException{
 		db.saveProject(normalString,"", normalString.split("\n"),"",  new ArrayList<Integer>(), 100, 0);
 	}
 	

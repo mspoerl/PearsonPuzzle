@@ -15,11 +15,14 @@ import org.junit.*;
 import visitor.GUIBuilder;
 import view.JView;
 
-public class RobotButtonTest {
+public class Robot_Button_Test {
 	
-	Robot bot;
-	Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-	Integer projectsCount;
+	private final static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+	private final static Integer NumberOfDragAndDrops_for_Overload = 20;
+	private final static Integer NumberOfKlicks_for_Overload = 20;
+	
+	private Robot bot;
+	private Integer projectsCount;
 	
 	@Before
 	public void init(){
@@ -49,26 +52,26 @@ public class RobotButtonTest {
 		bot.setAutoDelay(10);
 	}
 
-	@Test
-	public void overloadTest_DragAndDrop() {
-		randomDragAndDrop(100);
-		for(int i =0; i<10;i++){
-		clickCompile();
-		sleep(10);
-		clickTest();
-		sleep(10);
+	@Test (timeout = 550*10)
+	public void overloadTest_DragAndDrop(){
+		bot.setAutoDelay(5);
+		randomDragAndDrop(NumberOfDragAndDrops_for_Overload);
+		for(int i =0; i<NumberOfKlicks_for_Overload;i++){
+			clickCompile();
+			sleep(5);
+			clickTest();
 		}
-		for(int i=0; i<20;i++){
+		for(int i=0; i<NumberOfKlicks_for_Overload;i++){
 			clickCompile();
 		}
-		sleep(2000);
+		sleep(200);
 	}
 	
-	@Test
+	@Test (timeout = 550*10)
 	public void overloadTest_selectProject(){
-		bot.setAutoDelay(10);
+		bot.setAutoDelay(5);
 		Random rand = new Random();
-		for(int i=0; i<20;i++){
+		for(int i=0; i<NumberOfKlicks_for_Overload;i++){
 			openProject(rand.nextInt(projectsCount));
 			openProjectList();
 		}
@@ -129,19 +132,6 @@ public class RobotButtonTest {
 		bot.mouseMove((int)screenSize.width/2+50,(int)screenSize.height/2-160);
 		leftClick();
 	}
-	
-//	@Test
-//	public void enterTest(){
-//		try {
-//			bot=new Robot();} 
-//		catch (AWTException e) {
-//			fail("Robot konnte nicht  Initialisiert werden");
-//		}
-//		bot.keyPress(KeyEvent.VK_ENTER);
-//		sleep(100);
-//		bot.keyRelease(KeyEvent.VK_ENTER);
-//		sleep(4000);
-//	}
 	
 	private void sleep(int time){
 		try {
