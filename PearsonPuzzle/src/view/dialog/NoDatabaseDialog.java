@@ -1,6 +1,5 @@
 package view.dialog;
 
-import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -56,6 +55,13 @@ public class NoDatabaseDialog extends JDialog{
 		});
 		optionPane.addPropertyChangeListener(controller);	}
 
+	
+	@Override
+	public Object get(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public JOptionPane getOptionPane() {
 		// TODO Auto-generated method stub
@@ -66,17 +72,5 @@ public class NoDatabaseDialog extends JDialog{
 	public void clearAndHide() {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Object get(String string) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

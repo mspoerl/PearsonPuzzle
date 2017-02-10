@@ -21,9 +21,9 @@ import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
 
 /**
- * Testcompiler, der sehr rudimentär arbeitet, Klassen nach dem kompilieren in den Hauptspeicher schreibt (und nach dem kompilieren wieder löscht)
+ * Testcompiler, der rudimentär arbeitet, Klassen nach dem kompilieren in den Arbeitsspeicher lädt. 
+ * Fehler während des Kompiliervorgangs werden notiert können bei Bedarf in Form einer Hash-Map abgerufen werden. 
  * @author workspace
- *
  */
 public class TestCompiler {		
 	
@@ -46,7 +46,6 @@ public class TestCompiler {
 	}
 	
 	public MemClassLoader compile(){
-		//System.out.println(srcCodeMap);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		MemClassLoader normalClassLoader = new MemClassLoader();
 	
@@ -90,7 +89,6 @@ public class TestCompiler {
 			 compileFailure.put("Art", ""+diagnostic.getKind());
 			 compileFailure.put("Quelle", ""+diagnostic.getSource().toString());
 			 compileFailure.put("Code", ""+diagnostic.getCode());
-			 // TODO: Fehlerbericht anpassen (Nachricht)
 			 compileFailure.put("Nachricht",""+diagnostic.getMessage( null ) );
 			 compileFailure.put("Zeile", ""+diagnostic.getLineNumber() );
 			 compileFailure.put("Position", ""+diagnostic.getPosition());
@@ -99,9 +97,24 @@ public class TestCompiler {
 			 compileFailure.put("Endposition", ""+diagnostic.getEndPosition() );
 			 compileFailures.add(compileFailure);			 
 		 }	
-		
 	}
-
+	
+	
+	
+	
+	
+	/**
+	  * Klassendatei wird gelöscht, falls sie existiert.
+	  * @param className Name der Klasse (Dateiname = className.class)
+	  */
+	 private static void deleteTestClass(String className){
+		 File file = new File(className+".class");
+		 if(file.exists()){
+			 file.delete();
+		 }
+	 }
+	
+	@Deprecated
 		/**
 		 * Kompiliert eine Liste von Codezeilen.
 		 * @param solutionArray Liste von Codezeilen
@@ -152,6 +165,7 @@ public class TestCompiler {
 				return compileCode(solutionString, className);
 		}
 		
+	@Deprecated
 		/**
 		 * Kompiliert einen als String übergebenen Source Code.
 		 * @param src Source Code
@@ -179,7 +193,8 @@ public class TestCompiler {
 				 return compileCode(srcVector);
 			 }
 		}
-			 
+		
+	@Deprecated
 		/**			 
 		 * Methode kompilert.
 		 * @param src Source Code
@@ -242,16 +257,5 @@ public class TestCompiler {
 			 }    // Java Compiler API 2
 			 deleteTestClass(className);
 			 return true;
-		 }
-		 
-		 /**
-		  * Klassendatei wird gelöscht, falls sie existiert.
-		  * @param className Name der Klasse (Dateiname = className.class)
-		  */
-		 private static void deleteTestClass(String className){
-			 File file = new File(className+".class");
-			 if(file.exists()){
-				 file.delete();
-			 }
 		 }
 }

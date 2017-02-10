@@ -10,8 +10,6 @@ import model.database.UserDBaccess;
 
 import org.junit.*;
 
-import view.PPException;
-
 public class DBAccess {
 
 	UserDBaccess db;

@@ -13,6 +13,9 @@ model
 model.access
 model.database
 model_Test
+org.syntax.jedit
+org.syntax.jedit.tokenmarker
+tools
 view
 view.beans
 view.dialog

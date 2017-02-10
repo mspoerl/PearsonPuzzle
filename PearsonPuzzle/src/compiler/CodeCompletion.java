@@ -23,6 +23,7 @@ public class CodeCompletion {
 	 * @return Klassenname (erster vorkommender)
 	 */
 	public static String extractClassName(String sourceCode){
+		sourceCode = removeComment(sourceCode);
 		if(sourceCode==null)
 			return null;
 		String className = null;
@@ -108,6 +109,17 @@ public class CodeCompletion {
 			return null;
 		System.out.println(declarationName);
 		return declarationName;				
+	}
+	
+	/**
+	 * Entfern alle Arten von Java-Kommentaren.
+	*/
+	public static String removeComment(String string){
+		if(string==null)
+				return null;
+		String comment = "//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/";
+		string = string.replaceAll(comment, "");
+		return string;		
 	}
 
 }
