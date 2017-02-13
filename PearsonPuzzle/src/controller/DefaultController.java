@@ -364,7 +364,7 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 					
 					//result = JUnitRunner.run();
 					if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){ //Junit Test soll nur erfolgen, wenn auch einer definerit ist
-						UnitRunner unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"),model.getImport("online"), model.getImport("classes"));
+						UnitRunner unitRunner = new UnitRunner(model.getJUnitCode(), model.getSollution(), model.getImport("methods"),model.getImport("online"), model.getImport("classes"));
 //						unitRunner.addOnlineImport(model.getImport("online"));
 //						unitRunner.addClasses(model.getImport("classes"));
 						result = unitRunner.run();

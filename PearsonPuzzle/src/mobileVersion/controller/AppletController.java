@@ -86,7 +86,7 @@ public class AppletController implements Controller{
 				if(model.getJUnitCode()!=null && !model.getJUnitCode().isEmpty() && !model.getJUnitCode().equals(UnitEditor.DEFAULT_UNIT_CODE)){ //Junit Test soll nur erfolgen, wenn auch einer definerit ist
 					UnitRunner unitRunner;
 					try {
-						unitRunner = new UnitRunner(model.getJUnitCode(), model.getProjectCode(), model.getImport("methods"),model.getImport("online"), model.getImport("classes"));
+						unitRunner = new UnitRunner(model.getJUnitCode(), model.getSollution(), model.getImport("methods"),model.getImport("online"), model.getImport("classes"));
 						result = unitRunner.run();
 						model.setJunitFailures(result);
 					} catch (PPException e1) {
