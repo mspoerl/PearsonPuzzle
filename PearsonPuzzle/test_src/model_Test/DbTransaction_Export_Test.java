@@ -29,7 +29,7 @@ import org.junit.Test;
  */
 public class DbTransaction_Export_Test {
 
-	private final static String location = "gen_rsc/database";
+	private final static String location = "gen_rsc"+File.separator+"database";
 	private Model model;
 	private Model secondModel;
 	private Integer projectID;
@@ -116,6 +116,7 @@ public class DbTransaction_Export_Test {
 		secondModel.fetchAll();
 		secondModel.replaceDatabase("exportdatei.zip", file.getAbsolutePath());
 		secondModel.selectProject(projectID);
+		file.delete();
 	}
 	
 	@Test
@@ -203,5 +204,4 @@ public class DbTransaction_Export_Test {
 		secondModel.removeProject();
 		secondModel.setDatabase(null);
 	}
-
 }

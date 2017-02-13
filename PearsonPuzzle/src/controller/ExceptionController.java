@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionEvent;
 import model.Model;
 import view.JView;
 
+@Deprecated
 public class ExceptionController implements Controller{
 	
 	private JView view;

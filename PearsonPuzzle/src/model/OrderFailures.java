@@ -87,7 +87,6 @@ public class OrderFailures {
 			treeMap.clear();
 			for(Integer rule : groupRule){
 				if(rule==null){
-					// TODO:  
 				}
 				else if(rule == 0){
 					// Dies stellt den Fall dar, dass die Sortierung dieser Zeile nicht berücksichtigt wird.

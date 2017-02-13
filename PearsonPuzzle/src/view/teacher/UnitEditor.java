@@ -206,9 +206,7 @@ public class UnitEditor extends JView{
 				test.setForeground(WHITE);
 			}
 			messageBox.setText(failureText);
-		}
-		// TODO Auto-generated method stub
-		
+		}		
 	}
 
 	public String getContent() {

@@ -5,6 +5,13 @@ import java.io.*;
 import java.net.*;
 import javax.tools.*;
 
+/**
+ * Ein MemJavaFileObject hält zu einem Klassennamen einen Byte-Stream bereit, in den geschrieben werden kann. 
+ * Dieser Stream kann von einem Compiler genutzt werden, um das Ergebnis der Kompilierung zu streamen. 
+ * 
+ * @author workspace
+ */
+
 class MemJavaFileObject extends SimpleJavaFileObject
 {
   private final ByteArrayOutputStream baos = new ByteArrayOutputStream( 8192 );

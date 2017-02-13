@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Fri Feb 10 17:37:42 CET 2017:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-015a-28e3-2fe0-000002a48200 
-on database directory /home/workspace/git2/PearsonPuzzle/database  with class loader sun.misc.Launcher$AppClassLoader@57364b53 
+Mon Feb 13 14:27:05 CET 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-015a-37a7-bfb9-000002a01258 
+on database directory /home/workspace/git_old/git2/PearsonPuzzle/database  with class loader sun.misc.Launcher$AppClassLoader@73cbc5cb 
 Loaded from file:/home/workspace/.m2/repository/org/apache/derby/derby/10.8.3.0/derby-10.8.3.0.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.7.0_111-b01
-user.dir=/home/workspace/git2/PearsonPuzzle
+java.runtime.version=1.7.0_121-b00
+user.dir=/home/workspace/git_old/git2/PearsonPuzzle
 os.name=Linux
 os.arch=amd64
 os.version=3.16.0-4-amd64

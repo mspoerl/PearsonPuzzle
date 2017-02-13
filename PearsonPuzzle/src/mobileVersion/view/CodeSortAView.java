@@ -90,7 +90,7 @@ public class CodeSortAView extends AppletView{
 			            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 //		messageBox=new JTextArea(defaultDescription);
 		if(!model.getProjectDescription().trim().equals(""))
-			messageBox.setText(model.getProjectDescription());
+			messageBox.setText("<html><body>"+model.getProjectDescription().replaceAll("\n","<br>")+"</body></html>");
 //		messageBox.setLineWrap(true);
 //		messageBox.setWrapStyleWord(true);
 //		messageBox.setEditable(false);
@@ -124,7 +124,6 @@ public class CodeSortAView extends AppletView{
 	 * Controller hinzuzufügen
 	 */
 	public void addController(Controller controller){
-		// TODO: In den offiziellen Controller auslagern
 		//saveDropList.addMouseListener((DefaultController)controller);
 		compileButton.addActionListener(controller);
 		compileButton.setActionCommand(DCCommand.Compile.toString());

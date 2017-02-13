@@ -237,8 +237,7 @@ public class TextEditor extends JView{
 		textArea.setTabSize(model.getTabSize());
 		textArea.setText(model.getProjectCode());
 		description.setText(model.getProjectDescription());
-		mainPanel.revalidate();
-		// TODO Auto-generated method stub	
+		mainPanel.revalidate();	
 	}
 	
 	@Override

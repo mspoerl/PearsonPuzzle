@@ -157,7 +157,7 @@ public class CodeSortView extends JView {
 		messageBox = new JLabel(defaultDescription);
 //		messageBox=new JTextArea(defaultDescription);
 		if(!model.getProjectDescription().trim().equals(""))
-			messageBox.setText(model.getProjectDescription());
+			messageBox.setText("<html><body>"+model.getProjectDescription().replaceAll("\n","<br>")+"</body></html>");
 //		messageBox.setLineWrap(true);
 //		messageBox.setWrapStyleWord(true);
 //		messageBox.setEditable(false);
@@ -194,7 +194,6 @@ public class CodeSortView extends JView {
 	 * Controller hinzuzufügen
 	 */
 	public void addController(Controller controller){
-		// TODO: In den offiziellen Controller auslagern
 		//saveDropList.addMouseListener((DefaultController)controller);
 		compileButton.addActionListener(controller);
 		compileButton.setActionCommand(DCCommand.Compile.toString());
@@ -243,7 +242,7 @@ public class CodeSortView extends JView {
 			if(model.getProjectDescription()==null || model.getProjectDescription().isEmpty())
 				messageBox.setText(defaultDescription);
 			else 
-				messageBox.setText(model.getProjectDescription());
+				messageBox.setText("<html><body>"+model.getProjectDescription().replaceAll("\n","<br>")+"</body></html>");
 			messageBox.revalidate();
 			smiley.setIcon(gameModel.getScoreImage());
 		}

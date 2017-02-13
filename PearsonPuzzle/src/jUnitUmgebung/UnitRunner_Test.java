@@ -2,7 +2,12 @@ package jUnitUmgebung;
 
 import view.PPException;
 
-public class run {
+/**
+ * Da aufgrund des implementierten Unit_ClassLoaders ein JUnit-Test für den UnitRunner möglich ist, 
+ * prüft diese Klasse Ohne Test-Framework, ob der Unit Runner die Grundfunktionalitäten unterstützt.
+ * @author workspace
+ */
+public class UnitRunner_Test {
 	public static void main (String args[]){
 		runUnitTest();
 	}

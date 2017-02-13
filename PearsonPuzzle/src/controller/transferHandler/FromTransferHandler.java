@@ -14,9 +14,20 @@ import javax.swing.TransferHandler;
 import model.Model;
 
 /**
+ * Eine JList kann durch diesen Controller mit Drag&Drop versehen werden.
+ * Die Klasse besteht im wesentlichen aus Methoden, die
+ * <ul><li>Das Exportieren von Daten regeln
+ * <ul><li>Die Selektion in der Liste wird zum Export bereitgestell.</li>
+ * <li>Mögliche Transferaktionen (COPY/MOVE) werden bekannt gegeben.</li>
+ * <li>Nach dem Export können Listeneinträge entfernt werden</li></ul></li>
+ * <li>Das Importieren von Daten regeln
+ * <ul><li>Erlaubtheit des Imports wird bekanntgegeben</li>
+ * <li>Der Import wird verarbeitet</li></ul></li>
+ * <li>Das Verhalten der Liste zur Laufzeit verändern können (nicht standardmäßig)
+ * <ul><li>Elemtente können oder können nicht mehr zurück gedropt werden</li>
+ * <li>Elemente werden aus der Liste entfernt (MOVE) oder kopiert (COPY)</li></ul></li></ul>
  * 
  * @author workspace
- *
  */
 public class FromTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
@@ -26,7 +37,7 @@ public class FromTransferHandler extends TransferHandler {
 	private int action;					// COPY oder MOVE
 	private boolean internDnD;			// Gibt Auskunft, ob es sich um ein Listeninternes DnD Event handelt (wird beim Export gesetzt und beim Import ausgelesen)
 	private boolean canRevertAction;	// Gibt an, ob Elemente wieder zurück in die Liste gedropt werden können.
-	 private Integer dragIndex;			// Index des Elements, das gedragt wird.
+	private Integer dragIndex;			// Index des Elements, das gedragt wird.
 	private JList<String> dragJList;
 	private DefaultListModel<String> dragDList;
 	
@@ -39,6 +50,10 @@ public class FromTransferHandler extends TransferHandler {
 		action = TransferHandler.MOVE;
 	}
 	
+	/**
+	 * 
+	 * @param action COPY or MOVE
+	 */
 	public void setAction(int action){
 		this.action=action;
 	}

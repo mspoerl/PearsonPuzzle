@@ -70,7 +70,6 @@ public class NoDatabaseDialog extends JDialog{
 
 	@Override
 	public void clearAndHide() {
-		// TODO Auto-generated method stub
-		
+		clear();		
 	}
 }

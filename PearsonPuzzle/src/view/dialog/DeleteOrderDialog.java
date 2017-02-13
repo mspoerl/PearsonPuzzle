@@ -119,7 +119,6 @@ public class DeleteOrderDialog extends JDialog implements Observer{
 	public Object get(String string) {
 		if(string.equals("groupNumber"))
 			return orderGroup.getSelectedIndex();
-		// TODO Auto-generated method stub
 		return null;
 	}
 

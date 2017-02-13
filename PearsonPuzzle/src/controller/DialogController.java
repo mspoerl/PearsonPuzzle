@@ -22,6 +22,15 @@ import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
 import view.dialog.JDialog;
 
+/**
+ * Controller für die Unterklassen von JDialog.
+ * 
+ * Es werden:
+ * <ul><li>Benutzereingaben verarbeitet</li>
+ * <li>Daten an das Model weitergereicht, das sich daraufhin eventuell ändert.</li>
+ * <li>Views gewechselt<li></ul>
+ * @author workspace
+ */
 public class DialogController implements Controller, PropertyChangeListener, FocusListener {
 	
 	private JDialog dialog;
@@ -67,14 +76,6 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 	public void valueChanged(ListSelectionEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public JDialog getView() {
-		return dialog;
-	}
-	
-	public Model getModel(){
-		return model;
 	}
 
 	/** This method reacts to state changes in the option pane. */
@@ -171,13 +172,19 @@ public class DialogController implements Controller, PropertyChangeListener, Foc
 				((JTextArea) e.getSource()).setText("");
 			}
 		}
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void focusLost(FocusEvent e) {
 		if(e.getSource().getClass().equals(JTextArea.class)){
 			model.setOrderFailures((Integer)dialog.get("groupID"), (String)dialog.get("text"));
 		}
+	}
+	
+	public JDialog getView() {
+		return dialog;
+	}
+	
+	public Model getModel(){
+		return model;
 	}
 }

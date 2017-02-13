@@ -6,6 +6,18 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Das ClassModel zerlegt Sourcecode in einzelne enthaltene Klassen, filtert Klassennamen mithilfe von Code Completion heraus und 
+ * fügt gewollte oder notwendige Ergänzungen an (zusätzliche Methoden, Imports, Klassen).
+ * 
+ * <ul><li>Sollte der übergebene Sourcecode keine Klassendefinition enthalten, wird er in eine Klasse "gewrapt".</li> 
+ * <li>Sollte der übergebene Sourcecode zudem kein Methodenkopf enthalten, wird der Methodenrumpf "gewrapt".
+ * <br>**Bsp: public void do(){ return;} -> public class <DEFAULT_CLASS_NAME> { public void do( return;} }</li>
+ * <li>Falls im Methodenrumpf ein return formuliert ist, wirde der Methode je nach Bedarf der Rückgabewert Object oder void zugewiesen.
+ * <br>**Bsp: int a; int b=0; a=b; return a; -> public int methode(){ int a; int b; a=b; return a; } </li></ul>
+ * 
+ * @author workspace
+ */
 public class ClassModel {
 	
 	private final static String DEFAULT_CLASS_NAME= "TestClass";
@@ -18,10 +30,18 @@ public class ClassModel {
 
 	/**
 	 * HashMap sourceCodeMap wird mit Inhalt gefüllt.<br>
-	 * Falls in src keine Klasse definiert wird, wird der Code "gewrapt". Dies geschieht, in dem eine Klasse namens <DEFAULT_CLASS_NAME> erstellt wird, kommt dieser Name bereits in der srcCodeMap (als Key) oder in src vor, werden Uterstriche angefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist.<br>
-	 * Falls in src zusätzlich auch keine Methode deklariert ist, wird  auch diese "gewrapt". Dies geschieht, indem eine Methode namens <DEFAULT_METHOD_NAME> erstellt wird. Kommt dieser Name bereits in src vor, werden Unterstriche eingefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist. <br>
-	 * Falls ein return enthalten ist, wird der Methode der Rückgabewert Object gegeben.
+	 * <ul><li>Falls in src keine Klasse definiert wird, wird der Code "gewrapt". Dies geschieht, in dem eine Klasse namens <DEFAULT_CLASS_NAME> erstellt wird, kommt dieser Name bereits in der srcCodeMap (als Key) oder in src vor, werden Uterstriche angefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist.</li>
+	 * <li>Falls in src zusätzlich auch keine Methode deklariert ist, wird  auch diese "gewrapt". Dies geschieht, indem eine Methode namens <DEFAULT_METHOD_NAME> erstellt wird. Kommt dieser Name bereits in src vor, werden Unterstriche eingefügt, bis ein klassenname gefunden wurde, der nicht bereits belegt ist. </li>
+	 * <li>Falls ein return enthalten ist, wird der Methode der Rückgabewert Object oder void gegeben.</li></ul>
 	 * 
+	 * Konkret:
+	 * <ul><li> 
+	 * Falls kein Klassenname existiert, wird versucht, den Sourcecode mit dem unter DEFAULT_CLASS_NAME definierten Namen zu wrappen. 
+	 * Bsp: public void do(){ return;} -> public class <DEFAULT_CLASS_NAME> { public void do( return;} }
+	 * </li><li>
+	 * Falls kein Methodenrumpf existiert, wird zusätzlich noch ein Methodenrumpf dazugebaut, um das ganze kompilierbar zu machen. 
+	 * Bsp: int a; int b=0; a=b; return a; -> public int methode(){ int a; int b; a=b; return a; } 
+	 * </li></ul>
 	 */
 	public ClassModel(String sourceCode, String methodImports, String onlineImports, String classImports) {
 		sourceCode = CodeCompletion.removeComment(sourceCode);
@@ -282,26 +302,29 @@ public class ClassModel {
 		if(srcCodeMap.containsKey(className)){
 			// TODO: Mehrfacheinträge handeln
 		}
-		if(packageMap.containsKey(className)){
-			// TODO: Mehrfacheinträge handeln
-		}
-		if(importMap.containsKey(className)){
-			Collection<String> buffer = importMap.get(className);
-			buffer.addAll(importStrings);
-			importMap.put(className, buffer);
-		}
-			
 		srcCodeMap.put(className, solutionString);
 		
 		if(packageString!=null && !packageString.isEmpty()){
 			if(packageMap==null)
 				packageMap = new HashMap<String, String>();
+			else if(packageMap.containsKey(className)){
+				// TODO: Mehrfacheinträge handeln
+			}
 			packageMap.put(className, packageString);
 		}
 		if(importStrings!=null && !importStrings.isEmpty()){
-			if(importMap==null)
+			if(importMap==null){
 				importMap = new HashMap<String, Collection<String>>();
-			importMap.put(className, importStrings);
+				importMap.put(className, importStrings);
+			}
+			else if(importMap.containsKey(className)){
+				Collection<String> buffer = importMap.get(className);
+				buffer.addAll(importStrings);
+				importMap.put(className, buffer);
+			}
+			else
+				importMap.put(className, importStrings);
+			
 		}		
 	}
 	

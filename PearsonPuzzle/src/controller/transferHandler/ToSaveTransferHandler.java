@@ -17,11 +17,11 @@ import javax.swing.TransferHandler;
 import model.Model;
 
 /**
- * Klasse ermöglicht, Drag&Drop Aktionen durchzuführen. <br>
- * Es werden nur bekannte Elemente (aus codeVector) aufdgenommen. <br>
- * Um dies zu prüfen greift die Klasse auf das Model zurück.  
+ * Klasse ermöglicht, Drag&Drop Aktionen durchzuführen. Für die Grundsätzliche Arbeitsweise einer Drag and Drop Liste betrachte FromTransferHandler.
+ * Es werden nur bekannte Elemente (aus codeVector) aufdgenommen. Um dies zu prüfen greift die Klasse auf das Model zurück. 
+ * Es kann aus verschiedenen Drag&Drop Modi gewählt werden.
+ * Das Verhalten des Controllers kann zu Laufzeit mittels enableRemove(); disableRemove(); sowie setAction(); verändert werden.
  * 
- * Das Verhalten kann über die Ü
  * @author workspace
  *
  */

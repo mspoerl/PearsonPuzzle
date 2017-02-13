@@ -113,8 +113,6 @@ public class LoginView extends JView{
 	public void update(Observable o, Object arg) {
 		if(arg!=null && arg.getClass().equals(PPException.class)){
 			this.showDialog((PPException) arg, true);
-		}
-		// TODO Auto-generated method stub
-		
+		}		
 	}
 }

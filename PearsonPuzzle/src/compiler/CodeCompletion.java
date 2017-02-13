@@ -4,8 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Klasse mit primär ststischen Methoden, die primär dazu dienen, Sourccodeteile in der richtigen Reihenfolge zusammenzufügen, 
- * oder Informationen, wir Klassenname, Packeges und Imports aus derm Sourcecode zu extrahieren.
+ * Klasse bietet ststische Methoden, die dazu dienen, Sourccode zu bearbeiten und zu analysieren. 
+ * So können Informationen, wir Klassenname, Packeges und Imports aus dem Sourcecode ausgelesen werden, 
+ * oder Kommentare entfernt werden.
  * 
  * @author workspace
  */

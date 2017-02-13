@@ -44,15 +44,11 @@ public abstract class JView implements Observer, View {
 	protected Model model;
 	private Controller controller;
 	private DialogController dialogController;
-	public JView(Model model){
-			// main Panel wird bereinigt
-			// da mainPanel static ist, ist dies notwendig (nur eine einzige Instanz existeiert) 
-			// XXX: Herangehensweise ändern (protected static ist nicht optimal
+	public JView(Model model){ 
 			this.model=model;
 			model.addObserver(this);
 		}
-		
-		
+			
 		/**
 		 * Methode soll vom Controller ausgeführt werden, um sich selbst <br>
 		 * als konkreter Controller für einen konkreten View hinzuzufügen.
@@ -72,7 +68,7 @@ public abstract class JView implements Observer, View {
 			frame.setLayout(new FlowLayout());
 			//mainPanel.setPreferredSize(new Dimension(1000,500));
 			frame.add(mainPanel);
-			frame.setSize(800,500);
+			frame.setSize(900,500);
 			frame.setLocationRelativeTo(null);
 		}
 		
@@ -90,7 +86,7 @@ public abstract class JView implements Observer, View {
 		 */
 		public void drawFrame(){
 		    frame.pack();
-			frame.setSize(850,500);
+			frame.setSize(900,500);
 			if(frame.isVisible()==false){
 				frame.setVisible(true);
 			}

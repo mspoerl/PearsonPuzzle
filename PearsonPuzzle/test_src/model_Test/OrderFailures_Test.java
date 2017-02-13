@@ -54,7 +54,6 @@ public class OrderFailures_Test {
 		this.codeLine_GroupMatrix = codeLine_GroupMatrix;
 		this.success = sucess;
 		this.codeMap = codeMap;
-		// TODO Auto-generated constructor stub
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static Collection getTestCase(int testCase){

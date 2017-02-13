@@ -29,7 +29,13 @@ import view.pupil.*;
 import view.teacher.*;
 
 /**
- *Śtandard-Controller der PearsonPuzzle Anwendung.
+ * Śtandard-Controller der PearsonPuzzle Anwendung.
+ * Ist für views der Superklasse JView gedacht.
+ * Es werden: 
+ * <ul><li>Benutzereingaben verarbeitet</li>
+ * <li>Daten an das Model weitergereicht, das sich daraufhin eventuell ändert.</li>
+ * <li>Views gewechselt<li></ul>
+ * 
  * @author workspace
  */
 public class DefaultController implements Controller, TableModelListener, FocusListener{
@@ -576,9 +582,18 @@ public class DefaultController implements Controller, TableModelListener, FocusL
 		}		
 	}
 
+	/** 
+	 * Nutzung ist im Normalfall nicht notwendig, zu Testzwecken aber sinnvoll.
+	 * @return Die View des Controllers
+	 */
 	public JView getView() {
 		return view;
 	}
+	
+	/**
+	 * Nutztung ist im Normalfall nciht notwendig, zu Testzwecken aber sinnvoll.
+	 * @return Das Model des Controllers
+	 */
 	public Model getModel(){
 		return model;
 	}

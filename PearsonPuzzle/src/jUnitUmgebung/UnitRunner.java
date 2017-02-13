@@ -36,14 +36,11 @@ import compiler.ClassModel;
 import compiler.StringJavaFileObject;
 
 /**
- * Klasse hält jUnit Test und zugehörige, zu testende Klassen in Form von Strings bereit, um diese bei bedarf zu kompilieren.
- * Es können auch nur Mehtoden oder nur der Inhalt einer Methode (ohne Methodenrumpf) übergeben werden. Diese werden dann "gewrapt".<br><br>
+ * Klasse hält jUnit Test und zugehörige, zu testende Klassen in Form von Strings bereit, um diese bei Bedarf zu kompilieren oder JUnit Test zu starten.
+ * Es können auch nur Mehtoden oder nur der Inhalt einer Methode (ohne Methodenrumpf) übergeben werden. Diese werden druch das compiler.ClassModel "gewrapt"
+ * <br><br>
  * 
- * Falls kein Klassenname existiert, wird versucht, den Sourcecode mit dem unter DEFAULT_CLASS_NAME definierten Namen zu wrappen. 
- * Bsp: public void do(){ return;} -> public class <DEFAULT_CLASS_NAME> { public void do( return;} } <br><br>
- * 
- * Falls kein Methodenrumpf existiert, wird zusätzlich noch ein Methodenrumpf dazugebaut, um das ganze kompilierbar zu machen. 
- * Bsp: int a; int b=0; a=b; return a; -> public int methode(){ int a; int b; a=b; return a; } <br><br>
+ * <br><br>
  * @author workspace
  */
 public class UnitRunner {
@@ -55,6 +52,8 @@ public class UnitRunner {
 	private Integer unitLineOffset;
 	private Vector<HashMap<String, String>> compileFailures;
 	/**
+	 *  Klasse hält jUnit Test und zugehörige, zu testende Klassen in Form von Strings bereit, um diese bei Bedarf zu kompilieren oder JUnit Test zu starten.
+	 *  Es können auch nur Mehtoden oder nur der Inhalt einer Methode (ohne Methodenrumpf) übergeben werden. Diese werden druch das compiler.ClassModel "gewrapt" 
 	 *
 	 * @param sourceCode_ToBeTested zu testende Klassen, Methoden, ...
 	 * @param imports evtl. notwendige imports
@@ -70,48 +69,14 @@ public class UnitRunner {
 		srcCodeMap = model.getCodeMap();
 	}
 	
-//	/**
-//	 * FIXME: package handeln
-//	 */
-//	public void addOnlineImport(String onlineImports){
-//		if(onlineImports == null || onlineImports.trim().isEmpty())
-//			return;
-//		for(String codeName : srcCodeMap.keySet()){
-//			if(!srcCodeMap.get(codeName).trim().startsWith("package "))
-//				srcCodeMap.put(codeName, onlineImports.trim()+"\n"+srcCodeMap.get(codeName));
-//			else 
-//				srcCodeMap.put(codeName, onlineImports.trim()+"\n"+srcCodeMap.get(codeName));
-//		}
-//	}
-//	
-//	/**
-//	 * Gewünschte Mehtoden oder Feld-Definitionen werden am Ende !aller! zu testenden Klassen eingefügt. 
-//	 * (Beziehungsweise aller zu dieser Zeit in srcCodeMap entahltenen Klassen)
-//	 * @param methodImports
-//	 */
-//	private void addMethods(String methodImports){
-//		if(methodImports == null || methodImports.trim().isEmpty())
-//			return;
-//		for(String codeName : srcCodeMap.keySet()){
-//			StringBuffer codeString = new StringBuffer(srcCodeMap.get(codeName));
-//			Integer closeIndex = codeString.lastIndexOf("}");
-//			codeString.insert(closeIndex, methodImports.trim()+"\n");
-//			srcCodeMap.put(codeName, codeString.toString());
-//		}
-//	}
-//	/**
-//	 * Fügt zu importierende Klassen der srcCodeMap hinzu.
-//	 * @param classImports Klassen in String Form
-//	 */
-//	public void addClasses(String classImports){
-//		if(classImports == null || classImports.trim().isEmpty())
-//			return;
-//		fillSrcCodeMap(classImports);
-//	}
 	public Vector<HashMap<String,String>> getFailures(){
 		return compileFailures;
 	}
 	
+	/**
+	 * TODO: Line Offset implementieren (durch Löschen von Kommentaren oder allgemein Änderungen am Source-Code kann es zu Zeilenversatz kommen, dieser soll hier zurückgegeben werden)  
+	 * @return
+	 */
 	public Integer getLineOffset(){
 		return unitLineOffset;
 	}
@@ -123,6 +88,9 @@ public class UnitRunner {
 		}
 	}
 	
+	/**
+	 * JUnit-spezifische notwendige Imports werden sicherheitshalber gesetzt.
+	 */
 	private void fillNeccessaryImports(){
 		if(unitImports==null)
 			unitImports = new String();

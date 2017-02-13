@@ -1,20 +1,81 @@
 package model.database;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Vector;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedInputStream;
+import java.util.zip.CheckedOutputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipInputStream;
 
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+
 
 public class ZipApp {
 	
-	public ZipApp(){
-		
+	public static void main(String[] args){
+		JFileChooser fc_exp = new JFileChooser();
+		int returnVal_exp = fc_exp.showSaveDialog(new JPanel());
+
+        if (returnVal_exp == JFileChooser.APPROVE_OPTION) {
+            File exportFile = fc_exp.getSelectedFile();
+            
+            LinkedList<String> importFiles = new LinkedList<String>();
+            File importFile = new File("database");
+            importFiles.add(importFile.getAbsolutePath());
+            //importFiles.add("derby.log");
+            gzip(importFiles, exportFile.getAbsolutePath());
+            //This is where a real application would open the file.
+        }
 	}
+	public static void gzip(Collection<String> importFiles, String exportFile)
+	  {
+//	    if ( args.length != 1 ) {
+//	      System.err.println( "Benutzung: gzip <source>" );
+//	      return;
+//	    }
+
+	    OutputStream os = null;
+	    InputStream  is = null;
+
+	    try
+	    {
+	      os = new GZIPOutputStream( new FileOutputStream( exportFile + ".gz" ) );
+	      is  = new FileInputStream( importFiles.iterator().next());
+
+	      byte[] buffer = new byte[ 8192 ];
+
+	      for ( int length; (length = is.read(buffer)) != -1; )
+	        os.write( buffer, 0, length );
+	    }
+	    catch ( IOException e )
+	    {
+	    	
+	      System.err.println( "Fehler: Kann nicht packen " + exportFile );
+	      e.printStackTrace();
+	    }
+	    finally
+	    {
+	      if ( is != null )
+	        try { is.close(); } catch ( IOException e ) { e.printStackTrace(); }
+	      if ( os != null )
+	        try { os.close(); } catch ( IOException e ) { e.printStackTrace(); }
+	    }
+	  }
+	
 
 	public static boolean zipIt( Vector<String> fileNames, String diskplace )
 	    {

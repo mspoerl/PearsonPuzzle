@@ -18,7 +18,11 @@ import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 import model.Model;
 
 import controller.DialogController;
-
+/**
+ * <img src="../../../rsc/icon/flag_green.png">
+ * @author workspace
+ *
+ */
 public class AddImportDialog extends JDialog{
 
 	private static final long serialVersionUID = -3755040607779146557L;
