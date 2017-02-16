@@ -106,6 +106,7 @@ public class CompileDialog extends JDialog implements Observer{
 		addClass.setIcon(new ImageIcon("rsc/icon/file/class.png"));
 		addMethod.addActionListener(controller);
 		addMethod.setActionCommand(DCCommand.AddMethods.toString());
+		addMethod.setIcon(new ImageIcon("rsc/icon/file/method.png"));
 	}
 
 	@Override

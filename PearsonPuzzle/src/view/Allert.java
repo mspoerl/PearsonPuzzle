@@ -21,14 +21,20 @@ public enum Allert {
 		String[] yesNoOptions = {"Ja", "Nein"};
 		switch(this){
 			case help_Orders:
-				JOptionPane.showMessageDialog(parentComponent, "<html><body style=\"text-align: center;\"><p style=\"width:700px; text-align:justify;\">An dieser Stelle werden Reihenfolgen festgelegt, in denen die SchülerInnnen die Codezeilen zusammensetzen sollen. <br>" +
-						"Dabei werden Codezeilen, die nach anderen Codezeilen kommen sollen, mit höheren Zahlen markiert und die Codezeilen, die vorher kommen sollen, " +
-						"mit niedrigeren Zahlen. Codezeilen, die austauschbar sind, werden mit gleichen Zahlen markiert." +
-						" Die Zahl '0' wird beim Testen der Reihenfolgen nicht beachtet. Die Zahlen einer Reihenfolge müssen stets aufsteigend sein und sollten aufeinander folgen. " +
-						"Über die Schaltfläche 'Gruppe hinzufügen' können weitere Reihenfolgen festgelegt werden.</p></body></html>", "Hilfetext", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(parentComponent, "<html><head><style type=\"text/css\"> p, ul, li { text-align:justify;}</style></head><body style=\"width: 700px; text-align: center;\">" +
+						"<p>An dieser Stelle werden Reihenfolgen festgelegt, in denen die SchülerInnnen die Codezeilen zusammensetzen sollen. </p>" +
+						"<ul>Anleitung für das Erstellen von Reihenfolgeneinträgen:" +
+						"<li>Codezeilen, die nach Codezeilen X kommen sollen, werden mit höheren Zahlen als Codezeile X versehen.</li>" +
+						"<li>Codezeilen, die vor Codezeile X kommen sollen, werden mit niedrigeren Zahlen als Codezeile X versehen.</li>" +
+						"<li>Codezeilen, die austauschbar sind, werden mit gleichen Zahlen versehen.</li>" +
+						"<li>Die Zahl '0' wird beim Testen der Reihenfolgen nicht beachtet.</li>" +
+						"<li>Die Zahlen einer Reihenfolge müssen stets aufsteigend sein (sonst genügt der formulierte Code selbst nicht den Regeln) und sollten aufeinander folgen.</li></ul>" +
+						"<p>Über die Schaltfläche 'Gruppe hinzufügen' können weitere Reihenfolgen festgelegt werden.</p>" +
+						"<br><p>Über die Schaltfläche 'Gruppe explizieren' kann für jede Gruppe eine Beschreibung angegeben werden, die dem Schüler Hilfestellung geben soll, was er falsch oder richtig gemacht hat.</p>" +
+						"</body></html>", "Hilfetext", JOptionPane.INFORMATION_MESSAGE);
 				return null;
 			case help_UnitTest:
-				JOptionPane.showMessageDialog(parentComponent, "<html><body style=\"width:700px; text-align: center;\"><p style=\"text-align:justify;\">Hier kann ein JUnit Test verfasst werden, der den zusammengepuzzelten Code testet (falls dieser kompilierbar ist). " +
+				JOptionPane.showMessageDialog(parentComponent, "<html><head><style type=\"text/css\"> p { text-align:justify;}</style></head><body style=\"width:700px; text-align: center;\"><p>Hier kann ein JUnit Test verfasst werden, der den zusammengepuzzelten Code testet (falls dieser kompilierbar ist). " +
 						"Die hier zu Beginn hinterlegte Unit Testklasse dient nur als Beispiel und wird, solange sie unverändert (oder leer) bleibt, nicht ausgeführt. Ob ein JUnit Test hinterlegt ist oder nicht, ist über den Reiter \"JUnit\" ersichtlich. " +
 						"Ist dieser blau eingefärbt, so ist ein Unit Test hinterlegt. Ist dieser hingegen schwarz, so ist kein Unit Test hinterlegt.<br><br>" +
 						"" +
@@ -36,7 +42,10 @@ public enum Allert {
 						"<ul style=\"text-align:left;\"><li>zusätzlich üben das Textfeld links oben noch etwaige nötige Imports angegeben werden. </li>" +
 						"<li>zusätzliche spezielle oder eigene Klasse(n) angegeben werden, falls diese nötig sind, um den Puzzlecode auszuführen/zu kompilieren. Diese sollten in Textform über den entsprechenden Button angehängt werden.</li>" +
 						"<li>zusätzliche Methode(n) angegeben werden, falss diese nötig sind, um den Puzzlecode ausführen/compilieren zu können. Diese werden dann dem Puzzlecode angehängt, sind aber im Puzzlemodus nicht sichtbar.</li>" +
-						"</ul></body></html>", "Hilfetext", JOptionPane.INFORMATION_MESSAGE);
+						"</ul>" +
+						"" +
+						"<p>Besteht der Puzzlecode nur aus einem Methodenrumpf (ohne Klasse und Methodenkopf), so ist ein etwaiger return Wert in Form eines Objects mittels <i>TestClass.testMethod();</i> verfügbar. <br>Wird zum Testen ein Konstruktor benötigt, so kann dieser als Methode über den entsprechenden Button angehängt werden.</p>" +
+						"</body></html>", "Hilfetext", JOptionPane.INFORMATION_MESSAGE);
 				return null;
 			case noProjectSelected:
 				JOptionPane.showMessageDialog(parentComponent, "Bitte Projekt auswählen");

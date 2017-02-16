@@ -109,12 +109,15 @@ public class UnitEditor extends JView{
 			addClasses = new JButton("<html><body>Zum Ausführen nötige <b>Klassen bearbeiten</b></body></html>");
 		addClasses.setAlignmentX(Component.CENTER_ALIGNMENT);
 		addClasses.setIcon(new ImageIcon("rsc/icon/file/class.png"));
+		addClasses.setHorizontalTextPosition(SwingConstants.RIGHT);
 		
 		if(model.getImport("methods") == null || model.getImport("methods").isEmpty())
 			addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden hinzufügen</b></body></html>");
 		else 
 			addMethods = new JButton("<html><body>Zum Ausführen nötige <b>Methoden bearbeiten</b></body></html>");
 		addMethods.setAlignmentX(Component.CENTER_ALIGNMENT);
+		addMethods.setIcon(new ImageIcon("rsc/icon/file/method.png"));
+		addMethods.setHorizontalTextPosition(SwingConstants.RIGHT);
 		leftPanel.add(importsSP);
 		leftPanel.add(addClasses);
 		leftPanel.add(addMethods);

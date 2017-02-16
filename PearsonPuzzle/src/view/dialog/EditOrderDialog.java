@@ -29,9 +29,9 @@ import controller.DialogController;
 public class EditOrderDialog extends JDialog implements Observer{
 	
 	private static final long serialVersionUID = 6546427675009283113L;
-	public final String DEFAULT_CONTENT = "Dieser Text wird angezeigt, wenn die gewählte Gruppe getestet wird.\n" +
-			"Ist der Test erfolgreich, wird folgendes ausgegeben:\t<eingegebener Text>: Ja\n" +
-			"Ist der Test nicht erfolgreich, wird folgendes ausgegeben:\t<eingegebener Text>: Nein";
+	public final String DEFAULT_CONTENT = "Dieser Text wird angezeigt, wenn die entsprechende Gruppe getestet wird.\n" +
+			"Es sollte hier angegeben werden, welche allgemeine oder konkrete Regel der Formulierung des Reihenfolgentest zugrunde liegt." +
+			"Der Schüler erhält damit eine konkrete Rückmeldung, was er falsch und richtig gemacht hat.";
 	private Model model;
 	private JOptionPane optionPane;
 	private JComboBox<String> orderGroup;

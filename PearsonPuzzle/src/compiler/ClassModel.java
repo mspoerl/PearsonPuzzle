@@ -194,10 +194,10 @@ public class ClassModel {
 				 pattern = Pattern.compile(patternString);
 				 Matcher matcher_ret = pattern.matcher(src);
 				 if(matcher_ret.find()){		// kein return Statement im Sourcecode
-					 method = "public Object "+methodName+"() {\n";
+					 method = "public static Object "+methodName+"() {\n";
 				 }
 				 else							// return statement im Sourcecode
-					 method = "public void "+methodName+"(){\n";				 
+					 method = "public static void "+methodName+"(){\n";				 
 			 }
 			 
 			 while(src.contains(className) | srcCodeMap.containsKey(className)){
