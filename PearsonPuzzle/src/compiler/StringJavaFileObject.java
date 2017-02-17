@@ -2,7 +2,7 @@ package compiler;
 
 import java.net.URI;
 
-import javax.tools.*;
+import javax.tools.SimpleJavaFileObject;
 
 /**
  * String Java File Object hält den Sourcecode in kompilierbarer Form bereit.

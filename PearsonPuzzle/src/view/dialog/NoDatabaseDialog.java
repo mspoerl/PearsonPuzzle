@@ -9,9 +9,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import controller.DialogController;
-
 import model.Model;
+import controller.DialogController;
 
 public class NoDatabaseDialog extends JDialog {
 

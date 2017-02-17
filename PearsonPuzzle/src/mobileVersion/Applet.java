@@ -7,13 +7,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import controller.Controller;
-
 import mobileVersion.controller.AppletController;
 import mobileVersion.view.AppletMenu;
 import mobileVersion.view.AppletView;
 import mobileVersion.view.ProjectListAView;
 import model.Model;
+import controller.Controller;
 
 /**
  * Diese Klasse ist als Java Web Start Application designed, um aus dem Internet

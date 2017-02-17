@@ -4,14 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Observable;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
+import model.Model;
+import view.JView;
 import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
-import view.JView;
-import model.Model;
 
 public class ConfigEditor extends JView {
 

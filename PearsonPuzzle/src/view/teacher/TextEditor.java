@@ -21,13 +21,12 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 
+import model.Model;
+import model.access.AccessGroup;
 import view.JView;
-
 import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
-import model.Model;
-import model.access.AccessGroup;
 
 /**
  * View, der dem Lehrer das grafische Bearbeiten von Projekten ermöglicht.

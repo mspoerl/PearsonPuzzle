@@ -16,10 +16,10 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -30,8 +30,8 @@ import org.junit.runner.Result;
 
 import view.PPException;
 
-import compiler.CodeCompletion;
 import compiler.ClassModel;
+import compiler.CodeCompletion;
 import compiler.StringJavaFileObject;
 
 /**

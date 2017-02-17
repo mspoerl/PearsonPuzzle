@@ -1,14 +1,15 @@
 package controller_Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+
 import javax.swing.JButton;
 
 import model.Model;
 import model.access.AccessGroup;
 
-import org.junit.*;
+import org.junit.Test;
 
 import view.JView;
 import view.pupil.PupilView;

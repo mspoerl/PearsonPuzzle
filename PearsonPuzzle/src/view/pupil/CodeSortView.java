@@ -20,18 +20,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.TransferHandler;
 
+import model.GameModel;
+import model.Model;
+
 import org.junit.runner.notification.Failure;
 
 import view.JView;
 import view.teacher.UnitEditor;
-
 import controller.Controller;
 import controller.DCCommand;
 import controller.transferHandler.FromTransferHandler;
 import controller.transferHandler.ToSaveTransferHandler;
-
-import model.GameModel;
-import model.Model;
 
 /**
  * Drag and Drop Liste für den Schüler. Hier kann gepuzzlet werden!

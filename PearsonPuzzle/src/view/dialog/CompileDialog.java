@@ -19,7 +19,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 import model.Model;
-
 import controller.DCCommand;
 import controller.DialogController;
 

@@ -11,16 +11,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 
-import compiler.TestCompiler;
-
 import model.Model;
-
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.CompileDialog;
 import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
 import view.dialog.JDialog;
+
+import compiler.TestCompiler;
 
 /**
  * Controller für die Unterklassen von JDialog.

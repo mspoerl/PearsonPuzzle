@@ -9,24 +9,44 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
 
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
-import javax.swing.*;
-
-import org.junit.runner.Result;
-
-import compiler.TestCompiler;
-
 import mobileVersion.Applet;
 import model.Model;
 import model.access.AccessGroup;
-import view.*;
-import view.pupil.*;
-import view.teacher.*;
+
+import org.junit.runner.Result;
+
+import view.Allert;
+import view.JView;
+import view.LoginView;
+import view.PPException;
+import view.pupil.CodeSortView;
+import view.pupil.PupilView;
+import view.teacher.ConfigEditor;
+import view.teacher.OptionConfiguration;
+import view.teacher.PreViewEditor;
+import view.teacher.TeacherView;
+import view.teacher.TextEditor;
+import view.teacher.UnitEditor;
+import view.teacher.UserEditor;
+
+import compiler.TestCompiler;
 
 /**
  * Śtandard-Controller der PearsonPuzzle Anwendung. Ist für views der

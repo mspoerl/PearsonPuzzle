@@ -4,17 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Observable;
 
-import javax.swing.JButton;
-import javax.swing.JList;
-
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 
 import model.Model;
-
 import controller.Controller;
 import controller.DCCommand;
 

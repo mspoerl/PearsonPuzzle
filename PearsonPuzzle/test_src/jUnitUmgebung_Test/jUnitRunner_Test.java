@@ -1,12 +1,10 @@
 package jUnitUmgebung_Test;
 
 import static org.junit.Assert.assertEquals;
-
 import jUnitUmgebung.UnitRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
-
 
 import org.junit.Before;
 import org.junit.Test;

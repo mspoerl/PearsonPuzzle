@@ -1,6 +1,6 @@
 package model_Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

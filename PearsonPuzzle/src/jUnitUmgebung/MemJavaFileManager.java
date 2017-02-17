@@ -1,7 +1,12 @@
 package jUnitUmgebung;
 
-import javax.tools.*;
+import javax.tools.DiagnosticCollector;
+import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.StandardJavaFileManager;
 
 /**
  * Macht es möglich, Dateien in den Arbeitspeicher zu laden. Stellt auch eine

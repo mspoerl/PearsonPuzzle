@@ -12,10 +12,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import model.Model;
 import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
-import model.Model;
 
 /**
  * Definiert die Login Ansicht, die zugleich als start Screen fungiert.

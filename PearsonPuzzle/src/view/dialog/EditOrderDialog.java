@@ -23,7 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 import model.Model;
-
 import controller.DCCommand;
 import controller.DialogController;
 

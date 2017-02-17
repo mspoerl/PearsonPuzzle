@@ -7,8 +7,15 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.util.Observer;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
+import model.Model;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.CompileDialog;
@@ -16,8 +23,6 @@ import view.dialog.DeleteOrderDialog;
 import view.dialog.EditOrderDialog;
 import view.teacher.ConfigEditor;
 import view.teacher.UnitEditor;
-
-import model.Model;
 import controller.Controller;
 import controller.DCCommand;
 import controller.DialogController;

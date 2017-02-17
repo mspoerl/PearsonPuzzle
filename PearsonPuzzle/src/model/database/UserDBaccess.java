@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import view.PPException;
-
 import model.access.AccessGroup;
+import view.PPException;
 
 public class UserDBaccess {
 

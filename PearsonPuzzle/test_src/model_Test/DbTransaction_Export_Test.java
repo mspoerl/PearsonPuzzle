@@ -1,5 +1,11 @@
 package model_Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,7 +15,6 @@ import model.Model;
 import model.access.AccessGroup;
 
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;

@@ -12,9 +12,8 @@ import javax.swing.JTextField;
 
 import model.Model;
 import model.access.AccessGroup;
-
-import controller.Controller;
 import view.JView;
+import controller.Controller;
 
 public class InitializeAccess extends JView {
 

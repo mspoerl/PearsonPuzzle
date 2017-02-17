@@ -29,13 +29,12 @@ import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 
 import model.Model;
-
+import view.Allert;
+import view.JView;
 import controller.Controller;
 import controller.DCCommand;
 import controller.transferHandler.FromTransferHandler;
 import controller.transferHandler.ToSaveTransferHandler;
-import view.Allert;
-import view.JView;
 
 public class PreViewEditor extends JView {
 

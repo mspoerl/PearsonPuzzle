@@ -7,10 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import view.PPException;
-
 import model.Model;
-import model.database.UserDBaccess;
+import view.PPException;
 
 /**
  * Klasse Kapselt die Zugrifsslogik auf die Datenbank.

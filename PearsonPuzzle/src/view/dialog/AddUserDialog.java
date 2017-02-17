@@ -1,5 +1,16 @@
 package view.dialog;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -9,18 +20,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import view.PPException;
-
-import controller.DCCommand;
-import controller.DialogController;
-
 import model.Model;
 import model.access.AccessGroup;
-
-import java.util.Observable;
-import java.util.Observer;
-import java.awt.*;
-import java.awt.event.*;
+import view.PPException;
+import controller.DCCommand;
+import controller.DialogController;
 
 public class AddUserDialog extends JDialog implements Observer {
 

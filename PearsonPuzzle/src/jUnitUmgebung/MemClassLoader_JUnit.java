@@ -1,6 +1,7 @@
 package jUnitUmgebung;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.runner.JUnitCore;
 

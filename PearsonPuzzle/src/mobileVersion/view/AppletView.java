@@ -1,15 +1,14 @@
 package mobileVersion.view;
 
 import java.awt.BorderLayout;
-
 import java.util.Observer;
+
 import javax.swing.JPanel;
 
 import model.Model;
 import view.Allert;
 import view.PPException;
 import view.View;
-
 import controller.Controller;
 
 public abstract class AppletView extends JPanel implements Observer, View {

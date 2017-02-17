@@ -4,9 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import view.Menu;
 import controller.Controller;
 import controller.DCCommand;
-import view.Menu;
 
 public class MenuPupil extends Menu {
 

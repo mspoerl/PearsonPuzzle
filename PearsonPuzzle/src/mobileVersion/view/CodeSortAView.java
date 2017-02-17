@@ -25,10 +25,10 @@ import model.Model;
 
 import org.junit.runner.notification.Failure;
 
+import view.teacher.UnitEditor;
 import controller.Controller;
 import controller.DCCommand;
 import controller.transferHandler.ToSaveTransferHandler;
-import view.teacher.UnitEditor;
 
 /**
  * <img src="../../../rsc/doc_img/LosGehtsScreen1.PNG"> <img

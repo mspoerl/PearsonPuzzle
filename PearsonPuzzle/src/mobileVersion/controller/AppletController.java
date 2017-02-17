@@ -9,13 +9,6 @@ import javax.swing.JRootPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 
-import org.junit.runner.Result;
-
-import compiler.TestCompiler;
-
-import controller.Controller;
-import controller.DCCommand;
-
 import mobileVersion.view.AppletMenu;
 import mobileVersion.view.AppletView;
 import mobileVersion.view.CodeSortAView;
@@ -23,9 +16,16 @@ import mobileVersion.view.ProjectListAView;
 import model.Model;
 import model.access.AccessGroup;
 
+import org.junit.runner.Result;
+
 import view.Allert;
 import view.PPException;
 import view.teacher.UnitEditor;
+
+import compiler.TestCompiler;
+
+import controller.Controller;
+import controller.DCCommand;
 
 /**
  * Schlanker und performanter Controller für die Applet-Views. Entspricht von

@@ -21,10 +21,9 @@ import javax.swing.ScrollPaneConstants;
 
 import model.Model;
 import model.access.AccessGroup;
-
+import view.JView;
 import controller.Controller;
 import controller.DCCommand;
-import view.JView;
 
 public class UserEditor extends JView {
 

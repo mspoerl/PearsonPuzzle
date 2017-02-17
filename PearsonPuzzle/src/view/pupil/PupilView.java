@@ -11,8 +11,8 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import view.JView;
 import model.Model;
+import view.JView;
 import controller.Controller;
 import controller.DCCommand;
 

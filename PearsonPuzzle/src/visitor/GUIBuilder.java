@@ -1,24 +1,26 @@
 package visitor;
 
-import java.awt.FlowLayout;
 import jUnitUmgebung.UnitRunner;
+
+import java.awt.FlowLayout;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import org.syntax.jedit.JEditTextArea;
-import org.syntax.jedit.tokenmarker.JavaTokenMarker;
-
-import controller.Controller;
-import controller.DefaultController;
-import controller.ExceptionController;
 import mobileVersion.controller.AppletController;
 import mobileVersion.view.AppletView;
 import model.Model;
+
+import org.syntax.jedit.JEditTextArea;
+import org.syntax.jedit.tokenmarker.JavaTokenMarker;
+
 import view.JView;
 import view.LoginView;
 import view.PPException;
 import view.dialog.InitializeAccess;
+import controller.Controller;
+import controller.DefaultController;
+import controller.ExceptionController;
 
 /**
  * Klasse dient dazu, die GUI zu erzeugen.<br>

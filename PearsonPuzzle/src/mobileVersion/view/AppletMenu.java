@@ -10,7 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 
 import model.GameModel;
-
 import controller.Controller;
 import controller.DCCommand;
 

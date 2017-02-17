@@ -7,17 +7,25 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-
-import org.junit.runner.notification.Failure;
 
 import model.Model;
 
+import org.junit.runner.notification.Failure;
+
+import view.JView;
 import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
-import view.JView;
 
 public class UnitEditor extends JView {
 

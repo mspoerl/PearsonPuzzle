@@ -4,13 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.Observable;
 
-import javax.swing.*;
-
-import controller.Controller;
-import controller.DCCommand;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import model.Model;
 import view.JView;
+import controller.Controller;
+import controller.DCCommand;
 
 /**
  * View, der den Lehrer grundsätzliche Einstellungen treffen lässt.

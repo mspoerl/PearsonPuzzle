@@ -9,10 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import model.Model;
 import controller.Controller;
 import controller.DCCommand;
-
-import model.Model;
 
 public class LoginAView extends AppletView {
     private static final long serialVersionUID = -6804602953131314060L;
