@@ -1,7 +1,6 @@
 package model.access;
 
-
 public interface AccessInterface {
-	public void verarbeite();
+    public void verarbeite();
 
 }

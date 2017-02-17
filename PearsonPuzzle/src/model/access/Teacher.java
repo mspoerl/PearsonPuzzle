@@ -2,17 +2,16 @@ package model.access;
 
 import model.Model;
 
-public class Teacher implements AccessInterface{
-	
-	Teacher(){	
-	}
-	Teacher(Model model){
-		
-	}
+public class Teacher implements AccessInterface {
 
-	public void verarbeite() {
-		// TODO Auto-generated method stub
-		
-	}
+    Teacher() {
+    }
+
+    Teacher(Model model) {}
+
+    public void verarbeite() {
+	// TODO Auto-generated method stub
+
+    }
 
 }

@@ -8,38 +8,40 @@ import controller.Controller;
 import controller.DCCommand;
 import view.Menu;
 
-public class MenuPupil extends Menu{
-	
-	/**
-	 * Definiert das Menü aus Schülerperspektive.
-	 */
-	private static final long serialVersionUID = 1L;
-	JMenuItem enterProject;
-	JMenuItem logout;
-	public MenuPupil(){
-		setupMenu();
-	}
-	MenuPupil(JFrame frame){
-		setupMenu();
-		frame.setJMenuBar(this);
-	}
+public class MenuPupil extends Menu {
 
-	@Override
-	protected void setupMenu() {		
-		JMenu menu = new JMenu ("Menü");			
-		enterProject = new JMenuItem("Projekte anzeigen");
-		enterProject.setActionCommand(DCCommand.ProjectList.toString());
-		logout = new JMenuItem("Logout");
-		logout.setActionCommand(DCCommand.Logout.toString());
+    /**
+     * Definiert das Menü aus Schülerperspektive.
+     */
+    private static final long serialVersionUID = 1L;
+    JMenuItem enterProject;
+    JMenuItem logout;
 
-		this.add(menu);
-		menu.add(enterProject);
-		menu.add(logout);
-	}
+    public MenuPupil() {
+	setupMenu();
+    }
 
-	@Override
-	public void addActionListener(Controller controller) {
-		enterProject.addActionListener(controller);
-		logout.addActionListener(controller);
-	}
+    MenuPupil(JFrame frame) {
+	setupMenu();
+	frame.setJMenuBar(this);
+    }
+
+    @Override
+    protected void setupMenu() {
+	JMenu menu = new JMenu("Menü");
+	enterProject = new JMenuItem("Projekte anzeigen");
+	enterProject.setActionCommand(DCCommand.ProjectList.toString());
+	logout = new JMenuItem("Logout");
+	logout.setActionCommand(DCCommand.Logout.toString());
+
+	this.add(menu);
+	menu.add(enterProject);
+	menu.add(logout);
+    }
+
+    @Override
+    public void addActionListener(Controller controller) {
+	enterProject.addActionListener(controller);
+	logout.addActionListener(controller);
+    }
 }

@@ -9,158 +9,186 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 /**
- * Klasse enthält statische Methoden, die dazu dienen, Fehler in der Reihenfolge des Lösungsarrays zu finden. 
- * Methode greift nicht alle Daten vom Model ab, um zu verhindern, dass das Model auch im Schülermodus die richtigen Anordnungen via getter zur verfügung stellen muss. 
- * In dieser Konzeption greift das Model auf die hier gegebenen statischen Methoden zu und gibt nur das Ergebnis der Test zurück.
+ * Klasse enthält statische Methoden, die dazu dienen, Fehler in der Reihenfolge
+ * des Lösungsarrays zu finden. Methode greift nicht alle Daten vom Model ab, um
+ * zu verhindern, dass das Model auch im Schülermodus die richtigen Anordnungen
+ * via getter zur verfügung stellen muss. In dieser Konzeption greift das Model
+ * auf die hier gegebenen statischen Methoden zu und gibt nur das Ergebnis der
+ * Test zurück.
+ * 
  * @author workspace
- *
+ * 
  */
 public class OrderFailures {
-	
-	public static boolean testOrder_simple(Model model, String projectCode){
-		String tab;
-		if(model.getTabSize()==0)
-			tab="";
-		else
-			tab=" ";
-		for(int i=0;i<model.getTabSize();i++){
-			tab=tab+" ";
-		}
-		String sollutionString = new String();
-		for (String string : model.getSolutionStrings()){
-			sollutionString=sollutionString+string+"\n";
-		}
-		
-		// XXX: hier wurde am 7.2.2016 trim() ergänzt
-		if(sollutionString.trim().equals(model.getProjectCode()))
-		 	return true;
+
+    public static boolean testOrder_simple(Model model, String projectCode) {
+	String tab;
+	if (model.getTabSize() == 0)
+	    tab = "";
+	else
+	    tab = " ";
+	for (int i = 0; i < model.getTabSize(); i++) {
+	    tab = tab + " ";
+	}
+	String sollutionString = new String();
+	for (String string : model.getSolutionStrings()) {
+	    sollutionString = sollutionString + string + "\n";
+	}
+
+	// XXX: hier wurde am 7.2.2016 trim() ergänzt
+	if (sollutionString.trim().equals(model.getProjectCode()))
+	    return true;
+	return false;
+    }
+
+    /**
+     * Prüft, ob sollutionCode und normalCode gleiche Einträge haben. Falls
+     * ignore Tabs gesetzt ist, werden führende und endständige Tabs und
+     * Leerzeichen werden nicht berücksichtigt.
+     * 
+     * @param sollutionCode
+     *            Lösungsvektor
+     * @param normalCode
+     *            Vorgegebener (richtiger) Vektor
+     * @param ignoreTabs
+     *            Tabs beim Vergleich ignorieren
+     * @return Vektoren sind gleich
+     */
+    public static boolean testOrder_simple(Vector<String> sollutionCode,
+	    Vector<String> normalCode, boolean ignoreTabs) {
+	Iterator<String> sollutionIterator = sollutionCode.iterator();
+	Iterator<String> normalIterator = normalCode.iterator();
+	while (sollutionIterator.hasNext() && normalIterator.hasNext()) {
+	    if (ignoreTabs) {
+		if (!((String) sollutionIterator.next()).trim().equals(
+			((String) normalIterator.next()).trim()))
+		    return false;
+	    } else if (!sollutionIterator.next().equals(normalIterator.next()))
 		return false;
 	}
-	
-	/**
-	 * Prüft, ob sollutionCode und normalCode gleiche Einträge haben.
-	 * Falls ignore Tabs gesetzt ist, werden führende und endständige Tabs und Leerzeichen werden nicht berücksichtigt.
-	 * @param sollutionCode	Lösungsvektor
-	 * @param normalCode	Vorgegebener (richtiger) Vektor
-	 * @param ignoreTabs	Tabs beim Vergleich ignorieren
-	 * @return Vektoren sind gleich
-	 */
-	public static boolean testOrder_simple(Vector<String> sollutionCode, Vector<String> normalCode, boolean ignoreTabs){
-		Iterator<String> sollutionIterator = sollutionCode.iterator();
-		Iterator<String> normalIterator = normalCode.iterator();
-		while(sollutionIterator.hasNext() && normalIterator.hasNext()){
-			if(ignoreTabs){
-				if(!((String) sollutionIterator.next()).trim().equals(((String) normalIterator.next()).trim()))
-					return false;
+	if (sollutionIterator.hasNext() || normalIterator.hasNext())
+	    return false;
+	return true;
+    }
+
+    /**
+     * Prüft, ob die in sortedCode gespeicherte Abfolge von Indizes des
+     * codeVektor_normal den in codeLine_GroupMatrix gespeicherten Abfolgeregeln
+     * entspricht. Wichtig dabei ist, dass die Vektoren in codeLineGroupMAtrix
+     * monoton steigende Zahlenfolgen beinhalten müssen. (Wäre dies nicht der
+     * Fall, würde der vorgegebene Vektor selbst nicht den Regeln entsprechen)
+     * Ausnahme hierbei stellt die 0 dar. Sie symbolisiert, dass der Eintrag
+     * nicht relementiert ist.
+     * 
+     * @param sortedCode
+     *            Vektor von Indizes des codeVector_normal
+     * @param codeLine_GroupMatrix
+     *            Matrix mit Abfolgeregeln
+     * @param codeMap
+     *            Zuordnung von Codezeile -> Index
+     * @param codeVector_normal
+     *            Vektor in einwandfreier Reihenfolge
+     * @return
+     */
+    public static LinkedList<Boolean> testOrder_groups(
+	    LinkedList<Integer> sortedCode,
+	    Vector<Vector<Integer>> codeLine_GroupMatrix,
+	    LinkedHashMap<String, Integer> codeMap,
+	    Vector<String> codeVector_normal) {
+
+	LinkedList<Boolean> groupFailures = new LinkedList<Boolean>();
+	TreeMap<Integer, HashMap<String, Integer>> treeMap;
+	for (Vector<Integer> groupRule : codeLine_GroupMatrix) {
+	    // System.out.println("Rule: "+groupRule);
+	    int line = 0;
+	    int ruleLayer = 0;
+	    int linemax = 0;
+	    treeMap = new TreeMap<Integer, HashMap<String, Integer>>();
+	    HashMap<String, Integer> minIndex = new HashMap<String, Integer>();
+	    treeMap.clear();
+	    for (Integer rule : groupRule) {
+		if (rule == null) {
+		    // Sortierung wird nicht berücksichtigt.
+		} else if (rule == 0) {
+		    // Dies stellt den Fall dar, dass die Sortierung dieser
+		    // Zeile nicht berücksichtigt wird.
+		} else if (rule == -1) {
+		    if (sortedCode.contains(codeMap.get(codeVector_normal
+			    .get(line)))) {
+			groupFailures.add(false);
+			break;
+		    }
+		} else {
+		    String keyString = codeVector_normal.get(line);
+
+		    // Regel nicht auf gleicher Ebene wie vorhergehende
+		    if (ruleLayer < rule) {
+			if (ruleLayer != 0) {
+			    // System.out.println(treeMap);
+			    TreeSet<Integer> treeSet = new TreeSet<Integer>(
+				    treeMap.lastEntry().getValue().values());
+			    linemax = treeSet.last();
 			}
-			else if(!sollutionIterator.next().equals(normalIterator.next()))
-				return false;
+			ruleLayer = rule;
+			treeMap.put(rule, new HashMap<String, Integer>());
+		    }
+		    // Regel auf gleicher Ebene
+		    else if (ruleLayer == rule) {
+			// treeMap.get(rule).add(new LinkedList<Integer>());
+		    } else {
+			// TODO: Fehlerbehandlung
+		    }
+
+		    // Falls auf dieser Ebene bereits ein Regeleintrag zu diesem
+		    // String existiert,
+		    // wird nach dem nächsten vorkommenden String gesucht
+		    Integer sameStringBuffer = null;
+		    Integer startIndex;
+		    if (treeMap.get(rule).containsKey(keyString)) {
+			sameStringBuffer = treeMap.get(rule).get(keyString);
+			startIndex = Math.max(linemax, sameStringBuffer + 1);
+		    } else
+			startIndex = linemax;
+
+		    // Lösungsstring wird durchsucht und
+		    for (int lineNr = startIndex; lineNr < codeVector_normal
+			    .size(); lineNr++) {
+			// sortedCode.size()> falls nicht alle Einträge
+			// geschaufelt wurden
+			if (sortedCode.size() > lineNr
+				&& codeMap.get(codeVector_normal.get(line)) == codeMap
+					.get(codeVector_normal.get(sortedCode
+						.get(lineNr)))) {
+			    if (minIndex.get(keyString) == null
+				    || minIndex.get(keyString) < lineNr) {
+				treeMap.get(rule).put(keyString, lineNr);
+				minIndex.put(keyString, lineNr);
+				// System.out.println("Regelebene: "+rule+"\t String: "+keyString+"\t wurde in in Zeile "+lineNr+
+				// " gefunden\t Linemax:"+linemax);
+				break;
+			    }
+			}
+		    }
+		    if (treeMap.get(rule).get(keyString) == null
+			    || treeMap.get(rule).get(keyString) <= linemax
+			    && linemax != 0
+			    || sameStringBuffer != null
+			    && sameStringBuffer == treeMap.get(rule).get(
+				    keyString)) {
+			// System.out.println("Regelebene: "+rule+"\t String: "+keyString+" konnte auf dieser Ebene zuletzt in Zeile "+sameStringBuffer+" gefunden werden."+"\n\ttreeEintrag: "+treeMap.get(rule).get(keyString)+"\t Letzte Zeile ohne Probleme:"+
+			// linemax);
+			groupFailures.add(false);
+			break;
+		    }
 		}
-		if(sollutionIterator.hasNext() || normalIterator.hasNext())
-			return false;
-		return true;
+		line++;
+	    }
+	    if (groupFailures.size() <= codeLine_GroupMatrix.indexOf(groupRule)) {
+		groupFailures.add(true);
+		// System.out.println("Fehler in Gruppe Nummer "+groupRule);
+	    }
 	}
-	
-	/**
-	 * Prüft, ob die in sortedCode gespeicherte Abfolge von Indizes des codeVektor_normal den in codeLine_GroupMatrix gespeicherten Abfolgeregeln entspricht.
-	 * Wichtig dabei ist, dass die Vektoren in codeLineGroupMAtrix monoton steigende Zahlenfolgen beinhalten müssen. (Wäre dies nicht der Fall, würde der vorgegebene Vektor selbst nicht den Regeln entsprechen)
-	 * Ausnahme hierbei stellt die 0 dar. Sie symbolisiert, dass der Eintrag nicht relementiert ist.
-	 * 
-	 * @param sortedCode Vektor von Indizes des codeVector_normal
-	 * @param codeLine_GroupMatrix	Matrix mit Abfolgeregeln
-	 * @param codeMap	Zuordnung von Codezeile -> Index 
-	 * @param codeVector_normal Vektor in einwandfreier Reihenfolge
-	 * @return
-	 */
-	public static LinkedList<Boolean> testOrder_groups(LinkedList<Integer> sortedCode,
-			 Vector<Vector<Integer>> codeLine_GroupMatrix, LinkedHashMap<String, Integer> codeMap, Vector<String> codeVector_normal) {
-			
-		LinkedList<Boolean> groupFailures = new LinkedList<Boolean>();
-		TreeMap<Integer, HashMap<String, Integer>>  treeMap;
-		for(Vector<Integer> groupRule : codeLine_GroupMatrix){
-			//System.out.println("Rule: "+groupRule);
-			int line=0;
-			int ruleLayer = 0;
-			int linemax =0;
-			treeMap =  new TreeMap<Integer, HashMap<String, Integer>>();
-			HashMap<String, Integer> minIndex = new HashMap<String, Integer>();
-			treeMap.clear();
-			for(Integer rule : groupRule){
-				if(rule==null){
-				}
-				else if(rule == 0){
-					// Dies stellt den Fall dar, dass die Sortierung dieser Zeile nicht berücksichtigt wird.
-				}
-				else if(rule == -1){
-					if(sortedCode.contains(codeMap.get(codeVector_normal.get(line)))){
-						groupFailures.add(false);			
-						break;
-					}
-				}
-				
-				else{
-					String keyString = codeVector_normal.get(line);
-					
-					// Regel nicht auf gleicher Ebene wie vorhergehende
-					if(ruleLayer<rule){
-						if(ruleLayer!=0){
-							//System.out.println(treeMap);
-							TreeSet<Integer> treeSet = new TreeSet<Integer>(treeMap.lastEntry().getValue().values());
-							linemax = treeSet.last();
-						}
-						ruleLayer=rule;
-						treeMap.put(rule, new HashMap<String,Integer>());
-					}
-					// Regel auf gleicher Ebene
-					else if(ruleLayer== rule){
-						//treeMap.get(rule).add(new LinkedList<Integer>());
-					}
-					else{
-						// TODO: Fehlerbehandlung
-					}
-					
-					
-					
-					// Falls auf dieser Ebene bereits ein Regeleintrag zu diesem String existiert, 
-					// wird nach dem nächsten vorkommenden String gesucht
-					Integer sameStringBuffer = null;
-					Integer startIndex;
-					if(treeMap.get(rule).containsKey(keyString)){
-						sameStringBuffer=treeMap.get(rule).get(keyString);
-						startIndex=Math.max(linemax, sameStringBuffer+1);
-					}
-					else
-						startIndex=linemax;
-					
-					
-					// Lösungsstring wird durchsucht und 
-					for(int lineNr=startIndex; lineNr<codeVector_normal.size();lineNr++){
-							// sortedCode.size()> falls nicht alle Einträge geschaufelt wurden
-						if( sortedCode.size()>lineNr && codeMap.get(codeVector_normal.get(line))== codeMap.get(codeVector_normal.get(sortedCode.get(lineNr)))){
-							if(minIndex.get(keyString)==null || minIndex.get(keyString)<lineNr){
-								treeMap.get(rule).put(keyString, lineNr );
-								minIndex.put(keyString, lineNr);
-								//System.out.println("Regelebene: "+rule+"\t String: "+keyString+"\t wurde in in Zeile "+lineNr+ " gefunden\t Linemax:"+linemax);
-								break;
-							}
-						}
-					}
-					if(treeMap.get(rule).get(keyString)==null 
-							|| treeMap.get(rule).get(keyString)<=linemax && linemax!=0 
-							|| sameStringBuffer!= null && sameStringBuffer==treeMap.get(rule).get(keyString)){
-						//System.out.println("Regelebene: "+rule+"\t String: "+keyString+" konnte auf dieser Ebene zuletzt in Zeile "+sameStringBuffer+" gefunden werden."+"\n\ttreeEintrag: "+treeMap.get(rule).get(keyString)+"\t Letzte Zeile ohne Probleme:"+ linemax);
-						groupFailures.add(false);
-						break;
-					}
-				}
-				line++;
-			}
-			if(groupFailures.size()<=codeLine_GroupMatrix.indexOf(groupRule)){
-				groupFailures.add(true);
-				//System.out.println("Fehler in Gruppe Nummer "+groupRule);
-			}
-		}
-		return groupFailures;
-	}
+	return groupFailures;
+    }
 
 }

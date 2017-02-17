@@ -1,12 +1,10 @@
 package model.access;
 
+public class Unauthorized implements AccessInterface {
 
+    public void verarbeite() {
 
-public class Unauthorized implements AccessInterface{
+	// TODO Auto-generated method stub
 
-	public void verarbeite() {
-		
-		// TODO Auto-generated method stub
-		
-	}
+    }
 }
