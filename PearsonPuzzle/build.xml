@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="PearsonPuzzle">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../../usr/lib/eclipse"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="../../.m2/repository/org/apache/derby/derby/10.8.3.0/derby-10.8.3.0.jar"/>
+    </path>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="../../../../usr/share/eclipse/dropins/jdt/plugins/org.junit_4.8.2.dist/junit.jar"/>
+        <pathelement location="../../../../usr/share/eclipse/dropins/jdt/plugins/org.hamcrest.core_1.3.0.jar"/>
+    </path>
+    <path id="PearsonPuzzle.classpath">
+        <pathelement location="target/classes"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+    <path id="run.DBAccess.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.JView (1).classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.user.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ViewController.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ControllerTest.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.Model.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.Design.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ControllerTest.LogoutPupilView_logout.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ModelTest (1).classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.DBAccess.test_MIN.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.user (2).classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.RobotButtonTest.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.LogoutButtonTest.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.UserDBaccess.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.randomKlickTest.classpath">
+        <path refid="PearsonPuzzle.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="target/classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="test_src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="target/classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <src path="test_src"/>
+            <classpath refid="PearsonPuzzle.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="DBAccess">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="model.DBAccess" todir="${junit.output.dir}"/>
+            <classpath refid="run.DBAccess.classpath"/>
+        </junit>
+    </target>
+    <target name="JView (1)">
+        <java classname="view.JView" failonerror="true" fork="yes">
+            <classpath refid="run.JView (1).classpath"/>
+        </java>
+    </target>
+    <target name="user">
+        <java classname="visitor.user" failonerror="true" fork="yes">
+            <classpath refid="run.user.classpath"/>
+        </java>
+    </target>
+    <target name="ViewController">
+        <java classname="controller.ViewController" failonerror="true" fork="yes">
+            <classpath refid="run.ViewController.classpath"/>
+        </java>
+    </target>
+    <target name="ControllerTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="model.ControllerTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.ControllerTest.classpath"/>
+        </junit>
+    </target>
+    <target name="Model">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="model.Model" todir="${junit.output.dir}"/>
+            <classpath refid="run.Model.classpath"/>
+        </junit>
+    </target>
+    <target name="Design">
+        <java classname="model.Design" failonerror="true" fork="yes">
+            <classpath refid="run.Design.classpath"/>
+        </java>
+    </target>
+    <target name="ControllerTest.LogoutPupilView_logout">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="model.ControllerTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.ControllerTest.LogoutPupilView_logout.classpath"/>
+        </junit>
+    </target>
+    <target name="ModelTest (1)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test_src.model.ModelTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.ModelTest (1).classpath"/>
+        </junit>
+    </target>
+    <target name="DBAccess.test_MIN">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="model.DBAccess" todir="${junit.output.dir}"/>
+            <classpath refid="run.DBAccess.test_MIN.classpath"/>
+        </junit>
+    </target>
+    <target name="user (2)">
+        <java classname="src.visitor.user" failonerror="true" fork="yes">
+            <classpath refid="run.user (2).classpath"/>
+        </java>
+    </target>
+    <target name="RobotButtonTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="Controller.RobotButtonTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.RobotButtonTest.classpath"/>
+        </junit>
+    </target>
+    <target name="LogoutButtonTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="Controller.LogoutButtonTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.LogoutButtonTest.classpath"/>
+        </junit>
+    </target>
+    <target name="UserDBaccess">
+        <java classname="model.UserDBaccess" failonerror="true" fork="yes">
+            <classpath refid="run.UserDBaccess.classpath"/>
+        </java>
+    </target>
+    <target name="randomKlickTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="Controller.randomKlickTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.randomKlickTest.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>

@@ -1,5 +1,11 @@
 package model_Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,7 +15,6 @@ import model.Model;
 import model.access.AccessGroup;
 
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +34,7 @@ import org.junit.Test;
  */
 public class DbTransaction_Export_Test {
 
-	private final static String location = "gen_rsc/database";
+	private final static String location = "gen_rsc"+File.separator+"database";
 	private Model model;
 	private Model secondModel;
 	private Integer projectID;
@@ -109,13 +114,15 @@ public class DbTransaction_Export_Test {
 		// secondModel = model;
 	}
 	private void exportAndImportData() {
-		model.exportDatabase(location);
+	    	File file = new File(location);
+		model.exportDatabase(file.getAbsolutePath()+File.separator+"exportDatei");
 		model.setDatabase(null);
-		File file = new File(location);
+		
 		secondModel = new Model();
 		secondModel.fetchAll();
-		secondModel.replaceDatabase("exportdatei.zip", file.getAbsolutePath());
+		secondModel.replaceDatabase("exportDatei.zip", file.getAbsolutePath());
 		secondModel.selectProject(projectID);
+		file.delete();
 	}
 	
 	@Test
@@ -203,5 +210,4 @@ public class DbTransaction_Export_Test {
 		secondModel.removeProject();
 		secondModel.setDatabase(null);
 	}
-
 }

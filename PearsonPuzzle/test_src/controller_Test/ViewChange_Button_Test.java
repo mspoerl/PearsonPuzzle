@@ -1,6 +1,7 @@
 package controller_Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -8,15 +9,29 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.swing.JButton;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import model.Model;
 import model.access.AccessGroup;
-import view.*;
-import view.teacher.*;
-import view.pupil.*;
+
+import org.junit.After;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import view.JView;
+import view.LoginView;
+import view.View;
+import view.pupil.CodeSortView;
+import view.pupil.PupilView;
+import view.teacher.ConfigEditor;
+import view.teacher.OptionConfiguration;
+import view.teacher.PreViewEditor;
+import view.teacher.TeacherView;
+import view.teacher.TextEditor;
+import view.teacher.UnitEditor;
+import view.teacher.UserEditor;
 import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
@@ -97,6 +112,9 @@ public class ViewChange_Button_Test {
 			Controller controller=null;
 			if(view_class.getSuperclass().equals(JView.class))
 				controller = new DefaultController(model, (JView) startView);
+			
+			if(controller == null)
+			    fail("Controller konnte nicht initialisiert werden");
 
 			Assume.assumeNotNull(controller);
 			selectFirstProject();

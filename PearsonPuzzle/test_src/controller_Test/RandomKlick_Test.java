@@ -1,14 +1,15 @@
 package controller_Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+
 import javax.swing.JButton;
 
 import model.Model;
 import model.access.AccessGroup;
 
-import org.junit.*;
+import org.junit.Test;
 
 import view.JView;
 import view.pupil.PupilView;
@@ -34,7 +35,7 @@ public class RandomKlick_Test {
 //		randomSwingKlick(AccessGroup.UNAUTHORIZED);
 //	}
 	
-	private void randomSwingKlick(final AccessGroup accessGroup){
+	private static void randomSwingKlick(final AccessGroup accessGroup){
 		final int numberOfKlicks = 20;
 		// ----- Array mit möglichen Kommandos wird erstellt
 		ArrayList <String> commandList = new ArrayList<String>();

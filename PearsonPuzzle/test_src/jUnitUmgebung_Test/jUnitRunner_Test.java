@@ -1,12 +1,10 @@
 package jUnitUmgebung_Test;
 
 import static org.junit.Assert.assertEquals;
-
 import jUnitUmgebung.UnitRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
-
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +12,7 @@ import org.junit.runners.Parameterized;
 
 import view.PPException;
 
-
+@Deprecated
 public class jUnitRunner_Test {
 	Boolean expectedResult;
 	String testString;

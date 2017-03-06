@@ -1,6 +1,6 @@
 package controller_Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -10,10 +10,11 @@ import java.util.Random;
 
 import model.Model;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
-import visitor.GUIBuilder;
 import view.JView;
+import visitor.GUIBuilder;
 
 public class Robot_Button_Test {
 	
