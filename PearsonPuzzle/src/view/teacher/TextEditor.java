@@ -106,21 +106,48 @@ public class TextEditor extends JView {
 	leftPanel.setPreferredSize(new Dimension(300, 350));
 	JPanel configDiv = new JPanel();
 	JPanel configPanel = new JPanel();
+	
+	String tooltip_Buffer;	
+	JTextField textField_Buffer;
+	JLabel label_Buffer;
+	
 	configPanel.setMaximumSize(new Dimension(50, 100));
 	configPanel.setLayout(new GridLayout(/* 6 */0, 2, 6, 3));
 
 	ArrayList<JLabel> labels = new ArrayList<JLabel>();
-	configFields.add(new JTextField("" + textArea.getTabSize()));
-	configFields.get(configFields.size() - 1).setName("TabSize");
-	labels.add(new JLabel("Tabbreite"));
+	tooltip_Buffer = "<html><body><p>" +
+		"Wird die Tabbreite auf 0 gestellt, werden Tabs verborgen (nicht entfernt).<br>" +
+		"Wird die Tabbreite >= 0 gestellt, werden Tabs auch bei puzzeln angezeigt." +
+		"</p></body></html>";
+	textField_Buffer = new JTextField("" + textArea.getTabSize());
+	textField_Buffer.setName("TabSize");
+	textField_Buffer.setToolTipText(tooltip_Buffer);
+	configFields.add(textField_Buffer);
+	
+	label_Buffer = new JLabel("Tabbreite");
+	label_Buffer.setToolTipText(tooltip_Buffer);
+	labels.add(label_Buffer);
 
-	configFields.add(new JTextField("" + model.getGrade()));
-	configFields.get(configFields.size() - 1).setName("Grade");
-	labels.add(new JLabel("Klassenstufe"));
-	labels.get(labels.size() - 1)
-		.setToolTipText(
-			new String(
-				"<html><p>Mögliche Werte:</p><table><tr><td>0</td><td>undefiniert</td></tr><tr><td>5</td><td>5. Jahrgangsstufe</td></tr><tr><td>6</td><td>6. Jahrgangsstufe</td><tr><td>7</td><td>7. Jahrgangsstufe</td><tr><td>8</td><td>8. Jahrgangsstufe</td><tr><td>9</td><td>9. Jahrgangsstufe</td><tr><td>10</td><td>10. Jahrgangsstufe</td><tr><td>11</td><td>11. Jahrgangsstufe</td><tr><td>12</td><td>12. Jahrgangsstufe</td></tr><tr><td>13</td><td>13. Jahrgangsstufe</td></tr><table><html>"));
+	tooltip_Buffer = "<html>" +
+		"<p>Mögliche Werte:</p>" +
+		"<table><tr><td>0</td><td>undefiniert</td></tr>" +
+		"<tr><td>5</td><td>5. Jahrgangsstufe</td></tr>" +
+		"<tr><td>6</td><td>6. Jahrgangsstufe</td>" +
+		"<tr><td>7</td><td>7. Jahrgangsstufe</td>" +
+		"<tr><td>8</td><td>8. Jahrgangsstufe</td>" +
+		"<tr><td>9</td><td>9. Jahrgangsstufe</td>" +
+		"<tr><td>10</td><td>10. Jahrgangsstufe</td>" +
+		"<tr><td>11</td><td>11. Jahrgangsstufe</td>" +
+		"<tr><td>12</td><td>12. Jahrgangsstufe</td></tr>" +
+		"<tr><td>13</td><td>13. Jahrgangsstufe</td></tr>" +
+		"</table></html>";
+	textField_Buffer = new JTextField("" + model.getGrade());
+	textField_Buffer.setName("Grade");
+	textField_Buffer.setToolTipText(tooltip_Buffer);
+	configFields.add(textField_Buffer);
+	label_Buffer = new JLabel("Klassenstufe");
+	label_Buffer.setToolTipText(tooltip_Buffer);
+	labels.add(label_Buffer);
 
 	for (int i = 0; i < labels.size() && i < configFields.size(); i++) {
 	    configPanel.add(labels.get(i));

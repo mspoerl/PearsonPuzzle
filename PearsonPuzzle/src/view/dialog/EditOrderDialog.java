@@ -127,18 +127,15 @@ public class EditOrderDialog extends JDialog implements Observer {
 	// Keine Interaktion mit dem Model, deshalb hier definiert (um
 	// DialogController schlank zu halten)
 	textPanel.addFocusListener(new FocusListener() {
-	    @Override
 	    public void focusLost(FocusEvent e) {
 	    }
 
-	    @Override
 	    public void focusGained(FocusEvent e) {
 
 	    }
 	});
 	textPanel.addFocusListener(controller);
 	orderGroup.addActionListener(new ActionListener() {
-	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
 		update();
 	    }

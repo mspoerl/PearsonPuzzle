@@ -83,7 +83,6 @@ public class ValueValidation {
     }
 
     public static String removeEmptyLines(String string) {
-	System.out.println(string);
 	if (string == null || string.isEmpty())
 	    return "";
 	String[] projectCodeArray = string.split("\n");

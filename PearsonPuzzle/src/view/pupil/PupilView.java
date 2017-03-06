@@ -95,7 +95,6 @@ public class PupilView extends JView {
 	projectDescription.setText(model.getProjectDescription());
     }
 
-    @Override
     public void update(Observable arg0, Object arg1) {
 	update();
     }

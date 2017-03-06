@@ -3,6 +3,8 @@ package view.dialog;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -112,8 +114,13 @@ public class AddImportDialog extends JDialog {
 		optionPane.setValue(new Integer(JOptionPane.CLOSED_OPTION));
 	    }
 	});
-	// Sichert ab, dass Access Group Feld immer als erstes den Focus
-	// bekommt.
+	// Sichert ab, dass die textArea immer als erstes den Focus bekommt. 
+	// (sonst schließt sich evtl. das Fenster, weil leer oder enter gedrückt wird)
+	addComponentListener(new ComponentAdapter() {
+	    public void componentShown(ComponentEvent ce) {
+		textArea.requestFocusInWindow();
+	    }
+	});
 	optionPane.addPropertyChangeListener(controller);
     }
 

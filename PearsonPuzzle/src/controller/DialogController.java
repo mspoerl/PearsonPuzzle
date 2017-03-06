@@ -12,6 +12,8 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 
 import model.Model;
+import model.access.Access;
+import model.access.AccessGroup;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;
 import view.dialog.CompileDialog;
@@ -117,7 +119,7 @@ public class DialogController implements Controller, PropertyChangeListener,
 			    dialog.clearAndHide();
 			}
 		    } else if (value.equals(JOptionPane.CANCEL_OPTION)
-			    && model.getAccessGroup() == null) {
+			    && model.getAccessGroup() != AccessGroup.TEACHER) {
 			System.exit(0);
 		    }
 		} else if (dialog.getTitle().equals("Nutzer hinzufügen")) {

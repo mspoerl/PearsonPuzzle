@@ -55,7 +55,7 @@ import compiler.TestCompiler;
  * <li>Benutzereingaben verarbeitet</li>
  * <li>Daten an das Model weitergereicht, das sich daraufhin eventuell ändert.</li>
  * <li>Views gewechselt
- * <li>
+ * </li>
  * </ul>
  * 
  * @author workspace
@@ -111,7 +111,8 @@ public class DefaultController implements Controller, TableModelListener,
 			return;
 		} else if (allert == JOptionPane.NO_OPTION) {
 		    if (model.getProjectListID() == null)
-			return;
+			model.fetchAll();
+			//return; 
 		    else
 			model.fetchAll();
 		} else if (allert == JOptionPane.CANCEL_OPTION)
@@ -535,10 +536,13 @@ public class DefaultController implements Controller, TableModelListener,
     public void focusGained(FocusEvent e) {
 	// Sorgt dafür, dass der Defaut Text im Text Editor verschwindet
 	if (view.getClass().equals(TextEditor.class)) {
-	    if (e.getComponent().getClass().equals(JTextArea.class)
-		    && ((JTextArea) (e.getComponent())).getText().contains(
+	    if (e.getComponent().getClass().equals(JTextArea.class)){
+		if(((JTextArea) (e.getComponent())).getText().contains(
 			    ((TextEditor) view).getDefaultText())) {
 		((JTextArea) (e.getComponent())).setText("");
+			    }
+//		else if(e.getComponent().getName().equals("ProjectCode"))
+//		    model.setProjectCode(((JTextArea) e.getComponent()).getText());
 	    }
 	} else if (view.getClass().equals(UnitEditor.class)) {
 	    if (e.getComponent().getName().equals("Imports")

@@ -36,7 +36,6 @@ public abstract class JDialog extends javax.swing.JDialog implements Observer {
 
     public abstract Object get(String string);
 
-    @Override
     public void update(Observable arg0, Object arg1) {
 	// TODO Auto-generated method stub
 

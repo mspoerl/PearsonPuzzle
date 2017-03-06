@@ -80,72 +80,10 @@ public class InitializeAccess extends JView {
 	dialogPanel.setVisible(true);
     }
 
-    //
-    // JOptionPane optionPane = new JOptionPane(
-    // public CustomDialog(Frame aFrame, String aWord, DialogDemo parent) {
-    // super(aFrame, true);
-    // dd = parent;
-    //
-    // magicWord = aWord.toUpperCase();
-    // setTitle("Quiz");
-    //
-    // textField = new JTextField(10);
-    //
-    // //Create an array of the text and components to be displayed.
-    // String msgString1 = "What was Dr. SEUSS's real last name?";
-    // String msgString2 = "(The answer is \"" + magicWord
-    // + "\".)";
-    // Object[] array = {msgString1, msgString2, textField};
-    //
-    // //Create an array specifying the number of dialog buttons
-    // //and their text.
-    // Object[] options = {btnString1, btnString2};
-    //
-    // //Create the JOptionPane.
-    // optionPane = new JOptionPane(array,
-    // JOptionPane.QUESTION_MESSAGE,
-    // JOptionPane.YES_NO_OPTION,
-    // null,
-    // options,
-    // options[0]);
-    //
-    // //Make this dialog display it.
-    // setContentPane(optionPane);
-    //
-    // //Handle window closing correctly.
-    // setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-    // addWindowListener(new WindowAdapter() {
-    // public void windowClosing(WindowEvent we) {
-    // /*
-    // * Instead of directly closing the window,
-    // * we're going to change the JOptionPane's
-    // * value property.
-    // */
-    // optionPane.setValue(new Integer(
-    // JOptionPane.CLOSED_OPTION));
-    // }
-    // });
-    //
-    // //Ensure the text field always gets the first focus.
-    // addComponentListener(new ComponentAdapter() {
-    // public void componentShown(ComponentEvent ce) {
-    // textField.requestFocusInWindow();
-    // }
-    // });
-    //
-    // //Register an event handler that puts the text into the option pane.
-    // textField.addActionListener(this);
-    //
-    // //Register an event handler that reacts to option pane state changes.
-    // optionPane.addPropertyChangeListener(this);
-    // }
-
-    @Override
     public void addController(Controller controller) {
 
     }
 
-    @Override
     public void update(Observable o, Object arg) {
 	messagePanel.removeAll();
 	if (arg.equals("username_unset"))

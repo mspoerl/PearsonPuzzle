@@ -35,7 +35,7 @@ public class RandomKlick_Test {
 //		randomSwingKlick(AccessGroup.UNAUTHORIZED);
 //	}
 	
-	private void randomSwingKlick(final AccessGroup accessGroup){
+	private static void randomSwingKlick(final AccessGroup accessGroup){
 		final int numberOfKlicks = 20;
 		// ----- Array mit möglichen Kommandos wird erstellt
 		ArrayList <String> commandList = new ArrayList<String>();

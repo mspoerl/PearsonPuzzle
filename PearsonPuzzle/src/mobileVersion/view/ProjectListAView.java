@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import model.Model;
@@ -47,7 +49,7 @@ public class ProjectListAView extends AppletView {
     private void setupProjectList() {
 	JList<String> projectList = new JList<String>(model.getProjectVector());
 	projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	new JScrollPane(projectList);
+	//new JScrollPane(projectList);
 	listSelectionModel = projectList.getSelectionModel();
 
 	// Liste wird nicht umgebrochen, sondern vertikal weitergeführt
@@ -59,13 +61,13 @@ public class ProjectListAView extends AppletView {
 	projectList.setFixedCellWidth(200);
 	JScrollPane scrollPanel_pL = new JScrollPane(projectList);
 	scrollPanel_pL
-		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 	scrollPanel_pL
-		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	this.add(projectList, BorderLayout.CENTER);
 
 	// Zeilen werden umgebrichen und Wortgrenzen beachtet
-	projectDescription = new JLabel("Wähle ein Projekt aus", JLabel.CENTER);
+	projectDescription = new JLabel("Wähle ein Projekt aus", SwingConstants.CENTER);
 	// projectDescription.setPreferredSize(new Dimension(200,50));
 	// projectDescription.setLineWrap(true);
 	// projectDescription.setWrapStyleWord(true);
@@ -73,9 +75,9 @@ public class ProjectListAView extends AppletView {
 	JScrollPane scrollPanel_pD = new JScrollPane(projectDescription);
 	// scrollPanel_pD.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 	scrollPanel_pD
-		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 	scrollPanel_pD
-		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	scrollPanel_pD.setMaximumSize(new Dimension(200, 50));
 	// scrollPanel_pD.setMinimumSize(new Dimension(100,100));
 	this.add(scrollPanel_pD, BorderLayout.NORTH);

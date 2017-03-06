@@ -20,7 +20,6 @@ import view.PPException;
 import view.dialog.InitializeAccess;
 import controller.Controller;
 import controller.DefaultController;
-import controller.ExceptionController;
 
 /**
  * Klasse dient dazu, die GUI zu erzeugen.<br>
@@ -31,7 +30,7 @@ import controller.ExceptionController;
 public class GUIBuilder {
     private Controller controller;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 	try {
 	    // UIManager.setLookAndFeel(
 	    // UIManager.getSystemLookAndFeelClassName() );
@@ -70,10 +69,11 @@ public class GUIBuilder {
 	    ((JView) controller.getView()).drawFrame();
     }
 
+    @SuppressWarnings("deprecation")
     public void setupExceptionGUI() {
 	Model model = new Model();
 	JView view = new InitializeAccess(model);
-	controller = new ExceptionController(model, view);
+	controller = new controller.ExceptionController(model, view);
 	view.drawFrame();
     }
 
@@ -98,33 +98,6 @@ public class GUIBuilder {
     }
 
     public static void runJEdit() {
-	// final Properties props = new Properties();
-	// StandaloneTextArea jeditText = new StandaloneTextArea(new
-	// IPropertyManager(){
-	// @Override
-	// public String getProperty(String name) {
-	// // TODO Auto-generated method stub
-	// return "";
-	// }});
-
-	// static final Properties props = new Properties();
-	// * static IPropertyManager propertyManager;
-	// *
-	// * static
-	// * {
-	// * props = new Properties();
-	// * load(props);
-	// * propertyManager = new IPropertyManager() {
-	// * public String getProperty() {
-	// * return props.getProperty();
-	// * }
-	// * }
-	// * }
-	// *
-	// * public MyTextArea()
-	// * {
-	// * super(propertyManager);
-	// * }
 	JFrame frame = new JFrame();
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setLayout(new FlowLayout());

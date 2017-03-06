@@ -73,7 +73,6 @@ public class AppletMenu extends JMenuBar implements Observer {
 	rightArrow.setActionCommand(command.toString());
     }
 
-    @Override
     public void update(Observable o, Object arg) {
 	if (o.getClass().equals(GameModel.class))
 	    Smiley.setIcon(((GameModel) o).getScoreImage());

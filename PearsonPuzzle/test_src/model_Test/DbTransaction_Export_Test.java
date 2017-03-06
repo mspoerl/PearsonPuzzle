@@ -114,12 +114,13 @@ public class DbTransaction_Export_Test {
 		// secondModel = model;
 	}
 	private void exportAndImportData() {
-		model.exportDatabase(location);
+	    	File file = new File(location);
+		model.exportDatabase(file.getAbsolutePath()+File.separator+"exportDatei");
 		model.setDatabase(null);
-		File file = new File(location);
+		
 		secondModel = new Model();
 		secondModel.fetchAll();
-		secondModel.replaceDatabase("exportdatei.zip", file.getAbsolutePath());
+		secondModel.replaceDatabase("exportDatei.zip", file.getAbsolutePath());
 		secondModel.selectProject(projectID);
 		file.delete();
 	}

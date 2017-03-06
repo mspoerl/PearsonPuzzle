@@ -22,6 +22,7 @@ import view.Allert;
 import view.PPException;
 import view.teacher.UnitEditor;
 
+import compiler.ClassModel;
 import compiler.TestCompiler;
 
 import controller.Controller;
@@ -77,11 +78,12 @@ public class AppletController implements Controller {
 	// -----------------------View Anpassung
 	// -----------------------------------
 	case Compile:
-	    TestCompiler testCompiler = new TestCompiler(model.getSollution(),
+	    ClassModel classModel = new ClassModel(model.getSollution(),
 		    model.getImport("methods"), model.getImport("online"),
 		    model.getImport("classes"));
-	    testCompiler.compile();
-	    model.setCompilerFailures(testCompiler.getFailures());
+	    TestCompiler compiler = new TestCompiler(classModel);
+	    compiler.compile();
+	    model.setCompilerFailures(compiler.getFailures());
 	    break;
 	case Test:
 	    model.testOrderOfSollution();

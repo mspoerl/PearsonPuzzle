@@ -53,10 +53,19 @@ public abstract class JView implements Observer, View {
     protected Model model;
     private Controller controller;
     private DialogController dialogController;
+    private boolean AddUserDialogEnabled;
 
     public JView(Model model) {
 	this.model = model;
 	model.addObserver(this);
+	AddUserDialogEnabled = true;
+    }
+    
+    /**
+     * Wird diese Funktion aufgerufen, kann bei nicht existierender Datenbank kein Teacher Account angelegt werden.
+     */
+    public void disableAddUserDialog(){
+	AddUserDialogEnabled = false;
     }
 
     /**
@@ -158,7 +167,8 @@ public abstract class JView implements Observer, View {
 
     public void showDialog(final PPException exception, boolean modal) {
 	view.dialog.JDialog dialog;
-	if (exception.getMessage() == PPException.databaseIsEmpty) {
+	if (exception.getMessage() == PPException.databaseIsEmpty
+		&& AddUserDialogEnabled == true) {
 	    Object[] options = { "Datensatz laden", "Datensatz erstellen" };
 	    int n = JOptionPane
 		    .showOptionDialog(
@@ -177,8 +187,12 @@ public abstract class JView implements Observer, View {
 			    .getAbsolutePath());
 		}
 		return;
-	    } else
+	    } else if(AddUserDialogEnabled==true){
 		dialog = new AddUserDialog(null, model, "Ersten Nutzer anlegen");
+	    }
+	    else{
+		return;
+	    }
 	} else
 	    return;
 	

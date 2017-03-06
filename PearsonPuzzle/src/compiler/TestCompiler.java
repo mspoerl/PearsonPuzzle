@@ -46,9 +46,15 @@ public class TestCompiler {
 	packageString = new String();
 	importStrings = new LinkedList<String>();
 	compileFailures = new Vector<HashMap<String, String>>();
-	ClassModel model = new ClassModel(sourceCode_ToBeTested, methodImports,
+	ClassModel classModel = new ClassModel(sourceCode_ToBeTested, methodImports,
 		onlineImports, classImports);
-	srcCodeMap = model.getCodeMap();
+	srcCodeMap = classModel.getCodeMap();
+    }
+    public TestCompiler(ClassModel classModel) {
+	packageString = new String();
+	importStrings = new LinkedList<String>();
+	compileFailures = new Vector<HashMap<String, String>>();
+	srcCodeMap = classModel.getCodeMap();
     }
 
     public Vector<HashMap<String, String>> getFailures() {

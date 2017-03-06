@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
@@ -43,6 +44,7 @@ public class ConfigEditor extends JView {
 	tableModel = new DefaultTableModel();
 	projectTable = new JTable(tableModel);
 	projectTable.setName("projectTable");
+	projectTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	updateTable();
 	JScrollPane projectTable_SP = new JScrollPane(projectTable);
 	projectTable_SP

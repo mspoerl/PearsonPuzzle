@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 
 import view.PPException;
 
-
+@Deprecated
 public class jUnitRunner_Test {
 	Boolean expectedResult;
 	String testString;

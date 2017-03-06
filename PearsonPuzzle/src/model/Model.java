@@ -64,7 +64,7 @@ public class Model extends Observable {
     private LinkedList<String> orderFailureText;
     private LinkedList<Failure> jUnitFailures;
     private Vector<HashMap<String, String>> compileFailures;
-    // private LinkedList<Boolean> groupFailures;
+    
     private LinkedHashMap<String, Boolean> successMap;
 
     private PPException exception;
@@ -110,6 +110,9 @@ public class Model extends Observable {
     private boolean setChanged(final String string,
 	    final String string_to_compare) {
 	if (string != null && string.equals(string_to_compare))
+	    return false;
+	else if(string == null
+		&& (string_to_compare==null || string_to_compare.trim().isEmpty()))
 	    return false;
 	else
 	    this.setChanged();
@@ -284,9 +287,9 @@ public class Model extends Observable {
      * @param codeString
      */
     public void setProjectCode(String codeString) {
+	setChanged(projectCode.trim(), codeString.trim());
 	codeString = ValueValidation.removeEmptyLines(codeString);
-	System.out.println("Model:" + codeString);
-	setChanged(this.projectCode, codeString);
+	setChanged(this.projectCode.trim(), codeString.trim());
 	projectCode = codeString;
 	boolean hasChanged = new Boolean(hasChanged());
 	notifyObservers();
@@ -360,12 +363,12 @@ public class Model extends Observable {
     /**
      * Matrix mit Reihenfolgenregeln wird in der Datenbank gespeichert.
      */
-    public void saveGroupMatrix() {
+    public synchronized void saveGroupMatrix() {
 	dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
 	notifyObservers();
     }
 
-    public void saveRandomisation() {
+    public synchronized void saveRandomisation() {
 	if (!sortedCode.isEmpty()
 		&& sortedCode.size() == codeVector_normal.size())
 	    normalizeSortedCode();
@@ -653,7 +656,7 @@ public class Model extends Observable {
 	    setChanged(this.jUnitCode, "");
 	    this.jUnitCode = "";
 	} else {
-	    setChanged(this.jUnitCode, jUnitCode);
+	    setChanged(this.jUnitCode, jUnitCode.trim());
 	    this.jUnitCode = jUnitCode;
 	}
     }
@@ -699,7 +702,7 @@ public class Model extends Observable {
      * "groben Eckdaten" sind: Projektname, Projektcode,
      * Beschreibung/Arbeitsanweisung.
      */
-    public void saveProject(boolean randomize) {
+    public synchronized void saveProject(boolean randomize) {
 	if (randomize) {
 	    saveProject(getProjectCode(), getProjectName(),
 		    getProjectDescription(), null);
@@ -709,7 +712,7 @@ public class Model extends Observable {
 	    setChanged();
 	    notifyObservers(Allert.code_not_fully_sorted);
 	}
-	System.out.println(dataBase.getRandomKeys(getProjectName()));
+	//System.out.println(dataBase.getRandomKeys(getProjectName()));
 	// else{
 	// normalizeSortedCode();
 	// saveProject(getProjectCode(), getProjectName(),
@@ -729,9 +732,9 @@ public class Model extends Observable {
      *            Neuer Projektname
      * @param linelength
      */
-    public boolean saveProject(String codeString, String projectName,
+    public synchronized boolean saveProject(String codeString, String projectName,
 	    String projectDescription, Integer linelength) {
-	projectCode = new String(codeString);
+	projectCode = new String(ValueValidation.removeEmptyLines(codeString));
 
 	if (projectID == null
 		|| !projectName.equals(projectList.get(projectID))) {
@@ -775,7 +778,7 @@ public class Model extends Observable {
      * Kann nur ausgeführt werden, wenn Projekt selektiert wurde. Speichert
      * TabSize, Grade, JUnitCode, und alle Imports (Klassen, Methoden, Online).
      */
-    public void saveProjectSettings() {
+    public synchronized void saveProjectSettings() {
 	if (projectID != null) {
 	    dataBase.saveProjectSettings(projectList.get(projectID), tabSize,
 		    grade);
@@ -935,7 +938,7 @@ public class Model extends Observable {
 	this.personMap = person_password;
     }
 
-    public boolean saveUser(Object username, Object password, Object accessgroup) {
+    public synchronized boolean saveUser(Object username, Object password, Object accessgroup) {
 
 	String userName = (String) username;
 	char[] passWord = (char[]) password;
@@ -1094,7 +1097,7 @@ public class Model extends Observable {
      * @param puzzlemode
      *            Puzzlemodus
      */
-    public void savePuzzlemode(Integer puzzlemode) {
+    public synchronized void savePuzzlemode(Integer puzzlemode) {
 	if (puzzlemode != null)
 	    dataBase.savePuzzlemode(projectList.get(projectID), puzzlemode);
     }
@@ -1144,7 +1147,7 @@ public class Model extends Observable {
 	}
     }
 
-    public void saveOrderFailures() {
+    public synchronized void saveOrderFailures() {
 	dataBase.saveOrderFailure(projectList.get(projectID), orderFailureText);
     }
 

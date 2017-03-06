@@ -112,6 +112,9 @@ public class ViewChange_Button_Test {
 			Controller controller=null;
 			if(view_class.getSuperclass().equals(JView.class))
 				controller = new DefaultController(model, (JView) startView);
+			
+			if(controller == null)
+			    fail("Controller konnte nicht initialisiert werden");
 
 			Assume.assumeNotNull(controller);
 			selectFirstProject();
