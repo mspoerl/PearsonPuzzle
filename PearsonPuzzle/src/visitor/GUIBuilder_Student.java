@@ -2,11 +2,9 @@ package visitor;
 
 import javax.swing.UIManager;
 
+import model.Model;
 import view.JView;
 import view.LoginView;
-
-import model.Model;
-
 import controller.Controller;
 import controller.DefaultController;
 
@@ -28,12 +26,14 @@ public class GUIBuilder_Student {
 
     public GUIBuilder_Student() {
     }
+
     public void setupGUI() {
 	if (controller == null) {
 	    Model model = new Model();
 	    LoginView startView = new LoginView(model);
-	    
-	    // Verhindert, dass ein Schüler einen Account anlegen kann, wenn noch keine Datenbank existiert.
+
+	    // Verhindert, dass ein Schüler einen Account anlegen kann, wenn
+	    // noch keine Datenbank existiert.
 
 	    startView.disableAddUserDialog();
 	    controller = new DefaultController(model, startView);

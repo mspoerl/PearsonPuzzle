@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 
 import model.Model;
-import model.access.Access;
 import model.access.AccessGroup;
 import view.dialog.AddImportDialog;
 import view.dialog.AddUserDialog;

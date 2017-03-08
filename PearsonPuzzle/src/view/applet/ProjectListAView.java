@@ -49,7 +49,7 @@ public class ProjectListAView extends AppletView {
     private void setupProjectList() {
 	JList<String> projectList = new JList<String>(model.getProjectVector());
 	projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	//new JScrollPane(projectList);
+	// new JScrollPane(projectList);
 	listSelectionModel = projectList.getSelectionModel();
 
 	// Liste wird nicht umgebrochen, sondern vertikal weitergeführt
@@ -67,7 +67,8 @@ public class ProjectListAView extends AppletView {
 	this.add(projectList, BorderLayout.CENTER);
 
 	// Zeilen werden umgebrichen und Wortgrenzen beachtet
-	projectDescription = new JLabel("Wähle ein Projekt aus", SwingConstants.CENTER);
+	projectDescription = new JLabel("Wähle ein Projekt aus",
+		SwingConstants.CENTER);
 	// projectDescription.setPreferredSize(new Dimension(200,50));
 	// projectDescription.setLineWrap(true);
 	// projectDescription.setWrapStyleWord(true);

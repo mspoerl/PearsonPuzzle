@@ -5,12 +5,10 @@ import javax.swing.UIManager;
 import model.Model;
 import view.JView;
 import view.LoginView;
-import view.applet.AppletView;
-import controller.AppletController;
 import controller.Controller;
 import controller.DefaultController;
 
-public class GUIBuilder_Teacher extends GUIBuilder{
+public class GUIBuilder_Teacher extends GUIBuilder {
     private Controller controller;
 
     public static void main(String[] args) {
@@ -28,6 +26,7 @@ public class GUIBuilder_Teacher extends GUIBuilder{
 
     public GUIBuilder_Teacher() {
     }
+
     public void setupGUI() {
 	if (controller == null) {
 	    Model model = new Model();

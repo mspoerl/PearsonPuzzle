@@ -1,5 +1,8 @@
-package jUnitUmgebung;
 
+
+import org.junit.runner.Result;
+
+import jUnitUmgebung.UnitRunner;
 import view.PPException;
 
 /**
@@ -33,11 +36,11 @@ public class UnitRunner_Test {
 	UnitRunner jUnitRunner;
 	try {
 	    jUnitRunner = new UnitRunner(unitText, code, null, null, null);
-	    jUnitRunner.run();
+	    Result result = jUnitRunner.run();
+	    System.out.println("Anzahl der Fehler: "+result.getFailureCount());
 	} catch (PPException e) {
 	    e.printStackTrace();
 	}
-	// jUnitRunner.compileClasses();
     }
 
 }
