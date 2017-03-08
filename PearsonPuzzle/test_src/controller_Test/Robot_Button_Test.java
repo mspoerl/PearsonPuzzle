@@ -16,6 +16,13 @@ import org.junit.Test;
 import view.JView;
 import visitor.GUIBuilder;
 
+/**
+ * 
+ * Es wird getestet, ob das Programm mit vielen aufeinanderfolgenden Nutzeraktionen klarkommt.
+ * 
+ * @author workspace
+ *
+ */
 public class Robot_Button_Test {
 	
 	private final static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();

@@ -26,7 +26,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
-import mobileVersion.Applet;
 import model.Model;
 import model.access.AccessGroup;
 
@@ -45,6 +44,7 @@ import view.teacher.TeacherView;
 import view.teacher.TextEditor;
 import view.teacher.UnitEditor;
 import view.teacher.UserEditor;
+import visitor.Applet;
 
 import compiler.TestCompiler;
 
@@ -347,7 +347,15 @@ public class DefaultController implements Controller, TableModelListener,
 		TestCompiler testCompiler = new TestCompiler(
 			model.getSollution(), model.getImport("methods"),
 			model.getImport("online"), model.getImport("classes"));
-		testCompiler.compile();
+		// Da der testCompiler die Klasse wrapt wird, hier interveniert, 
+		// wenn Schüler Klassendefeinition nicht übernommen hat. 
+		if(model.getProjectCode().contains(" class ")
+			&& !model.getSollution().contains(" class ")){
+		    testCompiler.setCompileFailure("Keine Klasse definiert");
+		}
+		else{
+		    testCompiler.compile();
+		}
 		model.setCompilerFailures(testCompiler.getFailures());
 		// TestCompiler testCompiler = new TestCompiler();
 		// testCompiler.compileCode(model.getSolutionStrings());

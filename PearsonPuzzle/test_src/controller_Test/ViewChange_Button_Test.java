@@ -36,6 +36,14 @@ import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
 
+
+/**
+ * Es wird getestet, ob unter der Vorraussetzung, einer bestimmten Nutzergruppe anzugehören und aus einem beliebeigen Start-View heraus, 
+ * es möglich ist, in einen anderen view zu wechseln. Dadurch soll sichergestellt werden, dass der Schüler nicht auf kritische Bereiche zugreifen kann,
+ * selbst wenn der Controller den falschen view liefern sollte. 
+ * @author workspace
+ *
+ */
 @RunWith(Parameterized.class)
 public class ViewChange_Button_Test {
 

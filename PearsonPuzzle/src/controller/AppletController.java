@@ -1,4 +1,4 @@
-package mobileVersion.controller;
+package controller;
 
 import jUnitUmgebung.UnitRunner;
 
@@ -9,10 +9,6 @@ import javax.swing.JRootPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 
-import mobileVersion.view.AppletMenu;
-import mobileVersion.view.AppletView;
-import mobileVersion.view.CodeSortAView;
-import mobileVersion.view.ProjectListAView;
 import model.Model;
 import model.access.AccessGroup;
 
@@ -20,13 +16,14 @@ import org.junit.runner.Result;
 
 import view.Allert;
 import view.PPException;
+import view.applet.AppletMenu;
+import view.applet.AppletView;
+import view.applet.CodeSortAView;
+import view.applet.ProjectListAView;
 import view.teacher.UnitEditor;
 
 import compiler.ClassModel;
 import compiler.TestCompiler;
-
-import controller.Controller;
-import controller.DCCommand;
 
 /**
  * Schlanker und performanter Controller für die Applet-Views. Entspricht von
@@ -82,7 +79,12 @@ public class AppletController implements Controller {
 		    model.getImport("methods"), model.getImport("online"),
 		    model.getImport("classes"));
 	    TestCompiler compiler = new TestCompiler(classModel);
-	    compiler.compile();
+	    if (model.getProjectCode().contains(" class ")
+		    && !model.getSollution().contains(" class ")) {
+		compiler.setCompileFailure("Keine Klasse definiert");
+	    } else {
+		compiler.compile();
+	    }
 	    model.setCompilerFailures(compiler.getFailures());
 	    break;
 	case Test:

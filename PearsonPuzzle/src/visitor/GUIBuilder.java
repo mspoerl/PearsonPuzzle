@@ -7,8 +7,6 @@ import java.awt.FlowLayout;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import mobileVersion.controller.AppletController;
-import mobileVersion.view.AppletView;
 import model.Model;
 
 import org.syntax.jedit.JEditTextArea;
@@ -17,7 +15,9 @@ import org.syntax.jedit.tokenmarker.JavaTokenMarker;
 import view.JView;
 import view.LoginView;
 import view.PPException;
+import view.applet.AppletView;
 import view.dialog.InitializeAccess;
+import controller.AppletController;
 import controller.Controller;
 import controller.DefaultController;
 

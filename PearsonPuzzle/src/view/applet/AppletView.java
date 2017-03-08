@@ -1,4 +1,4 @@
-package mobileVersion.view;
+package view.applet;
 
 import java.awt.BorderLayout;
 import java.util.Observer;
