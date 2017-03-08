@@ -1,4 +1,4 @@
-package model_Test;
+package deprecated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

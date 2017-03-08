@@ -1,4 +1,4 @@
-package jUnitUmgebung_Test;
+package deprecated;
 
 import static org.junit.Assert.assertEquals;
 import jUnitUmgebung.UnitRunner;

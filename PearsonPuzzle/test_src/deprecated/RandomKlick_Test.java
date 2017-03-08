@@ -1,4 +1,4 @@
-package controller_Test;
+package deprecated;
 import static org.junit.Assert.fail;
 
 import java.awt.event.ActionEvent;
