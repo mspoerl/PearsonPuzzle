@@ -31,7 +31,7 @@ public class OrderFailures_Test {
 	
 	@Before
 	public void initialize(){
-		
+	
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

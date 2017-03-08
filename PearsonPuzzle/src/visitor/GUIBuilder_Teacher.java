@@ -2,11 +2,11 @@ package visitor;
 
 import javax.swing.UIManager;
 
-import mobileVersion.controller.AppletController;
-import mobileVersion.view.AppletView;
 import model.Model;
 import view.JView;
 import view.LoginView;
+import view.applet.AppletView;
+import controller.AppletController;
 import controller.Controller;
 import controller.DefaultController;
 

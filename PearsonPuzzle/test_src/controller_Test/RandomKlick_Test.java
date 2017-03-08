@@ -18,6 +18,7 @@ import controller.DCCommand;
 import controller.DefaultController;
 
 
+@Deprecated
 public class RandomKlick_Test {
 	
 	

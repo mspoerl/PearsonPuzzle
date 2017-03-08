@@ -1,4 +1,4 @@
-package mobileVersion;
+package visitor;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -7,11 +7,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import mobileVersion.controller.AppletController;
-import mobileVersion.view.AppletMenu;
-import mobileVersion.view.AppletView;
-import mobileVersion.view.ProjectListAView;
+import view.applet.AppletMenu;
+import view.applet.AppletView;
+import view.applet.ProjectListAView;
+
 import model.Model;
+import controller.AppletController;
 import controller.Controller;
 
 /**

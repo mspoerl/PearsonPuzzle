@@ -1,4 +1,4 @@
-package mobileVersion.view;
+package view.applet;
 
 import java.util.Observable;
 import java.util.Observer;

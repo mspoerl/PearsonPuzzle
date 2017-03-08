@@ -15,6 +15,7 @@ import model.access.AccessGroup;
 import view.JView;
 import controller.Controller;
 
+@Deprecated
 public class InitializeAccess extends JView {
 
     // private JPanel contentPanel;

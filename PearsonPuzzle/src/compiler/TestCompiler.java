@@ -60,6 +60,23 @@ public class TestCompiler {
     public Vector<HashMap<String, String>> getFailures() {
 	return compileFailures;
     }
+    
+    public void setCompileFailure(String message){
+	 HashMap<String, String> compileFailure = new HashMap<String, String>(9);
+	    compileFailure.put("Klasse", "" + "klasse");
+	    compileFailure.put("Art", "" + "Fehler");
+	    compileFailure
+		    .put("Quelle", "" + "Quelle");
+	    compileFailure.put("Code", "" + "Code");
+	    compileFailure.put("Nachricht", "" + message);
+	    compileFailure.put("Zeile", "" + "0");
+	    compileFailure.put("Position", "" + "0");
+	    compileFailure.put("Spalte", "" + "0");
+	    compileFailure.put("Startpostion","0");
+	    compileFailure.put("Endposition", "" + "0");
+	    compileFailures.add(compileFailure);
+	
+    }
 
     public MemClassLoader compile() {
 	JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
