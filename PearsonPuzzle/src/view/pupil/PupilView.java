@@ -46,7 +46,7 @@ public class PupilView extends JView {
 	// makeDefaultListModel(model.getProjects());
 	JList<String> projectList = new JList<String>(model.getProjectVector());
 	projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	//new JScrollPane(projectList);
+	// new JScrollPane(projectList);
 	listSelectionModel = projectList.getSelectionModel();
 	if (model.getProjectListID() != null)
 	    listSelectionModel.setSelectionInterval(model.getProjectListID(),

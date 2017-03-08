@@ -7,7 +7,8 @@ public class Teacher implements AccessInterface {
     Teacher() {
     }
 
-    Teacher(Model model) {}
+    Teacher(Model model) {
+    }
 
     public void verarbeite() {
 	// TODO Auto-generated method stub

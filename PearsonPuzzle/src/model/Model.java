@@ -64,7 +64,7 @@ public class Model extends Observable {
     private LinkedList<String> orderFailureText;
     private LinkedList<Failure> jUnitFailures;
     private Vector<HashMap<String, String>> compileFailures;
-    
+
     private LinkedHashMap<String, Boolean> successMap;
 
     private PPException exception;
@@ -111,8 +111,9 @@ public class Model extends Observable {
 	    final String string_to_compare) {
 	if (string != null && string.equals(string_to_compare))
 	    return false;
-	else if(string == null
-		&& (string_to_compare==null || string_to_compare.trim().isEmpty()))
+	else if (string == null
+		&& (string_to_compare == null || string_to_compare.trim()
+			.isEmpty()))
 	    return false;
 	else
 	    this.setChanged();
@@ -187,7 +188,6 @@ public class Model extends Observable {
     public int getTabSize() {
 	return tabSize;
     }
-
 
     // --- Zufallsmodus
     public void setRandomMode(boolean random) {
@@ -712,7 +712,7 @@ public class Model extends Observable {
 	    setChanged();
 	    notifyObservers(Allert.code_not_fully_sorted);
 	}
-	//System.out.println(dataBase.getRandomKeys(getProjectName()));
+	// System.out.println(dataBase.getRandomKeys(getProjectName()));
 	// else{
 	// normalizeSortedCode();
 	// saveProject(getProjectCode(), getProjectName(),

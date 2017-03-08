@@ -7,11 +7,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.Model;
 import view.applet.AppletMenu;
 import view.applet.AppletView;
 import view.applet.ProjectListAView;
-
-import model.Model;
 import controller.AppletController;
 import controller.Controller;
 

@@ -1,4 +1,5 @@
 package deprecated;
+
 import static org.junit.Assert.fail;
 
 import java.awt.event.ActionEvent;
@@ -17,55 +18,56 @@ import controller.Controller;
 import controller.DCCommand;
 import controller.DefaultController;
 
-
 @Deprecated
 public class RandomKlick_Test {
-	
-	
-	@Test
-	public void randomKlicktestPupil() {
-		randomSwingKlick(AccessGroup.STUDENT);
-		
+
+    @Test
+    public void randomKlicktestPupil() {
+	randomSwingKlick(AccessGroup.STUDENT);
+
+    }
+
+    // @Test
+    // public void randomKlicktestTeacher() {
+    // randomSwingKlick(AccessGroup.TEACHER);
+    // }
+    // @Test
+    // public void randomKlicktestUnknown(){
+    // randomSwingKlick(AccessGroup.UNAUTHORIZED);
+    // }
+
+    private static void randomSwingKlick(final AccessGroup accessGroup) {
+	final int numberOfKlicks = 20;
+	// ----- Array mit möglichen Kommandos wird erstellt
+	ArrayList<String> commandList = new ArrayList<String>();
+	for (DCCommand command : DCCommand.values()) {
+	    commandList.add(command.toString());
 	}
-//	@Test
-//	public void randomKlicktestTeacher() {
-//		randomSwingKlick(AccessGroup.TEACHER);
-//	}
-//	@Test
-//	public void randomKlicktestUnknown(){
-//		randomSwingKlick(AccessGroup.UNAUTHORIZED);
-//	}
-	
-	private static void randomSwingKlick(final AccessGroup accessGroup){
-		final int numberOfKlicks = 20;
-		// ----- Array mit möglichen Kommandos wird erstellt
-		ArrayList <String> commandList = new ArrayList<String>();
-		for(DCCommand command : DCCommand.values()){
-			commandList.add(command.toString());
-		}
-		for(int i=0; i<numberOfKlicks;i++){
-			int randomInt = new java.util.Random().nextInt(commandList.size());
-			Model model = new Model();
-			//model.setAccessGroup(accessGroup);
-			model.login("TOM", new char[] {'T','u','m','1','2','3','4','!'});
-			JView view = new PupilView(model);
-			Controller controller = new DefaultController(model, view); 
-			JButton testButton = new JButton();
-			ActionEvent e = new ActionEvent(testButton, 1, commandList.get(randomInt));
-			// ----- Es wird versucht zu klicken.
-			try{
-				controller.actionPerformed(e);
-			}
-			catch(Exception ex){
-				ex.printStackTrace();
-				fail("Fehler bei Befehl "+commandList.get(randomInt)+"in View "+view.getClass().getName());
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e1) {
-				fail("Konnte Thread nicht pausieren");
-			}
-			// Wenn Allert erscheint, 
-		}
+	for (int i = 0; i < numberOfKlicks; i++) {
+	    int randomInt = new java.util.Random().nextInt(commandList.size());
+	    Model model = new Model();
+	    // model.setAccessGroup(accessGroup);
+	    model.login("TOM", new char[] { 'T', 'u', 'm', '1', '2', '3', '4',
+		    '!' });
+	    JView view = new PupilView(model);
+	    Controller controller = new DefaultController(model, view);
+	    JButton testButton = new JButton();
+	    ActionEvent e = new ActionEvent(testButton, 1,
+		    commandList.get(randomInt));
+	    // ----- Es wird versucht zu klicken.
+	    try {
+		controller.actionPerformed(e);
+	    } catch (Exception ex) {
+		ex.printStackTrace();
+		fail("Fehler bei Befehl " + commandList.get(randomInt)
+			+ "in View " + view.getClass().getName());
+	    }
+	    try {
+		Thread.sleep(100);
+	    } catch (InterruptedException e1) {
+		fail("Konnte Thread nicht pausieren");
+	    }
+	    // Wenn Allert erscheint,
 	}
+    }
 }

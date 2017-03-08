@@ -189,7 +189,6 @@ public class UnitEditor extends JView {
 	showHelp.setActionCommand(DCCommand.ShowHelp.toString());
     }
 
-
     @Override
     public void update(Observable o, Object arg) {
 	if (arg == DCCommand.Compile) {

@@ -91,7 +91,7 @@ public class AddImportDialog extends JDialog {
 	    // input.setText(model.getImport("online"));
 	    textArea.setText(model.getImport("online"));
 	}
-	if(instruction!=null)
+	if (instruction != null)
 	    instruction.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 	contentPanel.add(instruction);
@@ -114,8 +114,9 @@ public class AddImportDialog extends JDialog {
 		optionPane.setValue(new Integer(JOptionPane.CLOSED_OPTION));
 	    }
 	});
-	// Sichert ab, dass die textArea immer als erstes den Focus bekommt. 
-	// (sonst schließt sich evtl. das Fenster, weil leer oder enter gedrückt wird)
+	// Sichert ab, dass die textArea immer als erstes den Focus bekommt.
+	// (sonst schließt sich evtl. das Fenster, weil leer oder enter gedrückt
+	// wird)
 	addComponentListener(new ComponentAdapter() {
 	    public void componentShown(ComponentEvent ce) {
 		textArea.requestFocusInWindow();

@@ -54,8 +54,7 @@ import compiler.TestCompiler;
  * <ul>
  * <li>Benutzereingaben verarbeitet</li>
  * <li>Daten an das Model weitergereicht, das sich daraufhin eventuell ändert.</li>
- * <li>Views gewechselt
- * </li>
+ * <li>Views gewechselt</li>
  * </ul>
  * 
  * @author workspace
@@ -112,7 +111,7 @@ public class DefaultController implements Controller, TableModelListener,
 		} else if (allert == JOptionPane.NO_OPTION) {
 		    if (model.getProjectListID() == null)
 			model.fetchAll();
-			//return; 
+		    // return;
 		    else
 			model.fetchAll();
 		} else if (allert == JOptionPane.CANCEL_OPTION)
@@ -224,7 +223,7 @@ public class DefaultController implements Controller, TableModelListener,
 	    startView.setController(this);
 	    startView.addController(this);
 	    this.view = startView;
-	    //view.update(null,cmd.toString());
+	    // view.update(null,cmd.toString());
 	    break;
 	case ShowHelp:
 	    view.showDialog(DCCommand.ShowHelp, false);
@@ -347,13 +346,12 @@ public class DefaultController implements Controller, TableModelListener,
 		TestCompiler testCompiler = new TestCompiler(
 			model.getSollution(), model.getImport("methods"),
 			model.getImport("online"), model.getImport("classes"));
-		// Da der testCompiler die Klasse wrapt wird, hier interveniert, 
-		// wenn Schüler Klassendefeinition nicht übernommen hat. 
-		if(model.getProjectCode().contains(" class ")
-			&& !model.getSollution().contains(" class ")){
+		// Da der testCompiler die Klasse wrapt wird, hier interveniert,
+		// wenn Schüler Klassendefeinition nicht übernommen hat.
+		if (model.getProjectCode().contains(" class ")
+			&& !model.getSollution().contains(" class ")) {
 		    testCompiler.setCompileFailure("Keine Klasse definiert");
-		}
-		else{
+		} else {
 		    testCompiler.compile();
 		}
 		model.setCompilerFailures(testCompiler.getFailures());
@@ -544,13 +542,14 @@ public class DefaultController implements Controller, TableModelListener,
     public void focusGained(FocusEvent e) {
 	// Sorgt dafür, dass der Defaut Text im Text Editor verschwindet
 	if (view.getClass().equals(TextEditor.class)) {
-	    if (e.getComponent().getClass().equals(JTextArea.class)){
-		if(((JTextArea) (e.getComponent())).getText().contains(
-			    ((TextEditor) view).getDefaultText())) {
-		((JTextArea) (e.getComponent())).setText("");
-			    }
-//		else if(e.getComponent().getName().equals("ProjectCode"))
-//		    model.setProjectCode(((JTextArea) e.getComponent()).getText());
+	    if (e.getComponent().getClass().equals(JTextArea.class)) {
+		if (((JTextArea) (e.getComponent())).getText().contains(
+			((TextEditor) view).getDefaultText())) {
+		    ((JTextArea) (e.getComponent())).setText("");
+		}
+		// else if(e.getComponent().getName().equals("ProjectCode"))
+		// model.setProjectCode(((JTextArea)
+		// e.getComponent()).getText());
 	    }
 	} else if (view.getClass().equals(UnitEditor.class)) {
 	    if (e.getComponent().getName().equals("Imports")

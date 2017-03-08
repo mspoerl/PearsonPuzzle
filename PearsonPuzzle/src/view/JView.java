@@ -60,11 +60,12 @@ public abstract class JView implements Observer, View {
 	model.addObserver(this);
 	AddUserDialogEnabled = true;
     }
-    
+
     /**
-     * Wird diese Funktion aufgerufen, kann bei nicht existierender Datenbank kein Teacher Account angelegt werden.
+     * Wird diese Funktion aufgerufen, kann bei nicht existierender Datenbank
+     * kein Teacher Account angelegt werden.
      */
-    public void disableAddUserDialog(){
+    public void disableAddUserDialog() {
 	AddUserDialogEnabled = false;
     }
 
@@ -133,7 +134,6 @@ public abstract class JView implements Observer, View {
 	model.deleteObserver(this);
     }
 
-
     /**
      * Frame wird geschlossen.
      */
@@ -187,15 +187,14 @@ public abstract class JView implements Observer, View {
 			    .getAbsolutePath());
 		}
 		return;
-	    } else if(AddUserDialogEnabled==true){
+	    } else if (AddUserDialogEnabled == true) {
 		dialog = new AddUserDialog(null, model, "Ersten Nutzer anlegen");
-	    }
-	    else{
+	    } else {
 		return;
 	    }
 	} else
 	    return;
-	
+
 	dialogController = new DialogController(model, dialog);
 	dialog.addController(dialogController);
 	dialog.pack();

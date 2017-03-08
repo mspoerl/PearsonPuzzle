@@ -60,7 +60,7 @@ public class TeacherView extends JView {
 	projectList = new JList<String>();
 	projectList.setListData(model.getProjectVector());
 	projectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	
+
 	listSelectionModel = projectList.getSelectionModel();
 	// Liste wird nicht umgebrochen, sondern vertikal weitergeführt
 	projectList.setLayoutOrientation(JList.VERTICAL);
