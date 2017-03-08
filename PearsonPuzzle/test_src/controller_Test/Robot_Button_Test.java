@@ -6,10 +6,13 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 import model.Model;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -148,6 +151,13 @@ public class Robot_Button_Test {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	@After
+	public void exit(){
+	    bot.keyPress(KeyEvent.ALT_MASK);
+	    bot.keyPress(KeyEvent.VK_F4);
+	    bot.keyRelease(KeyEvent.ALT_MASK);
+	    bot.keyRelease(KeyEvent.VK_F4);
 	}
 
 }

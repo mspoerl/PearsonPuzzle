@@ -363,12 +363,12 @@ public class Model extends Observable {
     /**
      * Matrix mit Reihenfolgenregeln wird in der Datenbank gespeichert.
      */
-    public synchronized void saveGroupMatrix() {
+    public void saveGroupMatrix() {
 	dataBase.saveOrder(getProjectName(), codeLine_GroupMatrix);
 	notifyObservers();
     }
 
-    public synchronized void saveRandomisation() {
+    public void saveRandomisation() {
 	if (!sortedCode.isEmpty()
 		&& sortedCode.size() == codeVector_normal.size())
 	    normalizeSortedCode();
@@ -702,7 +702,7 @@ public class Model extends Observable {
      * "groben Eckdaten" sind: Projektname, Projektcode,
      * Beschreibung/Arbeitsanweisung.
      */
-    public synchronized void saveProject(boolean randomize) {
+    public void saveProject(boolean randomize) {
 	if (randomize) {
 	    saveProject(getProjectCode(), getProjectName(),
 		    getProjectDescription(), null);
@@ -732,7 +732,7 @@ public class Model extends Observable {
      *            Neuer Projektname
      * @param linelength
      */
-    public synchronized boolean saveProject(String codeString, String projectName,
+    public boolean saveProject(String codeString, String projectName,
 	    String projectDescription, Integer linelength) {
 	projectCode = new String(ValueValidation.removeEmptyLines(codeString));
 
@@ -778,7 +778,7 @@ public class Model extends Observable {
      * Kann nur ausgeführt werden, wenn Projekt selektiert wurde. Speichert
      * TabSize, Grade, JUnitCode, und alle Imports (Klassen, Methoden, Online).
      */
-    public synchronized void saveProjectSettings() {
+    public void saveProjectSettings() {
 	if (projectID != null) {
 	    dataBase.saveProjectSettings(projectList.get(projectID), tabSize,
 		    grade);
@@ -938,7 +938,7 @@ public class Model extends Observable {
 	this.personMap = person_password;
     }
 
-    public synchronized boolean saveUser(Object username, Object password, Object accessgroup) {
+    public boolean saveUser(Object username, Object password, Object accessgroup) {
 
 	String userName = (String) username;
 	char[] passWord = (char[]) password;
@@ -1097,7 +1097,7 @@ public class Model extends Observable {
      * @param puzzlemode
      *            Puzzlemodus
      */
-    public synchronized void savePuzzlemode(Integer puzzlemode) {
+    public void savePuzzlemode(Integer puzzlemode) {
 	if (puzzlemode != null)
 	    dataBase.savePuzzlemode(projectList.get(projectID), puzzlemode);
     }
@@ -1147,7 +1147,7 @@ public class Model extends Observable {
 	}
     }
 
-    public synchronized void saveOrderFailures() {
+    public void saveOrderFailures() {
 	dataBase.saveOrderFailure(projectList.get(projectID), orderFailureText);
     }
 
