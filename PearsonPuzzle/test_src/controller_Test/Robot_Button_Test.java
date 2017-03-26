@@ -1,5 +1,7 @@
 package controller_Test;
 
+
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.awt.AWTException;
@@ -35,13 +37,14 @@ public class Robot_Button_Test {
 
     private Robot bot;
     private Integer projectsCount;
+    private Model model;
 
     @Before
     public void init() {
 	GUIBuilder usr = new GUIBuilder();
 	usr.setupGUI();
 	Object view = usr.getController().getView();
-	Model model = ((JView) view).getModel();
+	model = ((JView) view).getModel();
 	projectsCount = model.getProjectVector().size();
 	try {
 	    bot = new Robot();
@@ -76,6 +79,7 @@ public class Robot_Button_Test {
 	for (int i = 0; i < NumberOfKlicks_for_Overload; i++) {
 	    clickCompile();
 	}
+	assertNotNull(model.getCompileFailures());
 	sleep(200);
     }
 

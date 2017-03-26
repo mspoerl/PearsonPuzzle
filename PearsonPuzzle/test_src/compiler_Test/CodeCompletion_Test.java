@@ -50,14 +50,14 @@ public class CodeCompletion_Test {
 
     @Test
     public void extractClassName_Test() {
-	assertEquals(expectedResult_className,
+	assertEquals("Gefundener Klassenname nicht passend.", expectedResult_className,
 		CodeCompletion.extractClassName(testString));
     }
 
     @Test
     public void extractDeclarationName_Test() {
 	String withoutComments = CodeCompletion.removeComment(testString);
-	assertEquals(expectedResult_Decalaration,
+	assertEquals("Gefundener Methodenname nicht passen.", expectedResult_Decalaration,
 		CodeCompletion.extractDeclarationName(withoutComments,
 			"classt;", "public class"));
     }

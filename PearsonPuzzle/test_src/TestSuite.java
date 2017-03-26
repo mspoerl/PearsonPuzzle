@@ -19,13 +19,19 @@ import controller_Test.ViewChange_Button_Test;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-DbTransaction_Export_Test.class, CodeCompletion_Test.class,
+    	DbTransaction_Export_Test.class, 
+    	
+    	CodeCompletion_Test.class,
 	TestCompiler_Test.class,
 
 	ViewChange_Button_Test.class,
 
-	OrderFailures_Test.class, Robot_Button_Test.class,
-	DbTransactio_Value_Test.class, })
+	OrderFailures_Test.class, 
+	
+	Robot_Button_Test.class,
+	DbTransactio_Value_Test.class, 
+	
+})
 public class TestSuite {
     //
 }
