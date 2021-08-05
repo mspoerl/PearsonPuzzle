@@ -9,6 +9,6 @@ Der Lehrer hat die Möglichkeit:
   - Abfolgemuster zu definieren, um z.B. festzulegen, dass Zeile x zwingend vor Zeile y zu erscheinen hat
   - Aus vier verschiedenen Drag and Drop Modi zu wählen
   - Datensätze (Derby Datenbank) zu exportieren und zu importieren
-  - Nutzerprofile anzulegen und Puzzle zu personalisieren
+  - Nutzerprofile anzulegen und Puzzle zu personalisieren  
 
 @wildcut
